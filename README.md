@@ -1,11 +1,15 @@
-# GearUP NRGB50 Demo Website
+# GearUP NRGB50 — Vangcur Style Demo
+
+এই demo-টি Vangcur-এর দেওয়া screenshot অনুসরণ করে তৈরি করা হয়েছে:
+- light blue product hero background
+- white rounded cards
+- বাংলা + English mixed copy
+- Vangcur-style product tabs
+- compact specifications table
+- maximum 3 FAQ
+- sticky bottom purchase bar
+- internal pages: Design Ideas, Installation Guide, Usage & Care
+
+এটি production website নয়; content architecture এবং visual implementation বোঝানোর prototype।
 
 Open `index.html` in a browser.
-
-Pages:
-- Product page: `index.html`
-- Design hub: `designs.html`
-- Installation guide: `installation.html`
-- Usage & care guide: `care.html`
-
-This is a visual architecture demo. Replace the demo product visual and demo price with verified store assets/data. The structure intentionally keeps detailed information off the main product page and connects it through internal links.
