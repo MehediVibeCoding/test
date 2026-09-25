@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { playfairDisplay, dmSans, hindSiliguri } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Ahsan's Learning Academy | HSC English & ICT",
@@ -13,7 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="bn">
+    <html
+      lang="bn"
+      className={`${playfairDisplay.variable} ${dmSans.variable} ${hindSiliguri.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

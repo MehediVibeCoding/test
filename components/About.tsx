@@ -1,21 +1,31 @@
-// 🔧 replace bullet content with confirmed bio details
+import Image from "next/image";
+import Reveal from "./Reveal";
+
 const HIGHLIGHTS = [
-  "University of Chittagong থেকে স্নাতক/স্নাতকোত্তর",
+  "University of Chittagong থেকে স্নাতক/স্নাতকোত্তর", // 🔧 confirm department/passing year
   "40th BCS (General) Education Cadre",
   "Lecturer, Chauddagram Govt. College — HSC English & ICT",
-  "৫০০+ শিক্ষার্থীকে HSC-তে গাইড করেছেন",
+  "৮+ বছরের শিক্ষকতা অভিজ্ঞতা",
+  "১০,০০০+ শিক্ষার্থীকে HSC-তে গাইড করেছেন",
 ];
 
 export default function About() {
   return (
     <section id="about" className="mx-auto max-w-5xl px-4 py-20">
       <div className="grid items-center gap-10 md:grid-cols-2">
-        {/* 🔧 replace with a real photo */}
-        <div className="aspect-square w-full max-w-sm justify-self-center overflow-hidden rounded-2xl bg-sky-100 shadow-glass flex items-center justify-center text-sky-700 font-display md:justify-self-start">
-          স্যারের ছবি
-        </div>
+        <Reveal className="justify-self-center md:justify-self-start">
+          <div className="relative w-full max-w-sm">
+            <Image
+              src="/images/ahsan-about.webp"
+              alt="Md. Ahsan Ullah তার ডেস্কে"
+              width={900}
+              height={1104}
+              className="h-auto w-full select-none"
+            />
+          </div>
+        </Reveal>
 
-        <div>
+        <Reveal delay={100}>
           <h2 className="font-display text-2xl font-semibold text-sky-950 md:text-3xl">
             পরিচিতি
           </h2>
@@ -35,7 +45,7 @@ export default function About() {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

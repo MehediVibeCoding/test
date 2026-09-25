@@ -23,14 +23,19 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ["Sora", "Noto Sans Bengali", "sans-serif"],
-        body: ["Inter", "Noto Sans Bengali", "sans-serif"],
+        // Playfair Display for Latin headings, Hind Siliguri covers Bengali glyphs
+        display: ["var(--font-display)", "var(--font-bengali)", "serif"],
+        // DM Sans for Latin body copy, Hind Siliguri covers Bengali glyphs
+        body: ["var(--font-dm-sans)", "var(--font-bengali)", "sans-serif"],
       },
       boxShadow: {
         glass: "0 8px 32px rgba(14,165,233,0.15)",
       },
       maxWidth: {
         prose: "65ch",
+      },
+      transitionTimingFunction: {
+        premium: "cubic-bezier(.16,1,.3,1)",
       },
     },
   },

@@ -1,3 +1,5 @@
+import Reveal from "./Reveal";
+
 // 🔧 demo testimonials — replace with real student/parent reviews
 const TESTIMONIALS = [
   {
@@ -22,23 +24,25 @@ export default function Testimonials() {
   return (
     <section className="bg-sky-100/50 px-4 py-20">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-10 text-center">
+        <Reveal className="mb-10 text-center">
           <h2 className="font-display text-2xl font-semibold text-sky-950 md:text-3xl">
             শিক্ষার্থী ও অভিভাবকরা যা বলেন
           </h2>
-        </div>
+        </Reveal>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="glass-panel p-6">
-              <blockquote className="text-sm leading-relaxed text-ink-800">
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-              <figcaption className="mt-4 text-sm">
-                <span className="font-display font-medium text-sky-950">{t.name}</span>
-                <span className="block text-sky-700">{t.role}</span>
-              </figcaption>
-            </figure>
+          {TESTIMONIALS.map((t, i) => (
+            <Reveal key={t.name} delay={i * 100}>
+              <figure className="glass-panel hover-lift h-full p-6 hover:shadow-glass">
+                <blockquote className="text-sm leading-relaxed text-ink-800">
+                  &ldquo;{t.quote}&rdquo;
+                </blockquote>
+                <figcaption className="mt-4 text-sm">
+                  <span className="font-display font-medium text-sky-950">{t.name}</span>
+                  <span className="block text-sky-700">{t.role}</span>
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
         </div>
       </div>

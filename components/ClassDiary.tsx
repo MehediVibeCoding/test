@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Reveal from "./Reveal";
 
 // 🔧 demo data — later this comes from Supabase, sorted by date desc
 const ENTRIES = [
@@ -40,7 +41,7 @@ export default function ClassDiary() {
 
   return (
     <section id="class-diary" className="mx-auto max-w-5xl px-4 py-20">
-      <div className="mb-10 text-center">
+      <Reveal className="mb-10 text-center">
         <h2 className="font-display text-2xl font-semibold text-sky-950 md:text-3xl">
           আজকের ক্লাস ডায়েরি
         </h2>
@@ -48,14 +49,14 @@ export default function ClassDiary() {
           ক্লাসে যা পড়ানো হয়েছে ভুলে গেছো? এখানে প্রতিদিনের ক্লাস নোট, স্লাইড ও
           হোমওয়ার্ক খুঁজে পাবে।
         </p>
-      </div>
+      </Reveal>
 
-      <div className="mb-8 flex flex-wrap justify-center gap-2">
+      <Reveal className="mb-8 flex flex-wrap justify-center gap-2" delay={80}>
         {BATCHES.map((batch) => (
           <button
             key={batch}
             onClick={() => setSelected(batch)}
-            className={`rounded-full px-4 py-2 text-sm transition-colors ${
+            className={`hover-lift rounded-full px-4 py-2 text-sm transition-colors ${
               selected === batch
                 ? "bg-sky-600 text-white"
                 : "bg-sky-100 text-sky-700 hover:bg-sky-200"
@@ -64,24 +65,26 @@ export default function ClassDiary() {
             {batch}
           </button>
         ))}
-      </div>
+      </Reveal>
 
       <div className="grid gap-5 md:grid-cols-3">
-        {filtered.map((entry) => (
-          <article key={entry.date + entry.batch} className="glass-panel p-5">
-            <p className="text-xs text-sky-700">{entry.date}</p>
-            <p className="mt-1 text-xs font-medium text-sky-950">{entry.batch}</p>
-            <h3 className="mt-3 font-display text-lg font-semibold text-sky-950">
-              {entry.topic}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-ink-800">{entry.note}</p>
-            <a
-              href={entry.slideUrl}
-              className="mt-4 inline-block text-sm font-medium text-sky-600 hover:text-sky-700"
-            >
-              প্রেজেন্টেশন/স্লাইড দেখো →
-            </a>
-          </article>
+        {filtered.map((entry, i) => (
+          <Reveal key={entry.date + entry.batch} delay={i * 100}>
+            <article className="glass-panel hover-lift h-full p-5 hover:shadow-glass">
+              <p className="text-xs text-sky-700">{entry.date}</p>
+              <p className="mt-1 text-xs font-medium text-sky-950">{entry.batch}</p>
+              <h3 className="mt-3 font-display text-lg font-semibold text-sky-950">
+                {entry.topic}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-800">{entry.note}</p>
+              <a
+                href={entry.slideUrl}
+                className="mt-4 inline-block text-sm font-medium text-sky-600 hover:text-sky-700"
+              >
+                প্রেজেন্টেশন/স্লাইড দেখো →
+              </a>
+            </article>
+          </Reveal>
         ))}
       </div>
     </section>
