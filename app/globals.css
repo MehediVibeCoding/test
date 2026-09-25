@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sky-950: #0a1f33;
+  --sky-700: #0369a1;
+  --sky-600: #0ea5e9;
+  --sky-400: #38bdf8;
+  --sky-100: #e0f2fe;
+  --cloud-50: #f5fafd;
+  --ink-800: #1e293b;
+
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-shadow: 0 8px 32px rgba(14, 165, 233, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--cloud-50);
+  color: var(--ink-800);
+  font-family: 'Inter', 'Noto Sans Bengali', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Sora', 'Noto Sans Bengali', system-ui, sans-serif;
+  color: var(--sky-950);
+}
+
+/* Glass panel — used sparingly: nav, hero CTA card, class-diary cards, forms */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: var(--glass-shadow);
+  border-radius: 1.25rem;
+}
+
+/* Slow-drifting sky gradient, used once in the hero */
+.sky-gradient {
+  background: radial-gradient(circle at 20% 20%, #e0f2fe 0%, #f5fafd 45%, #ffffff 100%);
+  background-size: 200% 200%;
+  animation: sky-drift 24s ease-in-out infinite;
+}
+
+@keyframes sky-drift {
+  0%   { background-position: 0% 0%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 0%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-gradient {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--sky-600);
+  outline-offset: 2px;
+}
