@@ -2,10 +2,16 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-sky-100/60 via-sky-50/40 to-white px-4 pt-6 pb-6 md:pt-10 md:pb-8">
+    <section
+      className="relative -mt-[58px] overflow-hidden px-4 pt-[74px] pb-6 sm:-mt-[68px] sm:pt-[90px] md:pb-10"
+      style={{
+        background:
+          "radial-gradient(ellipse 65% 50% at 5% 30%, rgba(56, 189, 248, 0.35) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 95% 45%, rgba(14, 165, 233, 0.30) 0%, transparent 65%), linear-gradient(180deg, #e0f2fe 0%, #f0f7fe 55%, #ffffff 100%)",
+      }}
+    >
       <div className="relative mx-auto grid max-w-6xl items-center gap-6 md:grid-cols-[1.1fr_0.9fr] md:gap-8">
         
-        {/* টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে সুন্দরভাবে থাকবে) */}
+        {/* টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে) */}
         <div className="order-2 text-center md:order-1 md:text-left">
           <p className="font-display text-xs sm:text-sm font-bold tracking-wide text-sky-700">
             Better Learning, Brighter Future
@@ -56,14 +62,14 @@ export default function Hero() {
             </a>
             <a
               href="#class-diary"
-              className="inline-flex items-center justify-center rounded-xl border border-sky-200 bg-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-sky-800 hover:bg-sky-50"
+              className="inline-flex items-center justify-center rounded-xl border border-sky-200 bg-white/90 px-5 py-2.5 text-xs sm:text-sm font-semibold text-sky-800 hover:bg-sky-50 shadow-sm"
             >
               আজকের ক্লাস নোট দেখো
             </a>
           </div>
         </div>
 
-        {/* ছবির কলাম — কোনো পেছনের নীল বক্স বা নিচে কৃত্রিম শ্যাডো নেই */}
+        {/* ছবির কলাম — নিচে মাস্কিং যোগ করে কালো ছায়া সম্পূর্ণ মুছে ফেলা হয়েছে */}
         <div className="order-1 flex justify-center md:order-2">
           <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[400px]">
             <Image
@@ -72,7 +78,7 @@ export default function Hero() {
               width={900}
               height={1350}
               priority
-              className="h-auto w-full object-contain select-none"
+              className="h-auto w-full object-contain select-none [mask-image:linear-gradient(to_bottom,black_82%,transparent_98%)] [-webkit-mask-image:linear-gradient(to_bottom,black_82%,transparent_98%)]"
             />
           </div>
         </div>
