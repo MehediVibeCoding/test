@@ -35,7 +35,7 @@ export default function BlogPreview() {
             পড়াশোনার টিপস, সিলেবাস বিশ্লেষণ ও পরীক্ষার কৌশল নিয়ে লেখা।
           </p>
         </div>
-        <a href="#blog" className="text-sm font-medium text-sky-600 hover:text-sky-700">
+        <a href="/blog" className="text-sm font-medium text-sky-600 hover:text-sky-700">
           সব ব্লগ দেখো →
         </a>
       </Reveal>

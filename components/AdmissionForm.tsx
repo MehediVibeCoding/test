@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { motion } from "motion/react";
 import Reveal from "./Reveal";
 
 const BATCH_OPTIONS = [
@@ -216,12 +217,14 @@ export default function AdmissionForm() {
             </div>
 
             <div className="pt-2">
-              <button
+              <motion.button
                 type="submit"
-                className="w-full rounded-xl bg-sky-600 py-3 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-sky-700"
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                className="crystal-btn-solid w-full rounded-xl py-3 text-xs sm:text-sm font-bold"
               >
                 ভর্তি আবেদন জমা দিন ✓
-              </button>
+              </motion.button>
             </div>
           </form>
         )}

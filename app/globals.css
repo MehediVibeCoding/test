@@ -149,3 +149,86 @@ h1, h2, h3, h4 {
   outline: 2px solid var(--sky-600);
   outline-offset: 2px;
 }
+
+/* ফর্ম ইনপুটের নিজস্ব বর্ডার-ফোকাস স্টাইল আছে (focus:border-sky-600),
+   তার ওপর গ্লোবাল outline যোগ হয়ে "ডাবল রিং" তৈরি করছিল — এখানে সেটা বন্ধ করা হলো। */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ক্রিস্টাল লিকুইড গ্লাস অ্যাকশন বাটন (ভাঙচুরের order-btn-glow থেকে রেফারেন্স
+   নিয়ে sky-blue প্যালেটে বসানো) — প্রাইমারি CTA বাটনগুলোতে ব্যবহার করার জন্য
+   ══════════════════════════════════════════════════════════════════════ */
+.crystal-btn {
+  --cb-pos-x: 40%;
+  --cb-pos-y: 140%;
+  --cb-spread-x: 130%;
+  --cb-spread-y: 170%;
+  --cb-color-1: #f0f8ff;
+  --cb-color-2: #e0f2fe;
+  --cb-color-3: #c3defc;
+  --cb-color-4: #44a7fc;
+  --cb-color-5: #c3defc;
+  --cb-stop-1: 37.35%;
+  --cb-stop-2: 61.36%;
+  --cb-stop-3: 78.42%;
+  --cb-stop-4: 93.52%;
+  --cb-stop-5: 100%;
+  color: #0284c7;
+  background: radial-gradient(
+    var(--cb-spread-x) var(--cb-spread-y) at var(--cb-pos-x) var(--cb-pos-y),
+    var(--cb-color-1) var(--cb-stop-1),
+    var(--cb-color-2) var(--cb-stop-2),
+    var(--cb-color-3) var(--cb-stop-3),
+    var(--cb-color-4) var(--cb-stop-4),
+    var(--cb-color-5) var(--cb-stop-5)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 1),
+    0 3px 10px rgba(0, 88, 199, 0.12);
+  transition:
+    --cb-pos-x 0.75s, --cb-pos-y 0.75s,
+    --cb-spread-x 0.75s, --cb-spread-y 0.75s,
+    color 0.3s ease;
+}
+.crystal-btn:hover,
+.crystal-btn:focus-visible,
+.crystal-btn:active {
+  --cb-pos-x: 0%;
+  --cb-pos-y: 120%;
+  --cb-spread-x: 110%;
+  --cb-spread-y: 110%;
+  --cb-color-1: #f0f8ff;
+  --cb-color-2: #c3defc;
+  --cb-color-3: #7dd3fc;
+  --cb-color-4: #c3defc;
+  --cb-color-5: #e0f2fe;
+  --cb-stop-1: 0%;
+  --cb-stop-2: 10%;
+  --cb-stop-3: 35.44%;
+  --cb-stop-4: 71.34%;
+  --cb-stop-5: 150%;
+  color: #0284c7;
+  outline: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .crystal-btn { transition: color 0.2s ease; }
+}
+
+/* সলিড ভার্সন — ঘন sky-blue ব্যাকগ্রাউন্ডের ওপর বসানো বাটনের জন্য (যেমন ডার্ক ফুটার) */
+.crystal-btn-solid {
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.4), 0 3px 10px rgba(0, 88, 199, 0.25);
+  transition: filter 0.2s ease;
+}
+.crystal-btn-solid:hover,
+.crystal-btn-solid:focus-visible {
+  filter: brightness(1.08);
+  outline: none;
+}

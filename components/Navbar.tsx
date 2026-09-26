@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ScrollLink from "./ScrollLink";
 
 const NAV_LINKS = [
-  { label: "পরিচিতি", href: "#about" },
-  { label: "কেন একাডেমি", href: "#why-us" },
-  { label: "ব্যাচসমূহ", href: "#batches" },
-  { label: "ক্লাস ডায়েরি", href: "#class-diary" },
-  { label: "ভিডিও", href: "#videos" },
-  { label: "যোগাযোগ", href: "#contact" },
+  { label: "পরিচিতি", id: "about" },
+  { label: "কেন একাডেমি", id: "why-us" },
+  { label: "ব্যাচসমূহ", id: "batches" },
+  { label: "ক্লাস ডায়েরি", id: "class-diary" },
+  { label: "ভিডিও", id: "videos" },
+  { label: "যোগাযোগ", id: "contact" },
 ];
 
 export default function Navbar() {
@@ -58,8 +59,8 @@ export default function Navbar() {
             : "border-sky-100/60 bg-white/70 shadow-sm backdrop-blur-sm"
         }`}
       >
-        {/* ব্র্যান্ড লোগো ও নাম (মোবাইলেও পরিচ্ছন্নভাবে দেখাবে) */}
-        <a href="#" className="flex items-center gap-2.5">
+        {/* ব্র্যান্ড লোগো ও নাম — ক্লিক করলে স্মুথ স্ক্রলে উপরে যাবে, URL-এ # যোগ হবে না */}
+        <ScrollLink targetId="top" className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-700 to-sky-500 font-bold text-white shadow-sm">
             AU
           </div>
@@ -71,18 +72,18 @@ export default function Navbar() {
               HSC English &amp; ICT
             </span>
           </div>
-        </a>
+        </ScrollLink>
 
-        {/* ডেক্সটপ মেনু লিংক */}
+        {/* ডেক্সটপ মেনু লিংক — স্মুথ স্ক্রল, URL-এ # যোগ হবে না */}
         <ul className="hidden items-center gap-5 text-sm font-medium text-ink-800 lg:flex">
           {NAV_LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
+            <li key={link.id}>
+              <ScrollLink
+                targetId={link.id}
                 className="transition-colors hover:text-sky-600 focus:outline-none"
               >
                 {link.label}
-              </a>
+              </ScrollLink>
             </li>
           ))}
         </ul>
@@ -138,13 +139,13 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* ভর্তি ফরম বাটন (ডেক্সটপ) */}
-          <a
-            href="#admission"
-            className="hidden rounded-xl bg-sky-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-sky-700 sm:inline-block"
+          {/* ভর্তি ফরম বাটন (ডেক্সটপ) — ক্রিস্টাল লিকুইড গ্লাস + স্প্রিং ট্যাপ */}
+          <ScrollLink
+            targetId="admission"
+            className="crystal-btn hidden rounded-xl px-4 py-2 text-xs font-bold sm:inline-flex sm:items-center sm:justify-center"
           >
             ভর্তি হও
-          </a>
+          </ScrollLink>
 
           {/* মোবাইল আধুনিক স্টাইলিশ ৩-ডট/মেনু বাটন */}
           <button
@@ -182,22 +183,22 @@ export default function Navbar() {
       >
         <div className="flex flex-col gap-2">
           {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
+            <ScrollLink
+              key={link.id}
+              targetId={link.id}
+              onNavigate={() => setOpen(false)}
               className="rounded-xl px-3 py-2 text-sm font-medium text-ink-800 transition-colors hover:bg-sky-50 hover:text-sky-700"
-              onClick={() => setOpen(false)}
             >
               {link.label}
-            </a>
+            </ScrollLink>
           ))}
-          <a
-            href="#admission"
-            onClick={() => setOpen(false)}
-            className="mt-2 rounded-xl bg-sky-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-sky-700"
+          <ScrollLink
+            targetId="admission"
+            onNavigate={() => setOpen(false)}
+            className="crystal-btn mt-2 flex items-center justify-center rounded-xl px-4 py-2.5 text-center text-sm font-bold"
           >
             ভর্তি ফর্ম পূরণ করো
-          </a>
+          </ScrollLink>
         </div>
       </div>
     </header>

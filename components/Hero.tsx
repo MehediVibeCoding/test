@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ScrollLink from "./ScrollLink";
 
 export default function Hero() {
   return (
@@ -10,8 +11,8 @@ export default function Hero() {
       }}
     >
       <div className="relative mx-auto grid max-w-6xl items-center gap-6 md:grid-cols-[1.1fr_0.9fr] md:gap-8">
-        
-        {/* টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে) */}
+
+        {/* টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে) */}
         <div className="order-2 text-center md:order-1 md:text-left">
           <p className="font-display text-xs sm:text-sm font-bold tracking-wide text-sky-700">
             Better Learning, Brighter Future
@@ -31,9 +32,9 @@ export default function Hero() {
           </div>
 
           <p className="mx-auto mt-3 max-w-lg text-xs leading-relaxed text-ink-800/90 sm:text-sm md:mx-0">
-            ইংরেজি ও আইসিটির মতো গুরুত্বপূর্ণ বিষয়গুলোতে শিক্ষার্থীদের ভীতি দূর করে বাস্তবধর্মী
-            টেকনিক, নিয়মিত প্র্যাকটিস ও সঠিক গাইডলাইনের মাধ্যমে বোর্ড পরীক্ষায় নিশ্চিত A+ অর্জনের
-            পরিপূর্ণ সহায়ক একাডেমি।
+            ইংরেজি ও আইসিটির মতো গুরুত্বপূর্ণ বিষয়গুলোতে শিক্ষার্থীদের ভীতি দূর করে বাস্তবধর্মী
+            টেকনিক, নিয়মিত প্র্যাকটিস ও সঠিক গাইডলাইনের মাধ্যমে বোর্ড পরীক্ষায় নিশ্চিত A+ অর্জনের
+            পরিপূর্ণ সহায়ক একাডেমি।
           </p>
 
           {/* স্ট্যাটাস কাউন্টার */}
@@ -48,28 +49,29 @@ export default function Hero() {
             </div>
             <div>
               <p className="text-xl font-bold text-sky-950 sm:text-2xl">১০০%</p>
-              <p className="text-[11px] text-ink-800/70">বোর্ড সিলেবাস কেয়ার</p>
+              <p className="text-[11px] text-ink-800/70">বোর্ড সিলেবাস কেয়ার</p>
             </div>
           </div>
 
-          {/* অ্যাকশন বাটনসমূহ */}
+          {/* অ্যাকশন বাটনসমূহ — দুটোই এখন ক্রিস্টাল গ্লাস + স্প্রিং ট্যাপ অ্যানিমেশন,
+              URL-এ # যোগ না করে স্মুথ স্ক্রল করে */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-            <a
-              href="#admission"
-              className="inline-flex items-center justify-center rounded-xl bg-sky-600 px-6 py-2.5 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-sky-700"
+            <ScrollLink
+              targetId="admission"
+              className="crystal-btn-solid inline-flex items-center justify-center rounded-xl px-6 py-2.5 text-xs sm:text-sm font-bold"
             >
               প্রাইভেট ব্যাচে ভর্তি হও →
-            </a>
-            <a
-              href="#class-diary"
-              className="inline-flex items-center justify-center rounded-xl border border-sky-200 bg-white/90 px-5 py-2.5 text-xs sm:text-sm font-semibold text-sky-800 hover:bg-sky-50 shadow-sm"
+            </ScrollLink>
+            <ScrollLink
+              targetId="class-diary"
+              className="crystal-btn inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold"
             >
               আজকের ক্লাস নোট দেখো
-            </a>
+            </ScrollLink>
           </div>
         </div>
 
-        {/* ছবির কলাম — নিচে মাস্কিং যোগ করে কালো ছায়া সম্পূর্ণ মুছে ফেলা হয়েছে */}
+        {/* ছবির কলাম */}
         <div className="order-1 flex justify-center md:order-2">
           <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[400px]">
             <Image
