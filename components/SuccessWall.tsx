@@ -1,7 +1,7 @@
 import Reveal from "./Reveal";
 import { getSuccessToppers } from "@/lib/academyData";
 
-// ডাটাবেজ সাময়িক ফাঁকা থাকলে ডেমো ফলব্যাক
+// ডাটাবেজ সাময়িক ফাঁকা থাকলে ডেমো ফলব্যাক
 const FALLBACK_TOPPERS = [
   {
     id: "f1",
