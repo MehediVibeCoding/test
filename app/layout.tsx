@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { playfairDisplay, dmSans, hindSiliguri } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Ahsan's Learning Academy | HSC English & ICT",
@@ -14,11 +13,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="bn"
-      className={`${playfairDisplay.variable} ${dmSans.variable} ${hindSiliguri.variable}`}
-    >
+    <html lang="bn">
       <head>
+        {/*
+          All fonts are now loaded via a plain <link> tag (browser-side),
+          NOT next/font/google. next/font/google fetches Google Fonts at
+          BUILD time, and Google occasionally returns a URL shape Next.js
+          can't parse yet, which crashed the Vercel build with:
+          "TypeError: Cannot read properties of null (reading '1')"
+          (see https://github.com/vercel/next.js/issues/99114 — open bug).
+          A <link> tag loads fonts from the visitor's browser instead, so
+          the build never talks to Google Fonts and can't fail this way.
+        */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+        />
+
         {/*
           Digit-only font override — same technique as vangcur.com.
           Loads Noto Sans Bengali but the `text=` param subsets it down to just

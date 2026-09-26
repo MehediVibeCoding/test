@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 :root {
+  /* Loaded via <link> tags in app/layout.tsx, not next/font/google —
+     see the comment there for why. */
+  --font-display: "Playfair Display";
+  --font-dm-sans: "DM Sans";
+  --font-bengali: "Hind Siliguri";
+
   --sky-950: #0a1f33;
   --sky-700: #0369a1;
   --sky-600: #0284c7;

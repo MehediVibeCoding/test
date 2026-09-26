@@ -15,3 +15,33 @@ export function toBengaliDigits(
 
   return raw.replace(/[0-9]/g, (d) => BENGALI_DIGITS[Number(d)]);
 }
+
+const BENGALI_MONTHS = [
+  "জানুয়ারি",
+  "ফেব্রুয়ারি",
+  "মার্চ",
+  "এপ্রিল",
+  "মে",
+  "জুন",
+  "জুলাই",
+  "আগস্ট",
+  "সেপ্টেম্বর",
+  "অক্টোবর",
+  "নভেম্বর",
+  "ডিসেম্বর",
+];
+
+/**
+ * "2026-09-25" (Supabase-এর plain date স্ট্রিং) কে
+ * "২৫ সেপ্টেম্বর, ২০২৬" ফরম্যাটে রূপান্তর করে।
+ */
+export function formatBengaliDate(isoDate: string): string {
+  const d = new Date(`${isoDate}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return isoDate;
+
+  const day = toBengaliDigits(d.getDate());
+  const month = BENGALI_MONTHS[d.getMonth()];
+  const year = toBengaliDigits(d.getFullYear());
+
+  return `${day} ${month}, ${year}`;
+}

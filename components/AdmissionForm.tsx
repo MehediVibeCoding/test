@@ -3,33 +3,42 @@
 import { useState, FormEvent } from "react";
 import { motion } from "motion/react";
 import Reveal from "./Reveal";
+import { submitAdmission } from "@/app/actions/admission";
 
-const BATCH_OPTIONS = [
-  "HSC 28 English and ICT Combine",
-  "HSC 28 English (Batch 28)",
-  "HSC 28 ICT (Batch 28)",
-  "HSC 27 English and ICT Combine",
-  "HSC 27 English (Batch 27)",
-  "HSC 27 ICT (Batch 27)",
-];
+const GROUP_OPTIONS = ["বিজ্ঞান বিভাগ", "মানবিক বিভাগ", "ব্যবসায় শিক্ষা বিভাগ"];
 
-const GROUP_OPTIONS = ["বিজ্ঞান বিভাগ", "মানবিক বিভাগ", "ব্যবসায় শিক্ষা বিভাগ"];
+type AdmissionFormProps = {
+  batches: { id: string; name: string }[];
+};
 
-export default function AdmissionForm() {
+export default function AdmissionForm({ batches }: AdmissionFormProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     college: "",
     roll: "",
     group: "বিজ্ঞান বিভাগ",
-    batch: "HSC 28 English and ICT Combine",
+    batch: batches[0]?.name ?? "",
     phone: "",
     guardianPhone: "",
   });
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log("Admission Form Submitted:", formData);
+    setErrorMessage(null);
+    setIsSubmitting(true);
+
+    const result = await submitAdmission(formData);
+
+    setIsSubmitting(false);
+
+    if (!result.ok) {
+      setErrorMessage(result.error);
+      return;
+    }
+
     setSubmitted(true);
   }
 
@@ -42,7 +51,7 @@ export default function AdmissionForm() {
         `📂 বিভাগ: ${formData.group}\n` +
         `📚 কাঙ্ক্ষিত ব্যাচ: ${formData.batch}\n` +
         `📱 শিক্ষার্থীর ফোন: ${formData.phone}\n` +
-        `👨‍👩‍👧 অভিভাবকের নম্বর: ${formData.guardianPhone || "প্রযোজ্য নয়"}`
+        `👨‍👩‍👧 অভিভাবকের নম্বর: ${formData.guardianPhone || "প্রযোজ্য নয়"}`
     );
     window.open(`https://wa.me/8801845435539?text=${text}`, "_blank");
   }
@@ -57,8 +66,8 @@ export default function AdmissionForm() {
           প্রাইভেট ব্যাচে আসন নিশ্চিত করো
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-          তোমার প্রয়োজনীয় তথ্য দিয়ে নিচের ফরমটি পূরণ করো। একাডেমি থেকে দ্রুত তোমার সাথে
-          যোগাযোগ করে ব্যাচ ও ক্লাসের সময় কনফার্ম করা হবে।
+          তোমার প্রয়োজনীয় তথ্য দিয়ে নিচের ফরমটি পূরণ করো। একাডেমি থেকে দ্রুত তোমার সাথে
+          যোগাযোগ করে ব্যাচ ও ক্লাসের সময় কনফার্ম করা হবে।
         </p>
       </Reveal>
 
@@ -69,11 +78,11 @@ export default function AdmissionForm() {
               ✓
             </div>
             <h3 className="mt-4 text-xl font-bold text-sky-950">
-              আবেদন সফলভাবে গৃহীত হয়েছে!
+              আবেদন সফলভাবে গৃহীত হয়েছে!
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-ink-800/80 leading-relaxed">
               ধন্যবাদ, <span className="font-bold text-sky-900">{formData.name}</span>। তোমার আবেদনের
-              তথ্য সংরক্ষণ করা হয়েছে। দ্রুত আসন নিশ্চিত করতে চাইলে সরাসরি হোয়াটসঅ্যাপেও জানাতে পারো।
+              তথ্য সংরক্ষণ করা হয়েছে। দ্রুত আসন নিশ্চিত করতে চাইলে সরাসরি হোয়াটসঅ্যাপেও জানাতে পারো।
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <button
@@ -96,6 +105,12 @@ export default function AdmissionForm() {
             onSubmit={handleSubmit}
             className="space-y-4 rounded-2xl border border-sky-100 bg-white p-6 shadow-sm sm:p-8"
           >
+            {errorMessage && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs sm:text-sm font-semibold text-red-700">
+                {errorMessage}
+              </div>
+            )}
+
             {/* শিক্ষার্থীর নাম */}
             <div>
               <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
@@ -174,9 +189,9 @@ export default function AdmissionForm() {
                   onChange={(e) => setFormData({ ...formData, batch: e.target.value })}
                   className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
                 >
-                  {BATCH_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
+                  {batches.map((b) => (
+                    <option key={b.id} value={b.name}>
+                      {b.name}
                     </option>
                   ))}
                 </select>
@@ -219,11 +234,12 @@ export default function AdmissionForm() {
             <div className="pt-2">
               <motion.button
                 type="submit"
+                disabled={isSubmitting}
                 whileTap={{ scale: 0.97 }}
                 transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                className="crystal-btn-solid w-full rounded-xl py-3 text-xs sm:text-sm font-bold"
+                className="crystal-btn-solid w-full rounded-xl py-3 text-xs sm:text-sm font-bold disabled:opacity-60"
               >
-                ভর্তি আবেদন জমা দিন ✓
+                {isSubmitting ? "জমা হচ্ছে..." : "ভর্তি আবেদন জমা দিন ✓"}
               </motion.button>
             </div>
           </form>

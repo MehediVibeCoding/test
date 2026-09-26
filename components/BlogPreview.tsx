@@ -1,29 +1,9 @@
 import Reveal from "./Reveal";
+import { getPublishedBlogPosts } from "@/lib/academyData";
 
-// 🔧 demo posts — later fetched from Supabase blog_posts table
-const POSTS = [
-  {
-    title: "HSC English 1st Paper সম্পূর্ণ সিলেবাস (HSC-28)",
-    excerpt:
-      "Reading ও Writing Part-এর মার্কস বিভাজন, কোন অংশে কত নম্বর, এবং প্রস্তুতির কৌশল — সব একসাথে।",
-    date: "২৫ সেপ্টেম্বর, ২০২৬",
-    href: "#",
-  },
-  {
-    title: "Flow Chart লেখার সহজ নিয়ম",
-    excerpt: "ধাপে ধাপে Flow Chart লেখার কৌশল, সংযোজক শব্দের ব্যবহার এবং কমন ভুলগুলো।",
-    date: "২০ সেপ্টেম্বর, ২০২৬",
-    href: "#",
-  },
-  {
-    title: "ICT: Logic Gate MCQ কীভাবে দ্রুত সমাধান করবে",
-    excerpt: "Truth Table মুখস্থ না করেও কীভাবে যেকোনো Logic Gate MCQ সমাধান করা যায়।",
-    date: "১৮ সেপ্টেম্বর, ২০২৬",
-    href: "#",
-  },
-];
+export default async function BlogPreview() {
+  const posts = await getPublishedBlogPosts(3);
 
-export default function BlogPreview() {
   return (
     <section id="blog" className="mx-auto max-w-5xl px-4 py-20">
       <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-4">
@@ -41,8 +21,8 @@ export default function BlogPreview() {
       </Reveal>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {POSTS.map((post, i) => (
-          <Reveal key={post.title} delay={i * 100}>
+        {posts.map((post, i) => (
+          <Reveal key={post.id} delay={i * 100}>
             <a
               href={post.href}
               className="hover-lift block h-full rounded-2xl border border-sky-100 bg-white p-6 hover:shadow-glass"

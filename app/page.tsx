@@ -15,8 +15,12 @@ import FAQ from "@/components/FAQ";
 import AdmissionForm from "@/components/AdmissionForm";
 import Footer from "@/components/Footer";
 import StickyMobileBar from "@/components/StickyMobileBar";
+import { getActiveBatches } from "@/lib/academyData";
 
-export default function Home() {
+export default async function Home() {
+  // AdmissionForm-এর ব্যাচ ড্রপডাউনের জন্য (Batches সেকশন নিজে নিজের কপি ফেচ করে)
+  const batches = await getActiveBatches();
+
   return (
     <main className="min-h-screen">
       {/* ১. শীর্ষ ন্যাভবার (উপরে কোনো সাদা প্যাচ ছাড়া, মোবাইলে টেক্সট ও ৩-ডট মেনুসহ) */}
@@ -63,7 +67,7 @@ export default function Home() {
       <FAQ />
 
       {/* ১১. ভর্তি আবেদন ফরম (কলেজ রোল, গ্রুপ/বিভাগ, অভিভাবকের নম্বর ও কম্বাইন্ড ব্যাচ) */}
-      <AdmissionForm />
+      <AdmissionForm batches={batches} />
 
       {/* ১২. প্রিমিয়াম ফুটার (ডার্ক/লাইট মোড ও বাংলা/ইংরেজি ভাষা অপশনসহ) */}
       <Footer />
