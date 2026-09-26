@@ -44,7 +44,7 @@ export async function getActiveBatches(): Promise<Batch[]> {
 }
 
 // ============================================================
-// BLOG POSTS
+// BLOG POSTS (Summary & Single Full Post)
 // ============================================================
 export type BlogPostSummary = {
   id: string;
@@ -53,6 +53,17 @@ export type BlogPostSummary = {
   excerpt: string;
   date: string;
   href: string;
+  coverImageUrl?: string | null;
+};
+
+export type BlogPostDetail = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImageUrl: string | null;
+  date: string;
 };
 
 export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[]> {
@@ -60,7 +71,7 @@ export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("id, title, slug, excerpt, published_at")
+      .select("id, title, slug, excerpt, cover_image_url, published_at")
       .eq("published", true)
       .order("published_at", { ascending: false })
       .limit(limit);
@@ -75,12 +86,45 @@ export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[
       title: p.title as string,
       slug: p.slug as string,
       excerpt: p.excerpt as string,
+      coverImageUrl: (p.cover_image_url as string | null) ?? null,
       date: formatBengaliDate((p.published_at as string).slice(0, 10)),
       href: `/blog/${p.slug}`,
     }));
   } catch (err) {
     console.error("getPublishedBlogPosts error:", err);
     return [];
+  }
+}
+
+export async function getAllPublishedBlogPosts(): Promise<BlogPostSummary[]> {
+  return getPublishedBlogPosts(50);
+}
+
+// 🎯 একক ব্লগের সম্পূর্ণ কন্টেন্ট ফেচ করা
+export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | null> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("id, title, slug, excerpt, content, cover_image_url, published_at")
+      .eq("slug", slug)
+      .eq("published", true)
+      .maybeSingle();
+
+    if (error || !data) return null;
+
+    return {
+      id: data.id as string,
+      title: data.title as string,
+      slug: data.slug as string,
+      excerpt: data.excerpt as string,
+      content: data.content as string,
+      coverImageUrl: (data.cover_image_url as string | null) ?? null,
+      date: formatBengaliDate((data.published_at as string).slice(0, 10)),
+    };
+  } catch (err) {
+    console.error("getBlogPostBySlug error:", err);
+    return null;
   }
 }
 
