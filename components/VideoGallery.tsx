@@ -72,10 +72,6 @@ export default async function VideoGallery() {
                     src={thumbSrc}
                     alt={v.title}
                     className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80";
-                    }}
                   />
                   {/* প্লে বাটন ওভারলে */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
