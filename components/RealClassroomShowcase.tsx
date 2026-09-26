@@ -1,7 +1,7 @@
 import Reveal from "./Reveal";
 import { getClassroomPhotos } from "@/lib/academyData";
 
-// ডাটাবেজ সাময়িক ফাঁকা থাকলে ডেমো ফলব্যাক
+// ডাটাবেজ সাময়িক ফাঁকা থাকলে ডেমো ফলব্যাক
 const FALLBACK_MOMENTS = [
   {
     id: "m1",
@@ -60,9 +60,7 @@ export default async function RealClassroomShowcase() {
                 className={isBig ? "sm:col-span-2 sm:row-span-2" : ""}
               >
                 <div
-                  className={`group relative flex h-full min-h-[160px] flex-col justify-end overflow-hidden rounded-2xl border border-sky-100 bg-sky-950 shadow-sm transition-all hover:border-sky-300 ${
-                    isBig ? "aspect-[4/3] sm:aspect-auto" : "aspect-[4/3] sm:aspect-auto"
-                  }`}
+                  className="group relative flex h-full min-h-[160px] flex-col justify-end overflow-hidden rounded-2xl border border-sky-100 bg-sky-950 shadow-sm transition-all hover:border-sky-300"
                 >
                   {/* ছবি */}
                   {item.imageUrl ? (
@@ -71,10 +69,6 @@ export default async function RealClassroomShowcase() {
                       src={item.imageUrl}
                       alt={item.caption}
                       className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=80";
-                      }}
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center bg-sky-100 text-sky-400">
