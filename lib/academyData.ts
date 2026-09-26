@@ -46,7 +46,7 @@ export type BlogPostSummary = {
   title: string;
   slug: string;
   excerpt: string;
-  date: string; // already formatted for display, e.g. "২৫ সেপ্টেম্বর, ২০২৬"
+  date: string;
   href: string;
 };
 
@@ -79,7 +79,7 @@ export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[
 // ============================================================
 export type ClassDiaryEntry = {
   id: string;
-  date: string; // formatted, e.g. "২৫ সেপ্টেম্বর, ২০২৬"
+  date: string;
   batch: string;
   topic: string;
   note: string;
@@ -107,4 +107,179 @@ export async function getClassDiaryEntries(limit = 9): Promise<ClassDiaryEntry[]
     note: e.note as string,
     slideUrl: (e.slide_url as string | null) ?? "#",
   }));
+}
+
+// ============================================================
+// 🌟 ১. কৃতি শিক্ষার্থী দেয়াল (TOPPERS)
+// ============================================================
+export type SuccessTopper = {
+  id: string;
+  name: string;
+  batch: string;
+  result: string;
+  subject: string;
+  college: string;
+  photoUrl: string | null;
+};
+
+export async function getSuccessToppers(): Promise<SuccessTopper[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("success_toppers")
+    .select("id, name, batch, result, subject, college, photo_url")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getSuccessToppers failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((t) => ({
+    id: t.id as string,
+    name: t.name as string,
+    batch: t.batch as string,
+    result: t.result as string,
+    subject: t.subject as string,
+    college: t.college as string,
+    photoUrl: (t.photo_url as string | null) ?? null,
+  }));
+}
+
+// ============================================================
+// 🌟 ২. ক্লাসরুম গ্যালারি (CLASSROOM PHOTOS)
+// ============================================================
+export type ClassroomPhoto = {
+  id: string;
+  caption: string;
+  imageUrl: string;
+};
+
+export async function getClassroomPhotos(): Promise<ClassroomPhoto[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("classroom_photos")
+    .select("id, caption, image_url")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getClassroomPhotos failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((p) => ({
+    id: p.id as string,
+    caption: p.caption as string,
+    imageUrl: p.image_url as string,
+  }));
+}
+
+// ============================================================
+// 🌟 ৩. বিদায় ও স্মৃতি অ্যালবাম (FAREWELL MEMORIES)
+// ============================================================
+export type FarewellMemory = {
+  id: string;
+  batch: string;
+  caption: string;
+  imageUrl: string;
+};
+
+export async function getFarewellMemories(): Promise<FarewellMemory[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("farewell_memories")
+    .select("id, batch_tag, caption, image_url")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getFarewellMemories failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((m) => ({
+    id: m.id as string,
+    batch: m.batch_tag as string,
+    caption: m.caption as string,
+    imageUrl: m.image_url as string,
+  }));
+}
+
+// ============================================================
+// 🌟 ৪. সর্বশেষ ভিডিও লেকচার (VIDEOS)
+// ============================================================
+export type VideoLecture = {
+  id: string;
+  title: string;
+  href: string;
+  thumbnailUrl: string | null;
+};
+
+export async function getVideoLectures(): Promise<VideoLecture[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("video_lectures")
+    .select("id, title, video_url, thumbnail_url")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getVideoLectures failed:", error.message);
+    return [];
+  }
+
+  return (data ?? []).map((v) => ({
+    id: v.id as string,
+    title: v.title as string,
+    href: v.video_url as string,
+    thumbnailUrl: (v.thumbnail_url as string | null) ?? null,
+  }));
+}
+
+// ============================================================
+// 🌟 ৫. শিক্ষার্থী ও অভিভাবকদের রিভিউ (TESTIMONIALS)
+// ============================================================
+export type Testimonial = {
+  id: string;
+  name: string;
+  role: string;
+  type: "শিক্ষার্থী" | "অভিভাবক";
+  year: string;
+  quote: string;
+  isFeatured: boolean;
+};
+
+export async function getTestimonials(): Promise<{
+  featured: Testimonial[];
+  moreReviews: Testimonial[];
+}> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("testimonials")
+    .select("id, name, role_type, batch_year, quote, is_featured")
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getTestimonials failed:", error.message);
+    return { featured: [], moreReviews: [] };
+  }
+
+  const all = (data ?? []).map((t) => ({
+    id: t.id as string,
+    name: t.name as string,
+    role: `${t.role_type}, ${t.batch_year}`,
+    type: t.role_type as "শিক্ষার্থী" | "অভিভাবক",
+    year: t.batch_year as string,
+    quote: t.quote as string,
+    isFeatured: (t.is_featured as boolean) ?? false,
+  }));
+
+  const featured = all.filter((t) => t.isFeatured);
+
+  return {
+    featured: featured.length > 0 ? featured.slice(0, 3) : all.slice(0, 3),
+    moreReviews: all,
+  };
 }
