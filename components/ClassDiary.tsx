@@ -42,7 +42,7 @@ export default function ClassDiary() {
   return (
     <section id="class-diary" className="mx-auto max-w-5xl px-4 py-20">
       <Reveal className="mb-10 text-center">
-        <h2 className="font-display text-2xl font-semibold text-sky-950 md:text-3xl">
+        <h2 className="text-2xl font-semibold text-sky-950 md:text-3xl">
           আজকের ক্লাস ডায়েরি
         </h2>
         <p className="mx-auto mt-3 max-w-prose text-ink-800">
@@ -73,7 +73,7 @@ export default function ClassDiary() {
             <article className="glass-panel hover-lift h-full p-5 hover:shadow-glass">
               <p className="text-xs text-sky-700">{entry.date}</p>
               <p className="mt-1 text-xs font-medium text-sky-950">{entry.batch}</p>
-              <h3 className="mt-3 font-display text-lg font-semibold text-sky-950">
+              <h3 className="mt-3 text-lg font-semibold text-sky-950">
                 {entry.topic}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ink-800">{entry.note}</p>

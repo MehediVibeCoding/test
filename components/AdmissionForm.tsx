@@ -52,7 +52,7 @@ export default function AdmissionForm() {
         <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
           ভর্তি আবেদন
         </span>
-        <h2 className="mt-3 font-display text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
+        <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
           প্রাইভেট ব্যাচে আসন নিশ্চিত করো
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm text-ink-800/80 leading-relaxed">
@@ -67,7 +67,7 @@ export default function AdmissionForm() {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-xl font-bold text-emerald-600">
               ✓
             </div>
-            <h3 className="mt-4 font-display text-xl font-bold text-sky-950">
+            <h3 className="mt-4 text-xl font-bold text-sky-950">
               আবেদন সফলভাবে গৃহীত হয়েছে!
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-ink-800/80 leading-relaxed">

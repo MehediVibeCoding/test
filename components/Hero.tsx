@@ -17,7 +17,7 @@ export default function Hero() {
             Better Learning, Brighter Future
           </p>
 
-          <h1 className="mt-1 font-display text-3xl font-extrabold leading-tight text-sky-950 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-1 text-3xl font-bold leading-tight text-sky-950 sm:text-5xl lg:text-6xl">
             Md. Ahsan Ullah
           </h1>
 
@@ -39,15 +39,15 @@ export default function Hero() {
           {/* স্ট্যাটাস কাউন্টার */}
           <div className="mx-auto mt-5 flex max-w-md justify-center gap-6 border-y border-sky-200/60 py-3 sm:gap-8 md:mx-0 md:justify-start">
             <div>
-              <p className="font-display text-xl font-bold text-sky-950 sm:text-2xl">৮+ বছর</p>
+              <p className="text-xl font-bold text-sky-950 sm:text-2xl">৮+ বছর</p>
               <p className="text-[11px] text-ink-800/70">শিক্ষকতা অভিজ্ঞতা</p>
             </div>
             <div>
-              <p className="font-display text-xl font-bold text-sky-950 sm:text-2xl">১০,০০০+</p>
+              <p className="text-xl font-bold text-sky-950 sm:text-2xl">১০,০০০+</p>
               <p className="text-[11px] text-ink-800/70">শিক্ষার্থীকে পাঠদান</p>
             </div>
             <div>
-              <p className="font-display text-xl font-bold text-sky-950 sm:text-2xl">১০০%</p>
+              <p className="text-xl font-bold text-sky-950 sm:text-2xl">১০০%</p>
               <p className="text-[11px] text-ink-800/70">বোর্ড সিলেবাস কেয়ার</p>
             </div>
           </div>

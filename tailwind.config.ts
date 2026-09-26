@@ -23,10 +23,12 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Playfair Display for Latin headings, Hind Siliguri covers Bengali glyphs
-        display: ["var(--font-display)", "var(--font-bengali)", "serif"],
-        // DM Sans for Latin body copy, Hind Siliguri covers Bengali glyphs
-        body: ["var(--font-dm-sans)", "var(--font-bengali)", "sans-serif"],
+        // Playfair Display — opt-in accent only (e.g. small taglines), never the default heading font
+        display: ["var(--font-display)", "serif"],
+        // DM Sans for Latin text; digit-only Noto Sans Bengali (linked in layout.tsx,
+        // unicode-range restricted to ০-৯) must stay listed BEFORE var(--font-bengali)
+        // so Bengali numerals stay legible.
+        body: ["var(--font-dm-sans)", "'Noto Sans Bengali'", "var(--font-bengali)", "sans-serif"],
       },
       boxShadow: {
         glass: "0 8px 32px rgba(14,165,233,0.15)",

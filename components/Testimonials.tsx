@@ -25,7 +25,7 @@ export default function Testimonials() {
     <section className="bg-sky-100/50 px-4 py-20">
       <div className="mx-auto max-w-5xl">
         <Reveal className="mb-10 text-center">
-          <h2 className="font-display text-2xl font-semibold text-sky-950 md:text-3xl">
+          <h2 className="text-2xl font-semibold text-sky-950 md:text-3xl">
             শিক্ষার্থী ও অভিভাবকরা যা বলেন
           </h2>
         </Reveal>
@@ -38,7 +38,7 @@ export default function Testimonials() {
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
                 <figcaption className="mt-4 text-sm">
-                  <span className="font-display font-medium text-sky-950">{t.name}</span>
+                  <span className="font-medium text-sky-950">{t.name}</span>
                   <span className="block text-sky-700">{t.role}</span>
                 </figcaption>
               </figure>

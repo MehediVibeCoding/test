@@ -11,7 +11,7 @@ export const playfairDisplay = Playfair_Display({
 // Body copy (Latin characters) — same pairing as Vangcur
 export const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-dm-sans",
   display: "swap",
 });

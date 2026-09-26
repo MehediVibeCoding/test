@@ -60,7 +60,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-4">
         {/* ব্র্যান্ড পরিচিতি ও ভিশন */}
         <div className="md:col-span-2">
-          <p className="font-display text-xl font-bold text-white">
+          <p className="text-xl font-bold text-white">
             Ahsan&apos;s Learning Academy
           </p>
           <p className="mt-2 font-display text-xs font-semibold text-sky-400">
@@ -93,7 +93,7 @@ export default function Footer() {
 
         {/* দরকারি লিংকসমূহ */}
         <div className="text-xs sm:text-sm text-sky-100/80">
-          <p className="font-display font-bold text-white">প্রয়োজনীয় লিংক</p>
+          <p className="font-bold text-white">প্রয়োজনীয় লিংক</p>
           <ul className="mt-3 space-y-2">
             {NAV_LINKS.map((l) => (
               <li key={l.label}>
@@ -107,7 +107,7 @@ export default function Footer() {
 
         {/* সরাসরি যোগাযোগ */}
         <div className="text-xs sm:text-sm text-sky-100/80">
-          <p className="font-display font-bold text-white">ক্যাম্পাস ও যোগাযোগ</p>
+          <p className="font-bold text-white">ক্যাম্পাস ও যোগাযোগ</p>
           <ul className="mt-3 space-y-2.5">
             <li className="flex items-start gap-2">
               <span className="text-sky-400">📍</span>

@@ -60,11 +60,11 @@ export default function Navbar() {
       >
         {/* ব্র্যান্ড লোগো ও নাম (মোবাইলেও পরিচ্ছন্নভাবে দেখাবে) */}
         <a href="#" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-700 to-sky-500 font-display font-bold text-white shadow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-700 to-sky-500 font-bold text-white shadow-sm">
             AU
           </div>
           <div className="flex flex-col">
-            <span className="font-display text-sm font-bold leading-tight text-sky-950 sm:text-base">
+            <span className="text-sm font-bold leading-tight text-sky-950 sm:text-base">
               Ahsan&apos;s Academy
             </span>
             <span className="text-[10px] font-medium text-sky-700 leading-none">

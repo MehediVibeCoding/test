@@ -1,38 +1,38 @@
-# কী আছে এই জিপে
+# এই রাউন্ডে কী ঠিক হলো (শুধু ফন্ট সিস্টেম)
 
-জিপের ভেতরের ফোল্ডার স্ট্রাকচার তোমার repo-এর সাথে হুবহু মিলে যায় — এক্সট্র্যাক্ট করে
-সরাসরি প্রজেক্টের রুটে পেস্ট করলেই পুরনো ফাইলগুলো ওভাররাইট হয়ে যাবে।
+তোমার লাইভ repo (MehediVibeCoding/test)-এর সর্বশেষ ভার্সন (Hero, Footer, Navbar,
+About, AcademyFeatures, CampusLocation সহ সবকিছু) ফ্রেশ ক্লোন করে তার ওপরেই এই
+ফিক্স করা হয়েছে — তোমার নতুন কোনো ফিচার/কনটেন্ট মোছা বা বদলানো হয়নি।
 
-## নতুন ফাইল
-- app/fonts.ts
-- components/Reveal.tsx
-- public/images/ahsan-hero.webp
-- public/images/ahsan-about.webp
+## সমস্যা ১ — "Md. Ahsan Ullah" হেডিং-এ বাজে দেখানো সেরিফ ফন্ট
+আগে ভুলবশত প্রায় প্রতিটা হেডিং-এ Playfair Display (সেরিফ) জোর করে বসানো ছিল।
+এখন এটা ঠিক করা হয়েছে:
+- সব হেডিং ও লেবেল এখন ডিফল্টভাবে bold DM Sans (তোমার রেফারেন্স
+  vangcurweb.vercel.app-এর প্রোডাক্ট টাইটেলের মতোই মোটা, ক্লিন sans-serif)।
+- Playfair Display এখন শুধু ২ জায়গায় রাখা হয়েছে (Hero ও Footer-এর ছোট্ট
+  "Better Learning, Brighter Future" ট্যাগলাইন) — ভাঙচুরে যেভাবে এটা শুধু
+  accent হিসেবে ব্যবহার হয়, ঠিক সেভাবে।
 
-## আপডেট হওয়া ফাইল (পুরোনোটা রিপ্লেস হবে)
-- app/layout.tsx
-- app/globals.css
-- tailwind.config.ts
-- components/Hero.tsx
-- components/About.tsx
-- components/Navbar.tsx
-- components/Footer.tsx
-- components/Batches.tsx
-- components/ClassDiary.tsx
-- components/VideoGallery.tsx
-- components/BlogPreview.tsx
-- components/Testimonials.tsx
-- components/AdmissionForm.tsx
+## সমস্যা ২ — বাংলা সংখ্যা (১, ২, ৩...) অস্পষ্ট দেখানো
+Hind Siliguri ফন্টে বাংলা সংখ্যার গ্লিফ অস্পষ্ট, তাই ভাঙচুরে যেভাবে করা হয়েছে
+ঠিক সেই একই কৌশল বসানো হলো:
+- `app/layout.tsx`-এ একটা বিশেষ Google Fonts লিংক যোগ হয়েছে যেটা Noto Sans
+  Bengali ফন্টকে **শুধু ০-৯ এই দশটা বাংলা সংখ্যার জন্য** সীমাবদ্ধ করে (unicode-range)।
+- `tailwind.config.ts` ও `globals.css`-এ ফন্ট স্ট্যাক-এ এটা Hind Siliguri-এর
+  ঠিক আগে বসানো হয়েছে — ফলে সংখ্যা এই স্পষ্ট ফন্টে আসবে, বাকি সব বাংলা লেখা
+  Hind Siliguri-তেই থাকবে।
 
-## পেস্ট করার পর
-1. `npm install` (নতুন কোনো প্যাকেজ যোগ হয়নি, শুধু sanity-এর জন্য)
-2. `npm run build` — লোকালি বা Vercel-এ deploy দিলেই ফন্ট (Playfair Display /
-   DM Sans / Hind Siliguri) নিজে থেকে ডাউনলোড হয়ে বিল্ড হয়ে যাবে।
-3. যদি কোথাও লেআউট/ছবি ভাঙা দেখায়, স্ক্রিনশট পাঠিয়ো — সাথে সাথে ঠিক করে দেব।
+## বোনাস ফিক্স
+- DM Sans-এ 600 (semibold) ওয়েট লোড করা হয়নি আগে, কিন্তু কোডে বহু জায়গায়
+  `font-semibold` ব্যবহার হচ্ছিল — এখন 600 ওয়েটও লোড করা হয়েছে, তাই ওগুলো এখন
+  থেকে ঝাপসা/ভুল ফলব্যাক না দেখিয়ে ঠিকভাবে রেন্ডার হবে।
+- Hero-এর নাম হেডিং-এ `font-extrabold` (800) ব্যবহার হচ্ছিল যেটা লোডই করা ছিল
+  না — সেটাকে `font-bold` (700, যেটা আসলে লোড করা আছে) করে দেওয়া হয়েছে।
 
-## মনে রাখার মতো
-- 🔧 চিহ্নিত জায়গাগুলো এখনও placeholder/demo ডেটা (ফোন নম্বর, সোশ্যাল লিংক,
-  ব্যাচ শিডিউল, শিক্ষাগত যোগ্যতার ইউনিভার্সিটি নাম) — কনফার্ম করা তথ্য দিলে
-  পরের রাউন্ডে বসিয়ে দেব।
-- Navbar-এর লিংকগুলো এখন পেজের ভেতরের সেকশনে (#about, #batches ইত্যাদি) স্ক্রল
-  করে, আগে যেমন ভুল রুটে (/about) যাচ্ছিল সেটা ঠিক করা হয়েছে।
+## যেভাবে বসাবে
+জিপের ভেতরের path অনুযায়ী (app/, components/, tailwind.config.ts) ফাইলগুলো
+তোমার repo-তে replace করে দাও। `npm run build`/Vercel deploy দিলেই ফন্ট
+ডাউনলোড হয়ে সব ঠিকভাবে বসে যাবে (আমার টেস্ট এনভায়রনমেন্টে fonts.googleapis.com
+ব্লকড থাকায় শুধু ফন্ট ডাউনলোড অংশটা লোকালি ভেরিফাই করা যায়নি — কিন্তু পুরো
+TypeScript কম্পাইল ক্লিন পাস করেছে, তাই কোডে কোনো এরর নেই। Vercel-এ এটা নিয়ে
+সমস্যা হবে না)।

@@ -45,13 +45,22 @@ html {
 body {
   background: var(--cloud-50);
   color: var(--ink-800);
-  font-family: var(--font-dm-sans), var(--font-bengali), system-ui, sans-serif;
+  /* "Noto Sans Bengali" here is unicode-range restricted (in layout.tsx) to just
+     the ten Bengali digits ০-৯ — every other character still falls through to
+     Hind Siliguri. Keep it listed BEFORE var(--font-bengali) or digits go blurry. */
+  font-family: var(--font-dm-sans), "Noto Sans Bengali", var(--font-bengali), system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, h4, .font-display {
-  font-family: var(--font-display), var(--font-bengali), system-ui, serif;
+h1, h2, h3, h4 {
+  font-family: var(--font-dm-sans), "Noto Sans Bengali", var(--font-bengali), system-ui, sans-serif;
+  font-weight: 700;
   color: var(--sky-950);
+}
+
+/* Opt-in accent serif — used sparingly (small taglines only), never the default heading font */
+.font-display {
+  font-family: var(--font-display), var(--font-bengali), system-ui, serif;
 }
 
 /* সাধারণ পরিচ্ছন্ন গ্লাস প্যানেল (পাতলা বর্ডার ও স্বাভাবিক সফট শ্যাডো) */

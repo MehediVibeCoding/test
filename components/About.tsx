@@ -40,7 +40,7 @@ export default function About() {
                 className="h-auto w-full rounded-xl object-cover select-none"
               />
               <div className="mt-2.5 rounded-lg bg-sky-50/70 p-3 text-center">
-                <p className="font-display text-sm font-bold text-sky-950">মোঃ আহসান উল্লাহ</p>
+                <p className="text-sm font-bold text-sky-950">মোঃ আহসান উল্লাহ</p>
                 <p className="text-xs font-semibold text-sky-700">
                   প্রতিষ্ঠাতা ও প্রধান মেন্টর, Ahsan&apos;s Learning Academy
                 </p>
@@ -55,7 +55,7 @@ export default function About() {
             শিক্ষক পরিচিতি ও দর্শন
           </span>
 
-          <h2 className="mt-3 font-display text-2xl font-bold leading-tight text-sky-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold leading-tight text-sky-950 sm:text-3xl lg:text-4xl">
             সঠিক দিকনির্দেশনায় প্রতিটি শিক্ষার্থীই প্রতিভাবান
           </h2>
 

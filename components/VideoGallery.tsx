@@ -12,7 +12,7 @@ export default function VideoGallery() {
   return (
     <section id="videos" className="mx-auto max-w-5xl px-4 py-20">
       <Reveal className="mb-10 text-center">
-        <h2 className="font-display text-2xl font-semibold text-sky-950 md:text-3xl">
+        <h2 className="text-2xl font-semibold text-sky-950 md:text-3xl">
           সর্বশেষ ভিডিও
         </h2>
         <p className="mx-auto mt-3 max-w-prose text-ink-800">

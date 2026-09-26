@@ -8,7 +8,7 @@ export default function CampusLocation() {
           <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
             লোকেশন ও ক্যাম্পাস
           </span>
-          <h2 className="mt-3 font-display text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
             আমাদের একাডেমির ঠিকানা ও গুগল ম্যাপ
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm text-ink-800/80 leading-relaxed">
@@ -40,7 +40,7 @@ export default function CampusLocation() {
                 <span className="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-800">
                   📍 প্রধান ক্যাম্পাস
                 </span>
-                <h3 className="mt-3 font-display text-lg font-bold text-sky-950 sm:text-xl">
+                <h3 className="mt-3 text-lg font-bold text-sky-950 sm:text-xl">
                   Ahsan&apos;s Learning Academy
                 </h3>
                 <p className="mt-1 text-xs text-sky-700 font-semibold">

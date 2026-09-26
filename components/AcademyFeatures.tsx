@@ -47,7 +47,7 @@ export default function AcademyFeatures() {
           <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
             আমাদের বিশেষত্ব
           </span>
-          <h2 className="mt-3 font-display text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
             কেন আমাদের একাডেমিতে পড়বে?
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-xs sm:text-sm text-ink-800/80 leading-relaxed">
@@ -67,7 +67,7 @@ export default function AcademyFeatures() {
                       {item.tag}
                     </span>
                   </div>
-                  <h3 className="mt-4 font-display text-base font-bold text-sky-950">
+                  <h3 className="mt-4 text-base font-bold text-sky-950">
                     {item.title}
                   </h3>
                   <p className="mt-2 text-xs sm:text-sm leading-relaxed text-ink-800/80">

@@ -106,7 +106,7 @@ export default function Batches() {
           <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
             অফলাইন ও প্রাইভেট ব্যাচ
           </span>
-          <h2 className="mt-3 font-display text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
             চলমান ব্যাচসমূহ (HSC 27 ও HSC 28)
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-xs sm:text-sm text-ink-800/80 leading-relaxed">
@@ -128,7 +128,7 @@ export default function Batches() {
                     <span className="text-[11px] font-medium text-ink-800/60">{batch.target}</span>
                   </div>
 
-                  <h3 className="mt-3 font-display text-base font-bold text-sky-950">
+                  <h3 className="mt-3 text-base font-bold text-sky-950">
                     {batch.name}
                   </h3>
 
