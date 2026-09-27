@@ -139,41 +139,46 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
 
     setIsSubmitting(true);
 
-    const result = await submitAdmission({
-      name: formData.name.trim(),
-      college: formData.college.trim(),
-      roll: formData.roll.trim(),
-      group: formData.group,
-      batch: formData.batch,
-      phone: formData.phone.trim(),
-      guardianPhone: formData.guardianPhone.trim(),
-    });
-
-    setIsSubmitting(false);
-
-    if (!result.ok) {
-      setErrorMessage(result.error);
-      return;
-    }
-
-    // ২ ঘণ্টার জন্য লক ডেটা সংরক্ষণ
-    const sessionData = {
-      timestamp: Date.now(),
-      data: formData,
-    };
     try {
-      localStorage.setItem(SUBMISSION_LOCK_KEY, JSON.stringify(sessionData));
-    } catch {
-      // fallback
-    }
+      const result = await submitAdmission({
+        name: formData.name.trim(),
+        college: formData.college.trim(),
+        roll: formData.roll.trim(),
+        group: formData.group,
+        batch: formData.batch,
+        phone: formData.phone.trim(),
+        guardianPhone: formData.guardianPhone.trim(),
+      });
 
-    setSubmittedData(formData);
+      if (!result.ok) {
+        setErrorMessage(result.error);
+        return;
+      }
+
+      // ২ ঘণ্টার জন্য লক ডেটা সংরক্ষণ
+      const sessionData = {
+        timestamp: Date.now(),
+        data: formData,
+      };
+      try {
+        localStorage.setItem(SUBMISSION_LOCK_KEY, JSON.stringify(sessionData));
+      } catch {
+        // fallback
+      }
+
+      setSubmittedData(formData);
+    } catch (err) {
+      console.error("Admission submission network error:", err);
+      setErrorMessage("ইন্টারনেট সংযোগে ত্রুটি হয়েছে। আপনার কানেকশন চেক করে আবার চেষ্টা করুন।");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <section id="admission" className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-white">
       <div className="mx-auto max-w-3xl">
-        {/* সেকশন হেডার (টাইট স্পেসিং সহ) */}
+        {/* সেকশন হেডার */}
         <Reveal className="mb-6 text-center sm:mb-10">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             ভর্তি আবেদন
@@ -244,7 +249,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
               </div>
             </div>
           ) : (
-            /* আবেদন ফর্ম (কোনো স্টার চিহ্ন ছাড়া সম্পূর্ণ পরিচ্ছন্ন লেবেল) */
+            /* আবেদন ফর্ম */
             <form
               onSubmit={handleSubmit}
               className="space-y-4 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8"
@@ -313,7 +318,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
                 </div>
               </div>
 
-              {/* বিভাগ ও কাঙ্ক্ষিত ব্যাচ (ডিফল্টভাবে "সিলেক্ট করুন") */}
+              {/* বিভাগ ও কাঙ্ক্ষিত ব্যাচ */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
