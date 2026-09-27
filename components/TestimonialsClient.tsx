@@ -23,6 +23,15 @@ function sanitizeInput(str: string): string {
   return str.replace(/[<>]/g, "").trim();
 }
 
+// নামের প্রথম অক্ষরগুলো দিয়ে সুন্দর অ্যাভাটার ইনিশিয়াল তৈরি
+function getInitials(name: string): string {
+  const clean = name.trim();
+  if (!clean) return "AU";
+  const parts = clean.split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 export default function TestimonialsClient({
   featured,
 }: {
@@ -112,63 +121,86 @@ export default function TestimonialsClient({
   }
 
   return (
-    <section className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-gradient-to-b from-sky-50/40 via-white to-white">
+    <section className="relative px-6 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-gradient-to-b from-sky-50/40 via-white to-white">
       <div className="mx-auto max-w-7xl">
-        {/* সেকশন হেডার */}
-        <Reveal className="mb-12 text-center sm:mb-16">
+        {/* সেকশন হেডার (টাইট স্পেসিং সহ) */}
+        <Reveal className="mb-8 text-center sm:mb-10">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             শিক্ষার্থী ও অভিভাবক প্রতিক্রিয়া
           </span>
-          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
             শিক্ষার্থী ও অভিভাবকরা যা বলেন
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
             আমাদের একাডেমি থেকে পড়ে শিক্ষার্থী ও অভিভাবকদের বাস্তব অভিজ্ঞতা ও অভিমত।
           </p>
         </Reveal>
 
-        {/* ৩টি মনোটোন প্রিমিয়াম রিভিউ কার্ড গ্রিড (কোনো কোটেশন মার্ক বা ডুপ্লিকেট রোল ছাড়া) */}
+        {/* ৩টি প্রিমিয়াম রিভিউ কার্ড গ্রিড (অ্যাভাটার ও ক্লিন লেআউট সহ) */}
         <div className="grid gap-6 md:grid-cols-3">
-          {featured.map((t, i) => (
-            <Reveal key={t.id || t.name} delay={i * 70}>
-              <figure className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
-                <div>
-                  {/* বক্তব্য টেক্সট (স্বাভাবিক ও পরিচ্ছন্ন) */}
-                  <p className="font-body text-sm sm:text-[14.5px] leading-[1.8] text-ink-800/90">
-                    {t.quote}
-                  </p>
-                </div>
+          {featured.map((t, i) => {
+            const isGuardian = t.type === "অভিভাবক";
+            const initials = getInitials(t.name);
 
-                {/* পরিচয় ও ভূমিকা ব্যাজ (একক ও স্পষ্ট) */}
-                <figcaption className="mt-6 flex items-center justify-between border-t border-sky-100/80 pt-4">
+            return (
+              <Reveal key={t.id || t.name} delay={i * 70}>
+                <figure className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
                   <div>
-                    <span className="block font-body text-sm font-bold text-sky-950 sm:text-[15px]">
-                      {t.name}
-                    </span>
-                    <span className="block font-body text-xs font-semibold text-sky-700 mt-0.5">
-                      {t.year || t.role}
-                    </span>
+                    {/* কোটেশন মার্ক অ্যাকসেন্ট */}
+                    <div className="mb-3.5 text-sky-400">
+                      <svg className="h-6 w-6 opacity-60" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                      </svg>
+                    </div>
+
+                    {/* বক্তব্য টেক্সট */}
+                    <p className="font-body text-sm sm:text-[14.5px] leading-[1.75] text-ink-800/90">
+                      {t.quote}
+                    </p>
                   </div>
-                  <span
-                    className={`rounded-full px-3 py-1 font-body text-xs font-bold ${
-                      t.type === "শিক্ষার্থী"
-                        ? "border border-sky-200/80 bg-sky-50 text-sky-800"
-                        : "border border-amber-200/80 bg-amber-50 text-amber-800"
-                    }`}
-                  >
-                    {t.type}
-                  </span>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
+
+                  {/* পরিচয় ও অ্যাভাটার (অভিভাবকের ক্ষেত্রে ডুপ্লিকেট টেক্সট রিমুভ) */}
+                  <figcaption className="mt-6 flex items-center justify-between border-t border-sky-100/80 pt-4">
+                    <div className="flex items-center gap-3">
+                      {/* ইউজার ইনিশিয়াল অ্যাভাটার */}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-50 font-body text-xs font-black text-sky-800 border border-sky-200/60">
+                        {initials}
+                      </div>
+                      <div>
+                        <span className="block font-body text-sm font-bold text-sky-950 sm:text-[15px]">
+                          {t.name}
+                        </span>
+                        {/* শুধুমাত্র শিক্ষার্থীর ক্ষেত্রে ব্যাচ দেখাবে, অভিভাবকের ক্ষেত্রে ডুপ্লিকেট লেখা বাদ */}
+                        {!isGuardian && t.year && t.year !== "অভিভাবক" && (
+                          <span className="block font-body text-xs font-semibold text-sky-700 mt-0.5">
+                            {t.year}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* রোল ব্যাজ */}
+                    <span
+                      className={`rounded-full px-3 py-1 font-body text-xs font-bold ${
+                        isGuardian
+                          ? "border border-amber-200/80 bg-amber-50 text-amber-800"
+                          : "border border-sky-200/80 bg-sky-50 text-sky-800"
+                      }`}
+                    >
+                      {t.type}
+                    </span>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            );
+          })}
         </div>
 
-        {/* ব্যবহারকারীর লোকাল পেন্ডিং রিভিউ কার্ড */}
+        {/* ব্যবহারকারীর নিজস্ব লোকাল পেন্ডিং রিভিউ কার্ড */}
         {localPendingReview && (
-          <Reveal delay={100} className="mt-8">
-            <div className="rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/40 p-6 sm:p-7 shadow-xs">
-              <div className="mb-3 flex items-center justify-between">
+          <Reveal delay={100} className="mt-6">
+            <div className="rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/40 p-6 shadow-xs">
+              <div className="mb-2.5 flex items-center justify-between">
                 <span className="rounded-full bg-amber-100 px-3 py-1 font-body text-xs font-bold text-amber-900">
                   আপনার রিভিউটি জমা হয়েছে (অনুমোদনের অপেক্ষায়)
                 </span>
@@ -185,8 +217,8 @@ export default function TestimonialsClient({
           </Reveal>
         )}
 
-        {/* প্লাস আইকন যুক্ত প্রিমিয়াম রিভিউ বাটন */}
-        <Reveal delay={120} className="mt-14 text-center">
+        {/* প্লাস আইকন যুক্ত প্রিমিয়াম রিভিউ বাটন (টাইট স্পেসিং সহ) */}
+        <Reveal delay={120} className="mt-8 text-center sm:mt-10">
           <button
             onClick={() => setModalOpen(true)}
             className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
@@ -261,7 +293,7 @@ export default function TestimonialsClient({
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* পূর্ণ নাম (কোনো স্টার বা নির্দিষ্ট ব্যক্তির নাম ছাড়া) */}
+                    {/* পূর্ণ নাম */}
                     <div>
                       <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
                         আপনার পূর্ণ নাম
