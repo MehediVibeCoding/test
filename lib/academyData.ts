@@ -44,7 +44,7 @@ export async function getActiveBatches(): Promise<Batch[]> {
 }
 
 // ============================================================
-// BLOG POSTS (Summary & Single Full Post)
+// BLOG POSTS
 // ============================================================
 export type BlogPostSummary = {
   id: string;
@@ -71,9 +71,10 @@ export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("id, title, slug, excerpt, cover_image_url, published_at")
+      .select("id, title, slug, excerpt, cover_image_url, published_at, created_at")
       .eq("published", true)
       .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) {
@@ -87,7 +88,7 @@ export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[
       slug: p.slug as string,
       excerpt: p.excerpt as string,
       coverImageUrl: (p.cover_image_url as string | null) ?? null,
-      date: formatBengaliDate((p.published_at as string).slice(0, 10)),
+      date: formatBengaliDate(((p.published_at || p.created_at) as string).slice(0, 10)),
       href: `/blog/${p.slug}`,
     }));
   } catch (err) {
@@ -97,16 +98,15 @@ export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[
 }
 
 export async function getAllPublishedBlogPosts(): Promise<BlogPostSummary[]> {
-  return getPublishedBlogPosts(50);
+  return getPublishedBlogPosts(100);
 }
 
-// 🎯 একক ব্লগের সম্পূর্ণ কন্টেন্ট ফেচ করা
 export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("id, title, slug, excerpt, content, cover_image_url, published_at")
+      .select("id, title, slug, excerpt, content, cover_image_url, published_at, created_at")
       .eq("slug", slug)
       .eq("published", true)
       .maybeSingle();
@@ -120,7 +120,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | 
       excerpt: data.excerpt as string,
       content: data.content as string,
       coverImageUrl: (data.cover_image_url as string | null) ?? null,
-      date: formatBengaliDate((data.published_at as string).slice(0, 10)),
+      date: formatBengaliDate(((data.published_at || data.created_at) as string).slice(0, 10)),
     };
   } catch (err) {
     console.error("getBlogPostBySlug error:", err);
@@ -129,24 +129,27 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | 
 }
 
 // ============================================================
-// CLASS DIARY
+// CLASS DIARY (সর্বশেষ প্রকাশিত ক্রমানুসারে)
 // ============================================================
 export type ClassDiaryEntry = {
   id: string;
   date: string;
+  rawDate: string;
   batch: string;
   topic: string;
   note: string;
   slideUrl: string;
 };
 
-export async function getClassDiaryEntries(limit = 9): Promise<ClassDiaryEntry[]> {
+// ১. নির্দিষ্ট সংখ্যক ক্লাস ডায়েরি ফেচ করা (ডিফল্ট: সর্বশেষ ৩টি)
+export async function getClassDiaryEntries(limit = 3): Promise<ClassDiaryEntry[]> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("class_diary_entries")
-      .select("id, entry_date, batch_name_snapshot, topic, note, slide_url")
+      .select("id, entry_date, batch_name_snapshot, topic, note, slide_url, created_at")
       .order("entry_date", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) {
@@ -157,10 +160,11 @@ export async function getClassDiaryEntries(limit = 9): Promise<ClassDiaryEntry[]
     return (data ?? []).map((e) => ({
       id: e.id as string,
       date: formatBengaliDate(e.entry_date as string),
+      rawDate: e.entry_date as string,
       batch: (e.batch_name_snapshot as string | null) ?? "",
       topic: e.topic as string,
       note: e.note as string,
-      slideUrl: (e.slide_url as string | null) ?? "#",
+      slideUrl: (e.slide_url as string | null) ?? "",
     }));
   } catch (err) {
     console.error("getClassDiaryEntries error:", err);
@@ -168,8 +172,40 @@ export async function getClassDiaryEntries(limit = 9): Promise<ClassDiaryEntry[]
   }
 }
 
+// ২. আর্কাইভ পেজের জন্য সকল ক্লাস ডায়েরি ফেচ করা
+export async function getAllClassDiaryEntries(): Promise<ClassDiaryEntry[]> {
+  return getClassDiaryEntries(100);
+}
+
+// ৩. আইডি অনুযায়ী নির্দিষ্ট একক ক্লাস ডায়েরি বিস্তারিত ফেচ করা
+export async function getClassDiaryEntryById(id: string): Promise<ClassDiaryEntry | null> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("class_diary_entries")
+      .select("id, entry_date, batch_name_snapshot, topic, note, slide_url, created_at")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error || !data) return null;
+
+    return {
+      id: data.id as string,
+      date: formatBengaliDate(data.entry_date as string),
+      rawDate: data.entry_date as string,
+      batch: (data.batch_name_snapshot as string | null) ?? "",
+      topic: data.topic as string,
+      note: data.note as string,
+      slideUrl: (data.slide_url as string | null) ?? "",
+    };
+  } catch (err) {
+    console.error("getClassDiaryEntryById error:", err);
+    return null;
+  }
+}
+
 // ============================================================
-// 🌟 ১. কৃতি শিক্ষার্থী দেয়াল (TOPPERS)
+// TOPPERS, PHOTOS, MEMORIES, VIDEOS, TESTIMONIALS
 // ============================================================
 export type SuccessTopper = {
   id: string;
@@ -210,9 +246,6 @@ export async function getSuccessToppers(): Promise<SuccessTopper[]> {
   }
 }
 
-// ============================================================
-// 🌟 ২. ক্লাসরুম গ্যালারি (CLASSROOM PHOTOS)
-// ============================================================
 export type ClassroomPhoto = {
   id: string;
   caption: string;
@@ -244,9 +277,6 @@ export async function getClassroomPhotos(): Promise<ClassroomPhoto[]> {
   }
 }
 
-// ============================================================
-// 🌟 ৩. বিদায় ও স্মৃতি অ্যালবাম (FAREWELL MEMORIES)
-// ============================================================
 export type FarewellMemory = {
   id: string;
   batch: string;
@@ -280,9 +310,6 @@ export async function getFarewellMemories(): Promise<FarewellMemory[]> {
   }
 }
 
-// ============================================================
-// 🌟 ৪. সর্বশেষ ভিডিও লেকচার (VIDEOS)
-// ============================================================
 export type VideoLecture = {
   id: string;
   title: string;
@@ -316,9 +343,6 @@ export async function getVideoLectures(): Promise<VideoLecture[]> {
   }
 }
 
-// ============================================================
-// 🌟 ৫. শিক্ষার্থী ও অভিভাবকদের রিভিউ (TESTIMONIALS)
-// ============================================================
 export type Testimonial = {
   id: string;
   name: string;
