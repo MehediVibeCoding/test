@@ -1,93 +1,146 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "ব্যবহারের শর্তাবলী | Ahsan's Learning Academy",
-  description: "Ahsan's Learning Academy ওয়েবসাইট ব্যবহারের নিয়ম ও শর্তাবলী।",
+  description: "Ahsan's Learning Academy ওয়েবসাইট ব্যবহার ও শিক্ষামূলক সেবা গ্রহণের নিয়ম ও শর্তাবলী।",
 };
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-cloud-50 text-ink-800">
-      <Navbar />
+    <main className="min-h-screen bg-[#f8fafc] text-ink-800">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+        {/* ১. ভাঙচুর রেফারেন্স স্টাইল টপ হেডার কার্ড (ন্যাভবার ছাড়া সম্পূর্ণ ক্লিন) */}
+        <div className="overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-b from-[#e0f2fe]/60 via-white to-white p-6 shadow-xs sm:p-8">
+          {/* টপ বার: ফিরে যান বাটন ও সর্বশেষ আপডেট তারিখ */}
+          <div className="flex items-center justify-between gap-4 border-b border-sky-100/80 pb-5">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white px-4 py-2 font-body text-xs font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95 sm:px-5 sm:py-2.5 sm:text-[13px]"
+            >
+              <svg className="h-4 w-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>ফিরে যান</span>
+            </Link>
 
-      <section className="mx-auto max-w-3xl px-4 py-14 sm:py-20">
-        <div className="mb-10 text-center">
-          <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
-            নীতিমালা
-          </span>
-          <h1 className="mt-3 font-body text-2xl font-black text-sky-950 sm:text-3xl lg:text-4xl">
-            ব্যবহারের শর্তাবলী
-          </h1>
-          <p className="mt-2 text-xs text-muted">সর্বশেষ হালনাগাদ: সেপ্টেম্বর ২০২৬</p>
-        </div>
-
-        <div className="space-y-8 rounded-3xl border border-sky-100 bg-white p-6 shadow-sm sm:p-10">
-          <div>
-            <h2 className="text-base font-bold text-sky-950 sm:text-lg">১. ওয়েবসাইট সম্পর্কে</h2>
-            <p className="mt-2 text-xs leading-relaxed text-ink-800/85 sm:text-sm">
-              এই ওয়েবসাইট (Ahsan&apos;s Learning Academy) মোঃ আহসান উল্লাহ পরিচালিত একটি
-              ব্যক্তিগত প্রাইভেট ব্যাচ/লার্নিং সেন্টারের তথ্য, ক্লাস ডায়েরি, ভিডিও লেকচার ও
-              ভর্তি সংক্রান্ত সেবা প্রদানের জন্য তৈরি। এটি কোনো সরকারি প্রতিষ্ঠান বা কলেজের
-              অফিসিয়াল ওয়েবসাইট নয়।
-            </p>
+            <span className="font-body text-xs font-semibold text-slate-500">
+              সর্বশেষ আপডেট: সেপ্টেম্বর ২০২৬
+            </span>
           </div>
 
-          <div>
-            <h2 className="text-base font-bold text-sky-950 sm:text-lg">
-              ২. কনটেন্টের ব্যবহার
-            </h2>
-            <p className="mt-2 text-xs leading-relaxed text-ink-800/85 sm:text-sm">
-              এই ওয়েবসাইটের ক্লাস নোট, ব্লগ, ভিডিও ও অন্যান্য শিক্ষামূলক কনটেন্ট শুধুমাত্র
-              ব্যক্তিগত শিক্ষার উদ্দেশ্যে ব্যবহারের জন্য। পূর্বানুমতি ছাড়া কোনো কনটেন্ট বাণিজ্যিক
-              উদ্দেশ্যে পুনঃপ্রকাশ বা পুনর্বিতরণ করা যাবে না।
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-base font-bold text-sky-950 sm:text-lg">
-              ৩. ভর্তি ফরম ও যোগাযোগ
-            </h2>
-            <p className="mt-2 text-xs leading-relaxed text-ink-800/85 sm:text-sm">
-              ওয়েবসাইটের ভর্তি ফরম পূরণ করলেই স্বয়ংক্রিয়ভাবে আসন নিশ্চিত হয়ে যায় না — ফরম জমা
-              দেওয়ার পর ফোন বা WhatsApp-এর মাধ্যমে সরাসরি যোগাযোগ করে ব্যাচ ও ক্লাসের সময়
-              চূড়ান্তভাবে নিশ্চিত করা হয়। সঠিক ও হালনাগাদ তথ্য দেওয়ার দায়িত্ব আবেদনকারীর।
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-base font-bold text-sky-950 sm:text-lg">
-              ৪. মতামত ও রিভিউ
-            </h2>
-            <p className="mt-2 text-xs leading-relaxed text-ink-800/85 sm:text-sm">
-              ওয়েবসাইটে জমা দেওয়া মতামত/রিভিউ প্রকাশের আগে পর্যালোচনা করা হয়। আপত্তিকর,
-              মিথ্যা বা অপ্রাসঙ্গিক মতামত প্রকাশ না করার অধিকার কর্তৃপক্ষ সংরক্ষণ করে।
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-base font-bold text-sky-950 sm:text-lg">
-              ৫. বহিঃসংযোগ (External Links)
-            </h2>
-            <p className="mt-2 text-xs leading-relaxed text-ink-800/85 sm:text-sm">
-              এই ওয়েবসাইটে ইউটিউব, ফেসবুক বা অন্য কোনো বহিঃসংযোগ থাকতে পারে। ওই সব
-              প্ল্যাটফর্মের নিজস্ব শর্তাবলী ও গোপনীয়তা নীতির জন্য Ahsan&apos;s Learning
-              Academy দায়ী নয়।
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-base font-bold text-sky-950 sm:text-lg">
-              ৬. শর্তাবলীর পরিবর্তন
-            </h2>
-            <p className="mt-2 text-xs leading-relaxed text-ink-800/85 sm:text-sm">
-              প্রয়োজন অনুযায়ী এই শর্তাবলী ভবিষ্যতে হালনাগাদ করা হতে পারে। কোনো প্রশ্ন থাকলে
-              সরাসরি ফোন বা WhatsApp-এ (+880 1845-435539) যোগাযোগ করা যাবে।
-            </p>
+          {/* হেডার টাইটেল ও সার্কুলার আইকন */}
+          <div className="mt-6 flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700 shadow-xs">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="font-body text-xl font-black text-sky-950 sm:text-2xl lg:text-3xl">
+                ব্যবহারের শর্তাবলী (Terms & Conditions)
+              </h1>
+              <p className="mt-1 font-body text-xs sm:text-sm font-semibold text-sky-700">
+                ওয়েবসাইট ব্যবহার ও শিক্ষামূলক সেবা গ্রহণের সাধারণ নিয়মাবলী
+              </p>
+            </div>
           </div>
         </div>
-      </section>
+
+        {/* ২. সেগমেন্টেড বিষয়ভিত্তিক শর্তাবলী কার্ডসমূহ */}
+        <div className="mt-6 space-y-5">
+          {/* কার্ড ১: ওয়েবসাইট সম্পর্কে */}
+          <div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700 font-bold text-xs">
+                ০১
+              </div>
+              <h2 className="font-body text-base font-bold text-sky-950 sm:text-lg">
+                ওয়েবসাইট সম্পর্কে
+              </h2>
+            </div>
+            <p className="mt-3.5 font-body text-xs sm:text-[14px] leading-[1.8] text-ink-800/85">
+              এই ওয়েবসাইট (Ahsan&apos;s Learning Academy) মোঃ আহসান উল্লাহ পরিচালিত প্রাইভেট ব্যাচ ও লার্নিং সেন্টারের ক্লাস রুটিন, দৈনন্দিন ক্লাস ডায়েরি, ভিডিও লেকচার ও ভর্তি সংক্রান্ত সেবা শিক্ষার্থীদের সহজে পৌঁছে দেওয়ার জন্য নির্মিত একটি ব্যক্তিগত প্ল্যাটফর্ম।
+            </p>
+          </div>
+
+          {/* কার্ড ২: শিক্ষামূলক কনটেন্টের ব্যবহার */}
+          <div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700 font-bold text-xs">
+                ০২
+              </div>
+              <h2 className="font-body text-base font-bold text-sky-950 sm:text-lg">
+                শিক্ষামূলক কনটেন্টের ব্যবহার
+              </h2>
+            </div>
+            <p className="mt-3.5 font-body text-xs sm:text-[14px] leading-[1.8] text-ink-800/85">
+              এই ওয়েবসাইটে প্রকাশিত ক্লাস নোট, ভিডিও ক্লাস, স্লাইড ও স্টাডি ব্লগ শুধুমাত্র শিক্ষার্থীদের ব্যক্তিগত পড়াশোনা ও মেধা বিকাশের জন্য উন্মুক্ত। পূর্বানুমতি ছাড়া কোনো কনটেন্ট বাণিজ্যিকভাবে পুনরুৎপাদন বা বিক্রি করা নিষিদ্ধ।
+            </p>
+          </div>
+
+          {/* কার্ড ৩: ভর্তি আবেদন ও আসন নিশ্চিতকরণ */}
+          <div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700 font-bold text-xs">
+                ০৩
+              </div>
+              <h2 className="font-body text-base font-bold text-sky-950 sm:text-lg">
+                ভর্তি আবেদন ও আসন নিশ্চিতকরণ
+              </h2>
+            </div>
+            <p className="mt-3.5 font-body text-xs sm:text-[14px] leading-[1.8] text-ink-800/85">
+              ওয়েবসাইটে ভর্তি ফরম পূরণ করলেই স্বয়ংক্রিয়ভাবে ক্লাসের আসন চূড়ান্ত হয় না। আবেদন জমা দেওয়ার পর একাডেমি কর্তৃপক্ষ সরাসরি শিক্ষার্থী বা অভিভাবকের সাথে যোগাযোগ করে ক্লাসের সময়সূচী ও ব্যাচ নিশ্চিত করে থাকে। সঠিক ও হালনাগাদ তথ্য প্রদান করা আবেদনকারীর দায়িত্ব।
+            </p>
+          </div>
+
+          {/* কার্ড ৪: মতামত ও রিভিউ প্রকাশ */}
+          <div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700 font-bold text-xs">
+                ০৪
+              </div>
+              <h2 className="font-body text-base font-bold text-sky-950 sm:text-lg">
+                মতামত ও রিভিউ প্রকাশ
+              </h2>
+            </div>
+            <p className="mt-3.5 font-body text-xs sm:text-[14px] leading-[1.8] text-ink-800/85">
+              শিক্ষার্থী বা অভিভাবক কর্তৃক জমাকৃত মতামত ও ফিডব্যাক পর্যালোচনার পর ওয়েবসাইটে প্রকাশ করা হয়। যেকোনো বিভ্রান্তিকর, কুরুচিপূর্ণ বা অপ্রাসঙ্গিক বার্তা প্রকাশ না করার পূর্ণ অধিকার একাডেমি কর্তৃপক্ষের রয়েছে।
+            </p>
+          </div>
+
+          {/* কার্ড ৫: বহিঃসংযোগ (External Links) */}
+          <div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700 font-bold text-xs">
+                ০৫
+              </div>
+              <h2 className="font-body text-base font-bold text-sky-950 sm:text-lg">
+                বহিঃসংযোগ (External Links)
+              </h2>
+            </div>
+            <p className="mt-3.5 font-body text-xs sm:text-[14px] leading-[1.8] text-ink-800/85">
+              আমাদের ওয়েবসাইটে গুগল ম্যাপস, ইউটিউব বা ফেসবুকের লিংক সংযুক্ত থাকতে পারে। ওই সকল প্ল্যাটফর্মের নিজস্ব ব্যবহারের শর্তাবলী ও নীতিমালার জন্য সংশ্লিষ্ট প্ল্যাটফর্ম দায়ী।
+            </p>
+          </div>
+
+          {/* কার্ড ৬: শর্তাবলীর পরিবর্তন ও যোগাযোগ */}
+          <div className="rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700 font-bold text-xs">
+                ০৬
+              </div>
+              <h2 className="font-body text-base font-bold text-sky-950 sm:text-lg">
+                শর্তাবলীর পরিবর্তন ও যোগাযোগ
+              </h2>
+            </div>
+            <p className="mt-3.5 font-body text-xs sm:text-[14px] leading-[1.8] text-ink-800/85">
+              প্রয়োজন অনুযায়ী যেকোনো সময় এই ব্যবহারের শর্তাবলী হালনাগাদ করা হতে পারে। কোনো প্রশ্ন বা তথ্যের জন্য সরাসরি আমাদের ফোন বা হোয়াটসঅ্যাপ নম্বরে (+880 1845-435539) যোগাযোগ করা যাবে।
+            </p>
+          </div>
+        </div>
+      </div>
 
       <Footer />
     </main>
