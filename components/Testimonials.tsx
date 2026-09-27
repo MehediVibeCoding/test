@@ -1,7 +1,8 @@
 import { getTestimonials } from "@/lib/academyData";
 import TestimonialsClient from "./TestimonialsClient";
 
-// ডাটাবেজ সাময়িক ফাঁকা থাকলে ডেমো ফলব্যাক (টপ ৩টি)
+// ⚠️ গুরুত্বপূর্ণ: এগুলো ডেমো রিভিউ — শুধু ডাটাবেজ খালি থাকা অবস্থায় দেখানো হয়।
+// লঞ্চের আগে আসল শিক্ষার্থী/অভিভাবকের রিভিউ testimonials টেবিলে যোগ করে নিতে হবে।
 const FALLBACK_FEATURED = [
   {
     id: "t1",

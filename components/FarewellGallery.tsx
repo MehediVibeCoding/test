@@ -1,7 +1,8 @@
 import { getFarewellMemories } from "@/lib/academyData";
 import FarewellGalleryClient from "./FarewellGalleryClient";
 
-// ডাটাবেজ সাময়িক ফাঁকা থাকলে ডেমো ফলব্যাক
+// ⚠️ গুরুত্বপূর্ণ: এগুলো স্টক ছবি (Unsplash) — শুধু ডাটাবেজ খালি থাকা অবস্থায় দেখানো হয়।
+// লঞ্চের আগে আসল বিদায় অনুষ্ঠান/স্মৃতির ছবি farewell_memories টেবিলে আপলোড করতে হবে।
 const FALLBACK_MEMORIES = [
   {
     id: "fm1",

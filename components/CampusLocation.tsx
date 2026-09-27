@@ -6,13 +6,13 @@ export default function CampusLocation() {
       <div className="mx-auto max-w-6xl">
         <Reveal className="mb-10 text-center">
           <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
-            লোকেশন ও ক্যাম্পাস
+            লোকেশন ও যোগাযোগ
           </span>
           <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
             আমাদের একাডেমির ঠিকানা ও গুগল ম্যাপ
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-            চৌদ্দগ্রাম বাজারে অথবা সরাসরি একাডেমি ক্যাম্পাসে এসে ভর্তি সংক্রান্ত যেকোনো তথ্য
+            চৌদ্দগ্রাম বাজারে অথবা সরাসরি লার্নিং সেন্টারে এসে ভর্তি সংক্রান্ত যেকোনো তথ্য
             বা সরাসরি স্যারের সাথে কথা বলতে পারো।
           </p>
         </Reveal>
@@ -34,17 +34,17 @@ export default function CampusLocation() {
               />
             </div>
 
-            {/* ক্যাম্পাস বিবরণ ও যোগাযোগের তথ্য */}
+            {/* ঠিকানা ও যোগাযোগের তথ্য */}
             <div className="flex flex-col justify-between space-y-5 p-2 sm:p-4">
               <div>
                 <span className="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-800">
-                  📍 প্রধান ক্যাম্পাস
+                  📍 প্রধান লার্নিং সেন্টার
                 </span>
                 <h3 className="mt-3 text-lg font-bold text-sky-950 sm:text-xl">
                   Ahsan&apos;s Learning Academy
                 </h3>
                 <p className="mt-1 text-xs text-sky-700 font-semibold">
-                  চৌদ্দগ্রাম সরকারি কলেজ রোড, চৌদ্দগ্রাম, কুমিল্লা
+                  কলেজ রোড, চৌদ্দগ্রাম সরকারি কলেজ সংলগ্ন, চৌদ্দগ্রাম, কুমিল্লা
                 </p>
 
                 <div className="mt-5 space-y-3 text-xs sm:text-sm text-ink-800/90">

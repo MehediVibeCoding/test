@@ -136,7 +136,18 @@ export default function Footer() {
 
       {/* ফুটার কন্ট্রোল বার (ভাষা পরিবর্তন, থিম মোড ও কপিরাইট) */}
       <div className="mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-sky-100/70 sm:flex-row">
-        <p>© {new Date().getFullYear()} Ahsan&apos;s Learning Academy. সর্বস্বত্ব সংরক্ষিত।</p>
+        <div className="flex flex-col items-center gap-1.5 sm:items-start">
+          <p>© {new Date().getFullYear()} Ahsan&apos;s Learning Academy. সর্বস্বত্ব সংরক্ষিত।</p>
+          <div className="flex items-center gap-3 text-[11px]">
+            <a href="/privacy-policy" className="hover:text-white hover:underline">
+              গোপনীয়তা নীতি
+            </a>
+            <span className="text-white/20">|</span>
+            <a href="/terms" className="hover:text-white hover:underline">
+              ব্যবহারের শর্তাবলী
+            </a>
+          </div>
+        </div>
 
         {/* ল্যাঙ্গুয়েজ ও থিম বাটন */}
         <div className="flex items-center gap-3">
