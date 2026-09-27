@@ -32,25 +32,26 @@ function parseYouTubeId(url: string): string | null {
 
 export default async function VideoGallery() {
   const dbVideos = await getVideoLectures();
-  const videos = dbVideos.length > 0 ? dbVideos : FALLBACK_VIDEOS;
+  // হোমপেজে সর্বদা নিশ্চিতভাবে সর্বশেষ ৩টি ভিডিও
+  const videos = (dbVideos.length > 0 ? dbVideos : FALLBACK_VIDEOS).slice(0, 3);
 
   return (
-    <section id="videos" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-gradient-to-b from-white via-sky-50/40 to-white">
+    <section id="videos" className="relative px-4 py-6 sm:px-8 sm:py-10 lg:py-12 lg:px-12 bg-gradient-to-b from-white via-sky-50/40 to-white">
       <div className="mx-auto max-w-7xl">
-        {/* সেকশন হেডার */}
-        <Reveal className="mb-12 text-center sm:mb-16">
+        {/* সেকশন হেডার (টাইট কমপ্যাক্ট স্পেসিং সহ) */}
+        <Reveal className="mb-6 text-center sm:mb-8">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             ভিডিও ক্লাস লেকচার
           </span>
-          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+          <h2 className="mt-2.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
             সর্বশেষ ভিডিও লেকচার
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+          <p className="mx-auto mt-2 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
             ইংরেজি ও আইসিটির গুরুত্বপূর্ণ টপিকের সহজ ব্যাখ্যা ও বোর্ড প্রশ্ন সমাধানের ভিডিও ক্লাসসমূহ।
           </p>
         </Reveal>
 
-        {/* প্রিমিয়াম ভিডিও কার্ড গ্রিড (কোনো অপ্রয়োজনীয় এক্সট্রা টেক্সট ছাড়া) */}
+        {/* ৩টি ভিডিও কার্ড গ্রিড */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {videos.map((v, i) => {
             const ytId = parseYouTubeId(v.href);
