@@ -1,14 +1,45 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Reveal from "./Reveal";
 import type { Batch } from "@/lib/academyData";
+
+const SUBMISSION_LOCK_KEY = "ala_admission_locked_session";
+const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 
 type BatchesClientProps = {
   batches: Batch[];
 };
 
 export default function BatchesClient({ batches }: BatchesClientProps) {
+  const [isLocked, setIsLocked] = useState(false);
+
+  // ২ ঘণ্টার লক সেশন চেক (localStorage)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SUBMISSION_LOCK_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const elapsed = Date.now() - parsed.timestamp;
+        if (elapsed < TWO_HOURS_IN_MS && parsed.data) {
+          setIsLocked(true);
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }, []);
+
   function handleSelectBatch(batchName: string) {
+    if (isLocked) {
+      // আবেদন সম্পন্ন থাকলে সরাসরি রিসিটে স্ক্রল করবে
+      const admissionSection = document.getElementById("admission");
+      if (admissionSection) {
+        admissionSection.scrollIntoView({ behavior: "smooth" });
+      }
+      return;
+    }
+
     const selectElem = document.querySelector<HTMLSelectElement>('select[name="batch"]');
     if (selectElem) {
       selectElem.value = batchName;
@@ -76,13 +107,17 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
                   </ul>
                 </div>
 
-                {/* ক্লিন পিল বাটন */}
+                {/* ২ ঘণ্টার লক সমন্বিত পিল বাটন */}
                 <div className="mt-7 border-t border-sky-100/80 pt-4">
                   <button
                     onClick={() => handleSelectBatch(batch.name)}
-                    className="w-full rounded-full bg-sky-600 py-3 text-center font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:text-sm"
+                    className={`w-full rounded-full py-3 text-center font-body text-xs font-bold transition-all sm:text-sm ${
+                      isLocked
+                        ? "bg-emerald-600 text-white shadow-xs"
+                        : "bg-sky-600 text-white shadow-sm hover:bg-sky-700 active:scale-95"
+                    }`}
                   >
-                    ভর্তি ফরম পূরণ করো
+                    {isLocked ? "আবেদন সম্পন্ন হয়েছে" : "ভর্তি ফরম পূরণ করো"}
                   </button>
                 </div>
               </div>
