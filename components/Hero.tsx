@@ -47,14 +47,14 @@ const headlineWipeVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative overflow-hidden pt-4 pb-12 sm:pt-6 md:pb-16"
+      className="relative overflow-hidden pt-2 pb-12 sm:pt-4 md:pb-16"
       style={{
         background:
-          "radial-gradient(ellipse 65% 50% at 5% 30%, rgba(56, 189, 248, 0.30) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 95% 45%, rgba(14, 165, 233, 0.25) 0%, transparent 65%), linear-gradient(180deg, #e0f2fe 0%, #f0f7fe 60%, #ffffff 100%)",
+          "radial-gradient(ellipse 65% 50% at 5% 20%, rgba(56, 189, 248, 0.35) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 95% 35%, rgba(14, 165, 233, 0.25) 0%, transparent 65%), linear-gradient(180deg, #def1fe 0%, #f0f7fe 65%, #ffffff 100%)",
       }}
     >
       <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr] lg:px-12">
-        {/* ১. টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে) */}
+        {/* ১. টেক্সট কন্টেন্ট কলাম */}
         <motion.div
           variants={textContainerVariants}
           initial="hidden"
@@ -118,14 +118,14 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* অ্যাকশন বাটনসমূহ — সম্পূর্ণ ক্লিন ও প্রিমিয়াম পিল ডিজাইন */}
+          {/* অ্যাকশন বাটনসমূহ (সিগনেচার স্কাই-ব্লু + পিউর হোয়াইট পিল বাটন) */}
           <motion.div
             variants={lineVariants}
             className="mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:justify-start"
           >
             <ScrollLink
               targetId="admission"
-              className="inline-flex items-center justify-center rounded-full bg-sky-950 px-6 py-3 font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-900 active:scale-95 sm:text-sm"
+              className="inline-flex items-center justify-center rounded-full bg-sky-600 px-6 py-3 font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:text-sm"
             >
               প্রাইভেট ব্যাচে ভর্তি হও →
             </ScrollLink>
