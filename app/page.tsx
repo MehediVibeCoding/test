@@ -14,7 +14,6 @@ import CampusLocation from "@/components/CampusLocation";
 import FAQ from "@/components/FAQ";
 import AdmissionForm from "@/components/AdmissionForm";
 import Footer from "@/components/Footer";
-import StickyMobileBar from "@/components/StickyMobileBar";
 import { getActiveBatches } from "@/lib/academyData";
 
 export const dynamic = "force-dynamic";
@@ -30,50 +29,47 @@ export default async function Home() {
       {/* ২. হিরো সেকশন */}
       <Hero />
 
-      {/* ৩. শিক্ষক পরিচিতি ও দর্শন */}
+      {/* ৩. শিক্ষক পরিচিতি */}
       <About />
 
       {/* ৪. কেন আমাদের একাডেমি */}
       <AcademyFeatures />
 
-      {/* ৪.৫ রিয়েল ক্লাসরুম ও একাডেমি লাইফ */}
+      {/* ৫. রিয়েল ক্লাসরুম ও একাডেমি লাইফ */}
       <RealClassroomShowcase />
 
-      {/* ৫. চলমান ব্যাচসমূহ */}
+      {/* ৬. চলমান ব্যাচসমূহ */}
       <Batches />
 
-      {/* ৫.৫ বিদায় সংবর্ধনা ও স্মৃতি */}
+      {/* ৭. বিদায় সংবর্ধনা ও স্মৃতি */}
       <FarewellGallery />
 
-      {/* ৬. আজকের ক্লাস ডায়েরি ও বাড়ির কাজ */}
+      {/* ৮. আজকের ক্লাস ডায়েরি ও বাড়ির কাজ */}
       <ClassDiary />
 
-      {/* ৭. ভিডিও ক্লাস লেকচার */}
+      {/* ৯. ভিডিও ক্লাস লেকচার */}
       <VideoGallery />
 
-      {/* ৮. স্টাডি টিপস ও গাইডলাইন ব্লগ */}
+      {/* ১০. স্টাডি টিপস ও গাইডলাইন ব্লগ */}
       <BlogPreview />
 
-      {/* ৯. শিক্ষার্থী ও অভিভাবকদের মতামত */}
+      {/* ১১. শিক্ষার্থী ও অভিভাবকদের মতামত */}
       <Testimonials />
 
-      {/* ৯.৫ সাফল্যের গল্প ও ফলাফল বোর্ড */}
+      {/* ১২. সাফল্যের গল্প ও ফলাফল বোর্ড */}
       <SuccessWall />
 
-      {/* ১০. ক্যাম্পাস ও গুগল ম্যাপ লোকেশন */}
+      {/* ১৩. ক্যাম্পাস ও গুগল ম্যাপ লোকেশন */}
       <CampusLocation />
 
-      {/* ১০.৫ সাধারণ জিজ্ঞাসা */}
+      {/* ১৪. সাধারণ জিজ্ঞাসা */}
       <FAQ />
 
-      {/* ১১. ভর্তি আবেদন ফরম */}
+      {/* ১৫. ভর্তি আবেদন ফরম */}
       <AdmissionForm batches={batches} />
 
-      {/* ১২. প্রিমিয়াম ফুটার */}
+      {/* ১৬. প্রিমিয়াম ফুটার */}
       <Footer />
-
-      {/* মোবাইলের জন্য স্টিকি বটম কুইক-অ্যাকশন বার */}
-      <StickyMobileBar />
     </main>
   );
 }
