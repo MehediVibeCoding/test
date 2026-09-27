@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getBlogPostBySlug } from "@/lib/academyData";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +15,7 @@ export async function generateMetadata({
   const post = await getBlogPostBySlug(slug);
 
   if (!post) {
-    return { title: "ব্লগ পোস্ট পাওয়া যায়নি | Ahsan's Learning Academy" };
+    return { title: "ব্লগ পোস্ট পাওয়া যায়নি | Ahsan's Learning Academy" };
   }
 
   return {
@@ -38,100 +37,73 @@ export default async function BlogPostPage({
   }
 
   return (
-    <main className="min-h-screen bg-cloud-50 text-ink-800">
-      <Navbar />
+    <main className="min-h-screen bg-[#f8fafc] text-ink-800">
+      <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+        {/* ১. টপ হেডার কার্ড (ন্যাভবার ছাড়া ক্লিন ফিরে যান বাটন ও প্রকাশের তারিখ) */}
+        <div className="overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-b from-[#e0f2fe]/60 via-white to-white p-6 shadow-xs sm:p-8">
+          {/* টপ বার */}
+          <div className="flex items-center justify-between gap-4 border-b border-sky-100/80 pb-5">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white px-4 py-2 font-body text-xs font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95 sm:px-5 sm:py-2.5 sm:text-[13px]"
+            >
+              <svg className="h-4 w-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>সব ব্লগে ফিরে যান</span>
+            </Link>
 
-      <article className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
-        {/* ব্রেডক্রাম্ব */}
-        <nav className="mb-6 flex items-center gap-2 text-xs font-semibold text-muted">
-          <Link href="/" className="hover:text-sky-600 transition-colors">
-            হোমপেজ
-          </Link>
-          <span>/</span>
-          <Link href="/blog" className="hover:text-sky-600 transition-colors">
-            ব্লগ
-          </Link>
-          <span>/</span>
-          <span className="truncate max-w-[200px] text-sky-950 font-bold">{post.title}</span>
-        </nav>
-
-        {/* হেডার ও প্রকাশের তারিখ */}
-        <header className="mb-8">
-          <div className="flex flex-wrap items-center gap-2.5 text-xs font-bold text-sky-700">
-            <span className="rounded-full bg-sky-100 px-3 py-1 text-sky-800">
-              📅 {post.date}
+            <span className="font-body text-xs font-semibold text-slate-500">
+              প্রকাশিত: {post.date}
             </span>
-            <span className="text-muted">·</span>
-            <span className="text-muted">আহসান স্যারের লেকচার নোট</span>
           </div>
 
-          <h1 className="mt-4 font-body text-2xl font-black leading-tight text-sky-950 sm:text-3xl lg:text-4xl">
+          {/* ব্লগের মূল শিরোনাম */}
+          <h1 className="mt-6 font-body text-2xl font-black leading-tight text-sky-950 sm:text-3xl lg:text-4xl">
             {post.title}
           </h1>
 
-          {/* সংক্ষিপ্ত ভূমিকা বক্স */}
+          {/* সংক্ষিপ্ত ভূমিকা কোট */}
           {post.excerpt && (
-            <div className="mt-5 rounded-2xl border border-sky-100 bg-sky-50/70 p-4 font-body text-xs sm:text-sm italic leading-relaxed text-sky-950">
-              &ldquo;{post.excerpt}&rdquo;
+            <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50/50 p-4 font-body text-xs sm:text-sm italic leading-relaxed text-sky-950">
+              {post.excerpt}
             </div>
           )}
-        </header>
+        </div>
 
-        {/* কভার ছবি */}
+        {/* ২. কভার ছবি (যদি থাকে) */}
         {post.coverImageUrl && (
-          <div className="mb-10 overflow-hidden rounded-3xl border border-sky-100 shadow-sm">
+          <div className="mt-6 overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-xs">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={post.coverImageUrl}
               alt={post.title}
-              className="max-h-[420px] w-full object-cover"
+              className="max-h-[440px] w-full object-cover"
             />
           </div>
         )}
 
-        {/* মূল কনটেন্ট (প্যারাগ্রাফ ও পয়েন্ট আকারে ফরম্যাটেড) */}
-        <div className="space-y-4 font-body text-[13.5px] sm:text-[15px] leading-relaxed text-ink-800/90 whitespace-pre-line border-b border-sky-100 pb-10">
-          {post.content}
-        </div>
-
-        {/* লেখক পরিচিতি কার্ড */}
-        <section className="my-10 flex flex-col sm:flex-row items-center gap-5 rounded-3xl border border-sky-100 bg-white p-6 shadow-sm">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-xl font-black text-white shadow-sm">
-            AU
+        {/* ৩. মূল আর্টিকেল কনটেন্ট ও বটম সিগনেচার */}
+        <div className="mt-6 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-10">
+          {/* আর্টিকেলের টেক্সট বডি */}
+          <div className="space-y-5 font-body text-[15px] sm:text-base leading-[1.9] text-ink-800/90 whitespace-pre-line">
+            {post.content}
           </div>
-          <div className="text-center sm:text-left">
-            <p className="font-body text-base font-black text-sky-950">মোঃ আহসান উল্লাহ</p>
-            <p className="font-body text-xs font-semibold text-sky-700">
-              প্রভাষক, চৌদ্দগ্রাম সরকারি কলেজ · ৪০তম বিসিএস (সাধারণ শিক্ষা ক্যাডার)
-            </p>
-            <p className="mt-1 text-xs text-muted">
-              প্রতিষ্ঠাতা ও প্রধান মেন্টর — Ahsan&apos;s Learning Academy
-            </p>
-          </div>
-        </section>
 
-        {/* ফুটার নেভিগেশন ও কল-টু-অ্যাকশন */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl bg-gradient-to-r from-sky-700 to-sky-950 p-6 text-white text-center sm:text-left shadow-md">
-          <div>
-            <p className="font-body text-base font-bold">প্রাইভেট ব্যাচে আসন নিশ্চিত করতে চাও?</p>
-            <p className="text-xs text-sky-200 mt-0.5">সীমিত আসনে যত্নসহকারে সরাসরি পাঠদান করা হয়।</p>
+          {/* সবার শেষে ডানপাশে স্যারের মার্জিত ইটালিক সিগনেচার (Email Sign-off Style) */}
+          <div className="mt-12 border-t border-sky-100/80 pt-6 flex flex-col items-end text-right">
+            <span className="font-display italic text-lg sm:text-xl font-black text-sky-950 tracking-wide">
+              — Md. Ahsan Ullah
+            </span>
+            <span className="font-body text-xs font-semibold text-sky-700 mt-0.5">
+              Ahsan&apos;s Learning Academy
+            </span>
           </div>
-          <Link
-            href="/#admission"
-            className="rounded-xl bg-white px-5 py-2.5 font-body text-xs sm:text-sm font-black text-sky-950 shadow-sm hover:bg-sky-50 transition-colors"
-          >
-            ভর্তি ফরম পূরণ করো →
-          </Link>
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link href="/blog" className="font-body text-xs sm:text-sm font-bold text-sky-600 hover:underline">
-            ← সব ব্লগ আর্টিকেলের তালিকায় ফিরে যান
-          </Link>
         </div>
       </article>
 
+      {/* পেজ ফুটার */}
       <Footer />
     </main>
   );
-        }
+}
