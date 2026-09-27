@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
 import type { FarewellMemory } from "@/lib/academyData";
@@ -13,51 +13,104 @@ export default function FarewellGalleryClient({
   memories: FarewellMemory[];
 }) {
   const [selected, setSelected] = useState(ALL_LABEL);
-  const [activeMemory, setActiveMemory] = useState<FarewellMemory | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ডাটাবেজ থেকে আসা স্মৃতিগুলোর ব্যাচ ট্যাগ দিয়ে স্বয়ংক্রিয় ফিল্টার তৈরি
+  // "ক্লাসরুম মোমেন্টস" ট্যাগটি ফিল্টার তালিকা থেকে বাদ দিয়ে শুধুমাত্র বিদায় ব্যাচ ট্যাগ রাখা
   const filters = useMemo(() => {
-    const uniqueTags = Array.from(new Set(memories.map((m) => m.batch).filter(Boolean)));
+    const uniqueTags = Array.from(
+      new Set(
+        memories
+          .map((m) => m.batch)
+          .filter((b) => b && !b.includes("ক্লাসরুম মোমেন্টস"))
+      )
+    );
     return [ALL_LABEL, ...uniqueTags];
   }, [memories]);
 
-  const filtered = useMemo(
-    () => (selected === ALL_LABEL ? memories : memories.filter((m) => m.batch === selected)),
-    [memories, selected]
-  );
+  // নির্বাচিত ট্যাগ অনুযায়ী ফিল্টার করা মেমোরি তালিকা (ক্লাসরুম মোমেন্টস বাদ)
+  const filteredMemories = useMemo(() => {
+    const baseList = memories.filter(
+      (m) => !m.batch || !m.batch.includes("ক্লাসরুম মোমেন্টস")
+    );
+    if (selected === ALL_LABEL) return baseList;
+    return baseList.filter((m) => m.batch === selected);
+  }, [memories, selected]);
+
+  // ফিল্টার পরিবর্তন হলে স্লাইড ইনডেক্স ০ তে রিসেট
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [selected]);
+
+  // প্রতি ৩টি ছবি নিয়ে ১টি করে স্লাইড সেট তৈরি (১টি ১৬:৯ টপ + ২টি বটম স্প্লিট)
+  const slides = useMemo(() => {
+    const chunks: { top: string; bottom1: string; bottom2: string }[] = [];
+    for (let i = 0; i < filteredMemories.length; i += 3) {
+      const top = filteredMemories[i]?.imageUrl || "";
+      const bottom1 =
+        filteredMemories[i + 1]?.imageUrl || filteredMemories[0]?.imageUrl || "";
+      const bottom2 =
+        filteredMemories[i + 2]?.imageUrl || filteredMemories[1]?.imageUrl || "";
+      if (top) {
+        chunks.push({ top, bottom1, bottom2 });
+      }
+    }
+    return chunks.length > 0
+      ? chunks
+      : [
+          {
+            top: filteredMemories[0]?.imageUrl || "",
+            bottom1: filteredMemories[1]?.imageUrl || filteredMemories[0]?.imageUrl || "",
+            bottom2: filteredMemories[2]?.imageUrl || filteredMemories[0]?.imageUrl || "",
+          },
+        ];
+  }, [filteredMemories]);
+
+  const totalSlides = slides.length;
+
+  const nextSlide = () => {
+    if (totalSlides <= 1) return;
+    setCurrentIndex((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = () => {
+    if (totalSlides <= 1) return;
+    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const currentSlide = slides[currentIndex];
 
   return (
     <section
       id="memories"
-      className="relative overflow-hidden px-4 py-16 sm:py-20"
+      className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 overflow-hidden"
       style={{
         background:
-          "radial-gradient(circle at 15% 15%, rgba(56,189,248,0.10) 0%, transparent 55%), radial-gradient(circle at 85% 85%, rgba(2,132,199,0.08) 0%, transparent 55%), #0a1f33",
+          "radial-gradient(circle at 15% 15%, rgba(56,189,248,0.12) 0%, transparent 55%), radial-gradient(circle at 85% 85%, rgba(2,132,199,0.10) 0%, transparent 55%), #0a1f33",
       }}
     >
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="mb-8 text-center">
-          <span className="inline-flex rounded-full bg-white/10 px-3.5 py-1 text-xs font-bold text-sky-300">
+      <div className="mx-auto max-w-5xl">
+        {/* সেকশন হেডার */}
+        <Reveal className="mb-6 text-center sm:mb-8">
+          <span className="inline-flex rounded-full bg-white/10 px-4 py-1 font-body text-xs font-bold text-sky-300">
             বিদায় সংবর্ধনা ও স্মৃতি
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-white sm:text-4xl lg:text-[38px] leading-tight">
             যে মুহূর্তগুলো আমাদের গর্বিত করে
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-xs sm:text-sm text-sky-100/75 leading-relaxed">
-            বিদায় অনুষ্ঠানের আবেগঘন মুহূর্ত, শিক্ষকের সাথে শিক্ষার্থীদের বন্ধন — একেকটা ছবি
-            বলে দেয় এই একাডেমিতে কতটা যত্ন নিয়ে পড়ানো হয়।
+          <p className="mx-auto mt-2 max-w-xl font-body text-[14px] leading-[1.7] text-sky-100/75 sm:text-[15px]">
+            বিদায় অনুষ্ঠানের আবেগঘন মুহূর্ত এবং শিক্ষকের সাথে শিক্ষার্থীদের আন্তরিক বন্ধন।
           </p>
         </Reveal>
 
-        {/* ব্যাচভিত্তিক ফিল্টার */}
-        <Reveal className="mb-8 flex flex-wrap justify-center gap-2" delay={80}>
+        {/* ব্যাচ ফিল্টার বোতামসমূহ (ক্লাসরুম মোমেন্টস ছাড়া) */}
+        <Reveal className="mb-6 flex flex-wrap items-center justify-center gap-2" delay={80}>
           {filters.map((f) => (
             <button
               key={f}
               onClick={() => setSelected(f)}
-              className={`hover-lift rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-colors ${
+              className={`rounded-full px-4 py-1.5 font-body text-xs font-bold transition-all ${
                 selected === f
-                  ? "bg-sky-400 text-sky-950"
+                  ? "bg-sky-400 text-sky-950 shadow-xs"
                   : "bg-white/10 text-sky-100 hover:bg-white/20"
               }`}
             >
@@ -66,83 +119,107 @@ export default function FarewellGalleryClient({
           ))}
         </Reveal>
 
-        {/* ইন্টারঅ্যাক্টিভ কার্ড গ্রিড — ক্লিক করলে ফুলস্ক্রিন লাইটবক্সে বড় হয়ে দেখাবে */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-          {filtered.map((memory, i) => (
-            <Reveal key={memory.id || i} delay={i * 60}>
-              <button
-                onClick={() => setActiveMemory(memory)}
-                className="group relative flex aspect-square w-full flex-col justify-end overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-white/10 to-white/[0.03] text-left transition-transform duration-300 hover:-translate-y-1 hover:border-sky-300/50"
+        {/* ১টি ১৬:৯ টপ ছবি + ২টি বটম স্প্লিট ছবি (কোনো ক্যাপশন ছাড়া সম্পূর্ণ ক্লিন) */}
+        <Reveal delay={100}>
+          <div className="relative">
+            {/* ডেস্কটপ নেভিগেশন কন্ট্রোল */}
+            {totalSlides > 1 && (
+              <div className="hidden sm:flex items-center justify-end gap-2 mb-3">
+                <button
+                  onClick={prevSlide}
+                  aria-label="পূর্ববর্তী ছবি"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all hover:bg-sky-400 hover:text-sky-950 active:scale-95"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={nextSlide}
+                  aria-label="পরবর্তী ছবি"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition-all hover:bg-sky-400 hover:text-sky-950 active:scale-95"
+                >
+                  →
+                </button>
+              </div>
+            )}
+
+            {/* স্লাইড কনটেন্ট (মোবাইল টাচ সোয়াইপ সহ) */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -40) nextSlide();
+                  else if (info.offset.x > 40) prevSlide();
+                }}
+                className="space-y-3 sm:space-y-4 touch-pan-y"
               >
-                {memory.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={memory.imageUrl}
-                    alt={memory.caption}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-sky-200/50">
-                    📷
+                {/* ১. টপ ১৬:৯ হিরো ছবি */}
+                {currentSlide?.top && (
+                  <div className="relative aspect-video w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-white/15 bg-sky-950/60 shadow-lg">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={currentSlide.top}
+                      alt="Farewell Memory Top"
+                      className="h-full w-full object-cover select-none"
+                      draggable={false}
+                    />
                   </div>
                 )}
-                <div className="relative z-10 bg-gradient-to-t from-sky-950/90 via-sky-950/40 to-transparent p-2.5 sm:p-3">
-                  <span className="block text-[9px] font-bold text-sky-300">
-                    {memory.batch}
-                  </span>
-                  <p className="text-[10.5px] font-semibold leading-snug text-white sm:text-[11.5px] line-clamp-2">
-                    {memory.caption}
-                  </p>
-                </div>
-              </button>
-            </Reveal>
-          ))}
-        </div>
-      </div>
 
-      {/* ফুলস্ক্রিন লাইটবক্স */}
-      <AnimatePresence>
-        {activeMemory && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActiveMemory(null)}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              transition={{ type: "spring", stiffness: 300, damping: 28 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-sky-950 shadow-2xl"
-            >
-              <div className="flex aspect-square w-full items-center justify-center bg-black/40 overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={activeMemory.imageUrl}
-                  alt={activeMemory.caption}
-                  className="h-full w-full object-contain"
-                />
+                {/* ২. নিচে সমান দুই ভাগে বিভক্ত ২টি ছবি */}
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  {currentSlide?.bottom1 && (
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-white/15 bg-sky-950/60 shadow-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={currentSlide.bottom1}
+                        alt="Farewell Memory Sub 1"
+                        className="h-full w-full object-cover select-none"
+                        draggable={false}
+                      />
+                    </div>
+                  )}
+
+                  {currentSlide?.bottom2 && (
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-white/15 bg-sky-950/60 shadow-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={currentSlide.bottom2}
+                        alt="Farewell Memory Sub 2"
+                        className="h-full w-full object-cover select-none"
+                        draggable={false}
+                      />
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* ডট পেজিনেশন ইন্ডিকেটর */}
+            {totalSlides > 1 && (
+              <div className="mt-5 flex items-center justify-center gap-1.5">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Memory Slide ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all ${
+                      currentIndex === idx
+                        ? "w-6 bg-sky-400"
+                        : "w-2 bg-white/20 hover:bg-white/40"
+                    }`}
+                  />
+                ))}
               </div>
-              <div className="p-4 sm:p-5">
-                <p className="text-xs font-bold text-sky-300">{activeMemory.batch}</p>
-                <p className="mt-1 text-sm font-semibold text-white sm:text-base">
-                  {activeMemory.caption}
-                </p>
-              </div>
-              <button
-                onClick={() => setActiveMemory(null)}
-                aria-label="বন্ধ করুন"
-                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60"
-              >
-                ✕
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
-                    }
+}
