@@ -2,25 +2,26 @@ import Reveal from "./Reveal";
 
 export default function CampusLocation() {
   return (
-    <section id="contact" className="bg-sky-100/30 px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="mb-10 text-center">
-          <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
+    <section id="contact" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-gradient-to-b from-white via-sky-50/40 to-white">
+      <div className="mx-auto max-w-7xl">
+        {/* সেকশন হেডার */}
+        <Reveal className="mb-12 text-center sm:mb-16">
+          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             লোকেশন ও যোগাযোগ
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
             আমাদের একাডেমির ঠিকানা ও গুগল ম্যাপ
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-            চৌদ্দগ্রাম বাজারে অথবা সরাসরি লার্নিং সেন্টারে এসে ভর্তি সংক্রান্ত যেকোনো তথ্য
-            বা সরাসরি স্যারের সাথে কথা বলতে পারো।
+          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+            চৌদ্দগ্রাম সরকারি কলেজ সংলগ্ন লার্নিং সেন্টারে এসে ভর্তি সংক্রান্ত যেকোনো তথ্য বা সরাসরি স্যারের সাথে কথা বলতে পারো।
           </p>
         </Reveal>
 
+        {/* গুগল ম্যাপ ও যোগাযোগের তথ্য কার্ড */}
         <Reveal delay={80}>
-          <div className="grid gap-6 overflow-hidden rounded-2xl border border-sky-100 bg-white p-4 shadow-sm lg:grid-cols-[1.2fr_0.8fr] sm:p-6">
-            {/* লাইভ গুগল ম্যাপ এমবেড */}
-            <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-sky-100/90 lg:aspect-auto lg:h-full min-h-[280px]">
+          <div className="grid gap-8 overflow-hidden rounded-3xl border border-sky-100 bg-white p-6 shadow-xs lg:grid-cols-[1.2fr_0.8fr] sm:p-8">
+            {/* ১. লাইভ গুগল ম্যাপ এমবেড */}
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-sky-100/90 lg:aspect-auto lg:h-full min-h-[300px]">
               <iframe
                 title="Ahsan's Learning Academy Location"
                 src="https://maps.google.com/maps?q=Chauddagram%20Govt%20College,%20Chauddagram,%20Cumilla&t=&z=15&ie=UTF8&iwloc=&output=embed"
@@ -30,51 +31,73 @@ export default function CampusLocation() {
                 allowFullScreen={false}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="absolute inset-0 h-full w-full grayscale-[20%] contrast-[1.05]"
+                className="absolute inset-0 h-full w-full grayscale-[15%] contrast-[1.05]"
               />
             </div>
 
-            {/* ঠিকানা ও যোগাযোগের তথ্য */}
-            <div className="flex flex-col justify-between space-y-5 p-2 sm:p-4">
+            {/* ২. সঠিক ঠিকানা ও যোগাযোগের তথ্য (নো-ইমোজি, পিউর SVG আইকন) */}
+            <div className="flex flex-col justify-between space-y-6">
               <div>
-                <span className="rounded-md bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-800">
-                  📍 প্রধান লার্নিং সেন্টার
+                {/* সেন্টার ব্যাজ */}
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-200/80 bg-sky-50 px-3.5 py-1 font-body text-xs font-bold text-sky-800">
+                  <svg className="h-3.5 w-3.5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span>প্রধান লার্নিং সেন্টার</span>
                 </span>
-                <h3 className="mt-3 text-lg font-bold text-sky-950 sm:text-xl">
+
+                <h3 className="mt-4 font-body text-xl font-black text-sky-950 sm:text-2xl">
                   Ahsan&apos;s Learning Academy
                 </h3>
-                <p className="mt-1 text-xs text-sky-700 font-semibold">
+                <p className="mt-1 font-body text-xs sm:text-[13px] font-semibold text-sky-700">
                   কলেজ রোড, চৌদ্দগ্রাম সরকারি কলেজ সংলগ্ন, চৌদ্দগ্রাম, কুমিল্লা
                 </p>
 
-                <div className="mt-5 space-y-3 text-xs sm:text-sm text-ink-800/90">
-                  <div className="flex items-start gap-3">
-                    <span className="text-base text-sky-600">🏢</span>
+                {/* বিবরণ তালিকা */}
+                <div className="mt-6 space-y-4 font-body text-xs sm:text-sm text-ink-800/90">
+                  {/* দিকনির্দেশনা */}
+                  <div className="flex items-start gap-3.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
                     <div>
                       <p className="font-bold text-sky-950">দিকনির্দেশনা:</p>
-                      <p className="text-xs text-ink-800/80">
-                        চৌদ্দগ্রাম সরকারি কলেজ মেইন গেট সংলগ্ন / বাজার রোড।
+                      <p className="mt-0.5 text-xs text-ink-800/80 leading-relaxed">
+                        চৌদ্দগ্রাম সরকারি কলেজ মেইন গেট সংলগ্ন, কলেজ রোড।
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <span className="text-base text-sky-600">⏰</span>
+                  {/* ক্লাস সময় */}
+                  <div className="flex items-start gap-3.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
                     <div>
-                      <p className="font-bold text-sky-950">ক্লাস ও অফিস সময়:</p>
-                      <p className="text-xs text-ink-800/80">
-                        সকাল ৮:০০ টা — রাত ৮:০০ টা (সপ্তাহে ৭ দিন)
+                      <p className="font-bold text-sky-950">ক্লাস সময়:</p>
+                      <p className="mt-0.5 text-xs text-ink-800/80 leading-relaxed">
+                        সকাল ৭:০০ টা — ৯:৩০ টা এবং বিকাল ৩:০০ টা — ৫:০০ টা (সপ্তাহে ৬ দিন)
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <span className="text-base text-sky-600">📞</span>
+                  {/* সরাসরি হটলাইন */}
+                  <div className="flex items-start gap-3.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-sky-700">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                    </div>
                     <div>
                       <p className="font-bold text-sky-950">সরাসরি হটলাইন:</p>
                       <a
                         href="tel:+8801845435539"
-                        className="text-xs font-bold text-sky-700 hover:underline"
+                        className="mt-0.5 inline-block text-xs font-bold text-sky-700 hover:underline"
                       >
                         +880 1845-435539
                       </a>
@@ -83,16 +106,18 @@ export default function CampusLocation() {
                 </div>
               </div>
 
-              {/* সরাসরি গুগল ম্যাপে রুট দেখার বাটন */}
+              {/* গুগল ম্যাপ রুট দেখার পিল বাটন */}
               <div className="pt-2">
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Chauddagram+Govt+College"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-sky-600 py-2.5 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-sky-700"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 py-3 text-center font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
                 >
-                  <span>গুগল ম্যাপ অ্যাপে লোকেশন দেখুন</span>
-                  <span>→</span>
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  <span>গুগল ম্যাপে লোকেশন দেখুন</span>
                 </a>
               </div>
             </div>
