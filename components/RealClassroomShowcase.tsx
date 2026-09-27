@@ -1,94 +1,204 @@
-import Reveal from "./Reveal";
-import { getClassroomPhotos } from "@/lib/academyData";
+"use client";
 
-// ⚠️ গুরুত্বপূর্ণ: এগুলো স্টক ছবি (Unsplash) — শুধু ডাটাবেজ খালি থাকা অবস্থায় দেখানো হয়।
-// লঞ্চের আগে অবশ্যই আসল ক্লাসরুমের ছবি classroom_photos টেবিলে আপলোড করে দিতে হবে,
-// কারণ পেজে লেখা আছে এগুলো "বাস্তব মুহূর্ত" — স্টক ছবি থাকা অবস্থায় এই দাবিটা সঠিক নয়।
-const FALLBACK_MOMENTS = [
+import { useEffect, useState, useMemo } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import Reveal from "./Reveal";
+import { createClient } from "@/lib/supabase/client";
+
+// ডাটাবেজ ফাঁকা থাকলে ডেমো ফলব্যাক ছবি
+const FALLBACK_PHOTOS = [
   {
     id: "m1",
-    caption: "হোয়াইটবোর্ডে লজিক গেইট ও ইংলিশ ড্রাফটিং বোঝাচ্ছেন স্যার",
-    imageUrl: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: "m2",
-    caption: "সাপ্তাহিক বোর্ড স্ট্যান্ডার্ড মডেল টেস্ট দিচ্ছে শিক্ষার্থীরা",
     imageUrl: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "m3",
-    caption: "দুর্বল শিক্ষার্থীদের আলাদা ডেকে ডাউট সলভ করছেন স্যার",
     imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "m4",
-    caption: "ভালো ফলাফলের জন্য পুরস্কার বিতরণী মুহূর্ত",
-    imageUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: "m5",
-    caption: "ক্লাস শুরুর আগে উপস্থিতি ও সুশৃঙ্খল পরিবেশ",
     imageUrl: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    id: "m6",
+    imageUrl: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80",
   },
 ];
 
-export default async function RealClassroomShowcase() {
-  const dbPhotos = await getClassroomPhotos();
-  const photos = dbPhotos.length > 0 ? dbPhotos : FALLBACK_MOMENTS;
+export default function RealClassroomShowcase() {
+  const [photos, setPhotos] = useState<{ id: string; imageUrl: string }[]>(FALLBACK_PHOTOS);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // ডাটাবেজ থেকে ক্লাসরুম ছবি ফেচ করা
+  useEffect(() => {
+    async function loadPhotos() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("classroom_photos")
+          .select("id, image_url")
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          setPhotos(data.map((p) => ({ id: p.id, imageUrl: p.image_url })));
+        }
+      } catch {
+        // fallback
+      }
+    }
+    loadPhotos();
+  }, []);
+
+  // প্রতি ৩টি ছবি নিয়ে একটি করে স্লাইড সেট তৈরি (১টি ১৬:৯ টপ + ২টি বটম স্প্লিট)
+  const slides = useMemo(() => {
+    const chunks: { top: string; bottom1: string; bottom2: string }[] = [];
+    for (let i = 0; i < photos.length; i += 3) {
+      const top = photos[i]?.imageUrl || FALLBACK_PHOTOS[0].imageUrl;
+      const bottom1 = photos[i + 1]?.imageUrl || photos[0]?.imageUrl || FALLBACK_PHOTOS[1].imageUrl;
+      const bottom2 = photos[i + 2]?.imageUrl || photos[1]?.imageUrl || FALLBACK_PHOTOS[2].imageUrl;
+      chunks.push({ top, bottom1, bottom2 });
+    }
+    return chunks.length > 0 ? chunks : [{
+      top: FALLBACK_PHOTOS[0].imageUrl,
+      bottom1: FALLBACK_PHOTOS[1].imageUrl,
+      bottom2: FALLBACK_PHOTOS[2].imageUrl,
+    }];
+  }, [photos]);
+
+  const totalSlides = slides.length;
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const currentSlide = slides[currentIndex];
 
   return (
-    <section id="campus-life" className="px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="mb-10 text-center">
-          <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
-            রিয়েল ক্লাসরুম
-          </span>
-          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
-            আমাদের ক্লাসরুম ও একাডেমি লাইফ
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-            কোনো বিজ্ঞাপন নয় — এগুলো আমাদের প্রতিদিনের ক্লাসরুম, পড়াশোনার পরিবেশ এবং
-            শিক্ষার্থীদের যত্নের বাস্তব মুহূর্ত।
-          </p>
+    <section id="campus-life" className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-white">
+      <div className="mx-auto max-w-5xl">
+        {/* সেকশন হেডার ও ডেস্কটপ স্লাইডার কন্ট্রোল */}
+        <Reveal className="mb-6 sm:mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
+                রিয়েল ক্লাসরুম
+              </span>
+              <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px] leading-tight">
+                আমাদের ক্লাসরুম ও একাডেমি লাইফ
+              </h2>
+              <p className="mt-2 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
+                আমাদের প্রতিদিনের ক্লাসরুম, পড়াশোনার পরিবেশ এবং শিক্ষার্থীদের যত্নের বাস্তব মুহূর্ত।
+              </p>
+            </div>
+
+            {/* ডেস্কটপ স্লাইডার নেভিগেশন অ্যারো */}
+            {totalSlides > 1 && (
+              <div className="hidden sm:flex items-center gap-2 self-end">
+                <button
+                  onClick={prevSlide}
+                  aria-label="পূর্ববর্তী ছবি"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sky-200 bg-sky-50 text-sky-900 transition-all hover:bg-sky-600 hover:text-white active:scale-95 shadow-xs"
+                >
+                  ←
+                </button>
+                <button
+                  onClick={nextSlide}
+                  aria-label="পরবর্তী ছবি"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sky-200 bg-sky-50 text-sky-900 transition-all hover:bg-sky-600 hover:text-white active:scale-95 shadow-xs"
+                >
+                  →
+                </button>
+              </div>
+            )}
+          </div>
         </Reveal>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:auto-rows-[170px]">
-          {photos.map((item, i) => {
-            const isBig = i === 0;
-            return (
-              <Reveal
-                key={item.id || i}
-                delay={i * 70}
-                className={isBig ? "sm:col-span-2 sm:row-span-2" : ""}
+        {/* 🎯 ১টি ১৬:৯ টপ ছবি + ২টি বটম স্প্লিট ছবি (কোনো ক্যাপশন ছাড়া সম্পূর্ণ ক্লিন) */}
+        <Reveal delay={80}>
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -40) nextSlide();
+                  else if (info.offset.x > 40) prevSlide();
+                }}
+                className="space-y-3 sm:space-y-4 touch-pan-y"
               >
-                <div
-                  className="group relative flex h-full min-h-[160px] flex-col justify-end overflow-hidden rounded-2xl border border-sky-100 bg-sky-950 shadow-sm transition-all hover:border-sky-300"
-                >
-                  {/* ছবি */}
-                  {item.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.imageUrl}
-                      alt={item.caption}
-                      className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-sky-100 text-sky-400">
-                      📷
-                    </div>
-                  )}
+                {/* ১. টপ ১৬:৯ সাইজের বড় হিরো ছবি */}
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-sky-100 bg-slate-100 shadow-xs">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={currentSlide.top}
+                    alt="Classroom Main View"
+                    className="h-full w-full object-cover select-none"
+                    draggable={false}
+                  />
+                </div>
 
-                  {/* ক্যাপশন ওভারলে */}
-                  <div className="relative z-10 bg-gradient-to-t from-sky-950/90 via-sky-950/40 to-transparent p-3.5 sm:p-4">
-                    <p className="text-[11.5px] font-bold leading-snug text-white sm:text-xs">
-                      {item.caption}
-                    </p>
+                {/* ২. নিচে সমান দুই ভাগে বিভক্ত ২টি ছবি */}
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 bg-slate-100 shadow-xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={currentSlide.bottom1}
+                      alt="Classroom Sub View 1"
+                      className="h-full w-full object-cover select-none"
+                      draggable={false}
+                    />
+                  </div>
+
+                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 bg-slate-100 shadow-xs">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={currentSlide.bottom2}
+                      alt="Classroom Sub View 2"
+                      className="h-full w-full object-cover select-none"
+                      draggable={false}
+                    />
                   </div>
                 </div>
-              </Reveal>
-            );
-          })}
-        </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* ডট পেজিনেশন ইন্ডিকেটর */}
+            {totalSlides > 1 && (
+              <div className="mt-5 flex items-center justify-center gap-1.5">
+                {slides.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentIndex(idx)}
+                    aria-label={`Slide ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all ${
+                      currentIndex === idx
+                        ? "w-6 bg-sky-600"
+                        : "w-2 bg-sky-200 hover:bg-sky-300"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </Reveal>
       </div>
     </section>
   );
