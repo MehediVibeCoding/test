@@ -21,18 +21,18 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
   }
 
   return (
-    <section id="batches" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-gradient-to-b from-white via-sky-50/40 to-white">
+    <section id="batches" className="relative px-6 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-gradient-to-b from-white via-sky-50/40 to-white">
       <div className="mx-auto max-w-7xl">
-        {/* সেকশন হেডার */}
-        <Reveal className="mb-14 text-center sm:mb-18">
+        {/* সেকশন হেডার ও পারফেক্ট ২-লাইনের সাবটাইটেল */}
+        <Reveal className="mb-10 text-center sm:mb-14">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             অফলাইন ও প্রাইভেট ব্যাচ
           </span>
-          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
             চলমান ব্যাচসমূহ (HSC 27 ও HSC 28)
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
-            তোমার সুবিধামতো ব্যাচ নির্বাচন করে আগে থেকেই আসন নিশ্চিত করো। প্রতিটি ব্যাচে নির্দিষ্ট সংখ্যক শিক্ষার্থী নিয়ে অত্যন্ত যত্নসহকারে পড়ানো হয়।
+          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
+            তোমার সুবিধামতো ব্যাচ নির্বাচন করে আসন নিশ্চিত করো। প্রতিটি ব্যাচে নির্দিষ্ট সংখ্যক শিক্ষার্থী নিয়ে যত্নসহকারে পড়ানো হয়।
           </p>
         </Reveal>
 
@@ -40,7 +40,7 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {batches.map((batch, i) => (
             <Reveal key={batch.id} delay={i * 60}>
-              <div className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
+              <div className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-6 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
                 <div>
                   {/* টপ ব্যাজ ও কোহোর্ট ট্যাগ */}
                   <div className="flex items-center justify-between">
@@ -76,7 +76,7 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
                   </ul>
                 </div>
 
-                {/* ক্লিন পিল বাটন (কোনো অ্যারো চিহ্ন ছাড়া) */}
+                {/* ক্লিন পিল বাটন */}
                 <div className="mt-7 border-t border-sky-100/80 pt-4">
                   <button
                     onClick={() => handleSelectBatch(batch.name)}
