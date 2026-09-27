@@ -1,36 +1,156 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { motion } from "motion/react";
 import Reveal from "./Reveal";
 import { submitAdmission } from "@/app/actions/admission";
 
-const GROUP_OPTIONS = ["বিজ্ঞান বিভাগ", "মানবিক বিভাগ", "ব্যবসায় শিক্ষা বিভাগ"];
+const GROUP_OPTIONS = ["বিজ্ঞান বিভাগ", "মানবিক বিভাগ", "ব্যবসায় শিক্ষা বিভাগ"];
+const SUBMISSION_LOCK_KEY = "ala_admission_locked_session";
+const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 
 type AdmissionFormProps = {
   batches: { id: string; name: string }[];
 };
 
+type FormDataState = {
+  name: string;
+  college: string;
+  roll: string;
+  group: string;
+  batch: string;
+  phone: string;
+  guardianPhone: string;
+};
+
+const INITIAL_FORM: FormDataState = {
+  name: "",
+  college: "",
+  roll: "",
+  group: "", // ডিফল্টভাবে ফাঁকা (সিলেক্ট করুন)
+  batch: "", // ডিফল্টভাবে ফাঁকা (সিলেক্ট করুন)
+  phone: "",
+  guardianPhone: "",
+};
+
+// বাংলাদেশি মোবাইল নম্বর ভ্যালিডেটর (013 - 019 এবং ঠিক 11 ডিজিট)
+function isValidBdPhone(phone: string): boolean {
+  return /^01[3-9]\d{8}$/.test(phone.trim());
+}
+
+// নাম ও টেক্সট ফিল্টার (শুধুমাত্র বাংলা ও ইংরেজি বর্ণমালা, স্পেস ও ডট গ্রহণ করবে - কোনো সংখ্যা বা বিশেষ চিহ্ন ঢুকতে দেবে না)
+function filterAlphaOnly(value: string): string {
+  return value.replace(/[^a-zA-Z\u0980-\u09FF\s.]/g, "");
+}
+
+// ফোন নম্বর ফিল্টার (শুধুমাত্র ইংরেজি সংখ্যা গ্রহণ করবে, সর্বোচ্চ ১১ ডিজিট)
+function filterPhoneOnly(value: string): string {
+  // বাংলা ডিজিট থাকলে তা স্বয়ংক্রিয়ভাবে ইংরেজি সংখ্যায় রূপান্তর
+  const englishDigits = value.replace(/[০-৯]/g, (d) =>
+    String("০১২৩৪৫৬৭৮৯".indexOf(d))
+  );
+  return englishDigits.replace(/\D/g, "").slice(0, 11);
+}
+
+// কলেজ রোলের ফিল্টার (সংখ্যা, বর্ণ ও হাইফেন গ্রহণ করবে)
+function filterRollOnly(value: string): string {
+  return value.replace(/[^a-zA-Z0-9\u0980-\u09FF-]/g, "").slice(0, 20);
+}
+
 export default function AdmissionForm({ batches }: AdmissionFormProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState<FormDataState>(INITIAL_FORM);
+  const [submittedData, setSubmittedData] = useState<FormDataState | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    college: "",
-    roll: "",
-    group: "বিজ্ঞান বিভাগ",
-    batch: batches[0]?.name ?? "",
-    phone: "",
-    guardianPhone: "",
-  });
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
 
+  // ২ ঘণ্টার ডুপ্লিকেট সাবমিশন লক চেক (localStorage)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SUBMISSION_LOCK_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const elapsed = Date.now() - parsed.timestamp;
+        if (elapsed < TWO_HOURS_IN_MS && parsed.data) {
+          setSubmittedData(parsed.data);
+        } else {
+          localStorage.removeItem(SUBMISSION_LOCK_KEY);
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }, []);
+
+  // ইনপুট হ্যান্ডলারসমূহ (কঠোর রিয়েল-টাইম ক্যারেক্টার ফিল্টারিং)
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = filterAlphaOnly(e.target.value).slice(0, 60);
+    setFormData((prev) => ({ ...prev, name: val }));
+    if (fieldErrors.name) setFieldErrors((prev) => ({ ...prev, name: false }));
+  };
+
+  const handleCollegeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = filterAlphaOnly(e.target.value).slice(0, 80);
+    setFormData((prev) => ({ ...prev, college: val }));
+    if (fieldErrors.college) setFieldErrors((prev) => ({ ...prev, college: false }));
+  };
+
+  const handleRollChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = filterRollOnly(e.target.value);
+    setFormData((prev) => ({ ...prev, roll: val }));
+    if (fieldErrors.roll) setFieldErrors((prev) => ({ ...prev, roll: false }));
+  };
+
+  const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = filterPhoneOnly(e.target.value);
+    setFormData((prev) => ({ ...prev, phone: val }));
+    if (fieldErrors.phone) setFieldErrors((prev) => ({ ...prev, phone: false }));
+  };
+
+  const handleGuardianPhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = filterPhoneOnly(e.target.value);
+    setFormData((prev) => ({ ...prev, guardianPhone: val }));
+    if (fieldErrors.guardianPhone) setFieldErrors((prev) => ({ ...prev, guardianPhone: false }));
+  };
+
+  // ফর্ম সাবমিশন
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrorMessage(null);
+
+    const errors: { [key: string]: boolean } = {};
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) errors.name = true;
+    if (!formData.college.trim()) errors.college = true;
+    if (!formData.roll.trim()) errors.roll = true;
+    if (!formData.group) errors.group = true;
+    if (!formData.batch) errors.batch = true;
+    if (!isValidBdPhone(formData.phone)) errors.phone = true;
+    if (!isValidBdPhone(formData.guardianPhone)) errors.guardianPhone = true;
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      if (errors.phone || errors.guardianPhone) {
+        setErrorMessage("সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01845435539 - ঠিক ১১ ডিজিট)।");
+      } else if (errors.group || errors.batch) {
+        setErrorMessage("অনুগ্রহ করে বিভাগ ও কাঙ্ক্ষিত ব্যাচ নির্বাচন করুন।");
+      } else {
+        setErrorMessage("অনুগ্রহ করে লাল চিহ্নিত সকল আবশ্যক তথ্য সঠিকভাবে পূরণ করুন।");
+      }
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const result = await submitAdmission(formData);
+    const result = await submitAdmission({
+      name: formData.name.trim(),
+      college: formData.college.trim(),
+      roll: formData.roll.trim(),
+      group: formData.group,
+      batch: formData.batch,
+      phone: formData.phone.trim(),
+      guardianPhone: formData.guardianPhone.trim(),
+    });
 
     setIsSubmitting(false);
 
@@ -39,212 +159,296 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
       return;
     }
 
-    setSubmitted(true);
-  }
+    // ২ ঘণ্টার জন্য লোকাল স্টোরেজে লক সেট করা
+    const sessionData = {
+      timestamp: Date.now(),
+      data: formData,
+    };
+    try {
+      localStorage.setItem(SUBMISSION_LOCK_KEY, JSON.stringify(sessionData));
+    } catch {
+      // fallback
+    }
 
-  function handleSendWhatsApp() {
-    const text = encodeURIComponent(
-      `আসসালামু আলাইকুম স্যার,\nআমি আপনার একাডেমিতে ভর্তি হতে আগ্রহী।\n\n` +
-        `👤 নাম: ${formData.name}\n` +
-        `🏫 কলেজ: ${formData.college}\n` +
-        `🔢 রোল: ${formData.roll}\n` +
-        `📂 বিভাগ: ${formData.group}\n` +
-        `📚 কাঙ্ক্ষিত ব্যাচ: ${formData.batch}\n` +
-        `📱 শিক্ষার্থীর ফোন: ${formData.phone}\n` +
-        `👨‍👩‍👧 অভিভাবকের নম্বর: ${formData.guardianPhone || "প্রযোজ্য নয়"}`
-    );
-    window.open(`https://wa.me/8801845435539?text=${text}`, "_blank");
+    setSubmittedData(formData);
   }
 
   return (
-    <section id="admission" className="mx-auto max-w-3xl px-4 py-16 sm:py-20">
-      <Reveal className="mb-10 text-center">
-        <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
-          ভর্তি আবেদন
-        </span>
-        <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
-          প্রাইভেট ব্যাচে আসন নিশ্চিত করো
-        </h2>
-        <p className="mx-auto mt-3 max-w-lg text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-          তোমার প্রয়োজনীয় তথ্য দিয়ে নিচের ফরমটি পূরণ করো। একাডেমি থেকে দ্রুত তোমার সাথে
-          যোগাযোগ করে ব্যাচ ও ক্লাসের সময় কনফার্ম করা হবে।
-        </p>
-      </Reveal>
+    <section id="admission" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-white">
+      <div className="mx-auto max-w-3xl">
+        {/* সেকশন হেডার */}
+        <Reveal className="mb-12 text-center sm:mb-16">
+          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
+            ভর্তি আবেদন
+          </span>
+          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+            প্রাইভেট ব্যাচে আসন নিশ্চিত করো
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+            তোমার সঠিক তথ্য দিয়ে নিচের ফরমটি পূরণ করো। একাডেমি থেকে দ্রুত তোমার সাথে যোগাযোগ করে ব্যাচ ও ক্লাসের সময় কনফার্ম করা হবে।
+          </p>
+        </Reveal>
 
-      <Reveal delay={80}>
-        {submitted ? (
-          <div className="rounded-2xl border border-sky-200/90 bg-white p-8 text-center shadow-sm sm:p-10">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-xl font-bold text-emerald-600">
-              ✓
-            </div>
-            <h3 className="mt-4 text-xl font-bold text-sky-950">
-              আবেদন সফলভাবে গৃহীত হয়েছে!
-            </h3>
-            <p className="mt-2 text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-              ধন্যবাদ, <span className="font-bold text-sky-900">{formData.name}</span>। তোমার আবেদনের
-              তথ্য সংরক্ষণ করা হয়েছে। দ্রুত আসন নিশ্চিত করতে চাইলে সরাসরি হোয়াটসঅ্যাপেও জানাতে পারো।
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <button
-                onClick={handleSendWhatsApp}
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white transition-colors hover:bg-emerald-700"
-              >
-                <span>WhatsApp-এ সরাসরি পাঠাও</span>
-                <span>→</span>
-              </button>
-              <button
-                onClick={() => setSubmitted(false)}
-                className="rounded-xl border border-sky-200 bg-sky-50 px-4 py-2.5 text-xs sm:text-sm font-semibold text-sky-800 transition-colors hover:bg-sky-100"
-              >
-                নতুন আবেদন করুন
-              </button>
-            </div>
-          </div>
-        ) : (
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 rounded-2xl border border-sky-100 bg-white p-6 shadow-sm sm:p-8"
-          >
-            {errorMessage && (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs sm:text-sm font-semibold text-red-700">
-                {errorMessage}
+        <Reveal delay={80}>
+          {submittedData ? (
+            /* ই-কমার্স ইনভয়েস স্টাইল কনফার্মেশন সামারি কার্ড */
+            <div className="overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl shadow-emerald-950/5">
+              {/* টপ সাকসেস হেডার */}
+              <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-center text-white sm:p-8">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-2xl backdrop-blur-sm">
+                  ✓
+                </div>
+                <h3 className="font-body text-xl font-black sm:text-2xl">
+                  আবেদন সফলভাবে গৃহীত হয়েছে
+                </h3>
+                <p className="mt-1 font-body text-xs sm:text-sm text-emerald-100">
+                  ভর্তি আবেদনের তথ্য সিস্টেমে সংরক্ষিত আছে
+                </p>
               </div>
-            )}
 
-            {/* শিক্ষার্থীর নাম */}
-            <div>
-              <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                শিক্ষার্থীর পূর্ণ নাম *
-              </label>
-              <input
-                name="name"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                placeholder="যেমন: মোঃ সাকিব হোসেন"
-              />
+              {/* জমা দেওয়া তথ্যের সামারি ইনভয়েস টেবিল */}
+              <div className="p-6 sm:p-8">
+                <div className="mb-6 rounded-2xl bg-emerald-50/70 border border-emerald-100 p-4 text-center font-body text-xs sm:text-sm leading-relaxed text-emerald-950">
+                  ধন্যবাদ, <span className="font-black text-emerald-900">{submittedData.name}</span>। তোমার আবেদনের তথ্য সফলভাবে সংরক্ষণ করা হয়েছে। একাডেমি থেকে দ্রুত তোমার সাথে কল অথবা হোয়াটসঅ্যাপে যোগাযোগ করে ব্যাচ কনফার্ম করা হবে।
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/60 font-body text-xs sm:text-sm">
+                  <div className="divide-y divide-slate-100">
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">শিক্ষার্থীর নাম</span>
+                      <span className="font-bold text-sky-950">{submittedData.name}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">কলেজের নাম</span>
+                      <span className="font-bold text-sky-950">{submittedData.college}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">কলেজ রোল</span>
+                      <span className="font-bold text-sky-950">{submittedData.roll}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">বিভাগ / গ্রুপ</span>
+                      <span className="font-bold text-sky-950">{submittedData.group}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">নির্বাচিত ব্যাচ</span>
+                      <span className="font-bold text-sky-700">{submittedData.batch}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">শিক্ষার্থীর মোবাইল</span>
+                      <span className="font-bold text-sky-950">{submittedData.phone}</span>
+                    </div>
+                    <div className="flex justify-between p-3.5 sm:px-5">
+                      <span className="font-semibold text-slate-500">অভিভাবকের মোবাইল</span>
+                      <span className="font-bold text-sky-950">{submittedData.guardianPhone}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          ) : (
+            /* আবেদন ফর্ম */
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-5 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-9"
+            >
+              {errorMessage && (
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-4 font-body text-xs sm:text-sm font-semibold text-red-700">
+                  {errorMessage}
+                </div>
+              )}
 
-            {/* কলেজ নাম ও কলেজ রোল */}
-            <div className="grid gap-4 sm:grid-cols-2">
+              {/* শিক্ষার্থীর নাম */}
               <div>
-                <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                  কলেজের নাম *
+                <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                  শিক্ষার্থীর পূর্ণ নাম *
                 </label>
                 <input
-                  name="college"
+                  name="name"
                   required
-                  value={formData.college}
-                  onChange={(e) => setFormData({ ...formData, college: e.target.value })}
-                  className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                  placeholder="যেমন: চৌদ্দগ্রাম সরকারি কলেজ"
+                  value={formData.name}
+                  onChange={handleNameChange}
+                  className={`w-full rounded-2xl border px-4 py-3 font-body text-xs sm:text-sm outline-none transition-colors ${
+                    fieldErrors.name
+                      ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                      : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                  }`}
+                  placeholder="শিক্ষার্থীর পূর্ণ নাম লিখুন"
                 />
               </div>
 
-              <div>
-                <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                  কলেজ রোল নম্বর *
-                </label>
-                <input
-                  name="roll"
-                  required
-                  value={formData.roll}
-                  onChange={(e) => setFormData({ ...formData, roll: e.target.value })}
-                  className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                  placeholder="যেমন: ১০২৫"
-                />
-              </div>
-            </div>
+              {/* কলেজ ও কলেজ রোল */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                    কলেজের নাম *
+                  </label>
+                  <input
+                    name="college"
+                    required
+                    value={formData.college}
+                    onChange={handleCollegeChange}
+                    className={`w-full rounded-2xl border px-4 py-3 font-body text-xs sm:text-sm outline-none transition-colors ${
+                      fieldErrors.college
+                        ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                        : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                    }`}
+                    placeholder="যেমন: চৌদ্দগ্রাম সরকারি কলেজ"
+                  />
+                </div>
 
-            {/* বিভাগ এবং ব্যাচ নির্বাচন */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                  বিভাগ / গ্রুপ *
-                </label>
-                <select
-                  name="group"
-                  required
-                  value={formData.group}
-                  onChange={(e) => setFormData({ ...formData, group: e.target.value })}
-                  className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
+                <div>
+                  <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                    কলেজ রোল নম্বর *
+                  </label>
+                  <input
+                    name="roll"
+                    required
+                    value={formData.roll}
+                    onChange={handleRollChange}
+                    className={`w-full rounded-2xl border px-4 py-3 font-body text-xs sm:text-sm outline-none transition-colors ${
+                      fieldErrors.roll
+                        ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                        : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                    }`}
+                    placeholder="যেমন: ১০২৫"
+                  />
+                </div>
+              </div>
+
+              {/* বিভাগ ও কাঙ্ক্ষিত ব্যাচ (ডিফল্টভাবে "সিলেক্ট করুন") */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                    বিভাগ / গ্রুপ *
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="group"
+                      required
+                      value={formData.group}
+                      onChange={(e) => {
+                        setFormData({ ...formData, group: e.target.value });
+                        if (fieldErrors.group) setFieldErrors((p) => ({ ...p, group: false }));
+                      }}
+                      className={`w-full appearance-none rounded-2xl border px-4 py-3 pr-10 font-body text-xs sm:text-sm outline-none transition-colors cursor-pointer ${
+                        fieldErrors.group
+                          ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                          : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                      }`}
+                    >
+                      <option value="" disabled>
+                        বিভাগ সিলেক্ট করুন
+                      </option>
+                      {GROUP_OPTIONS.map((grp) => (
+                        <option key={grp} value={grp}>
+                          {grp}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-sky-700">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                    কাঙ্ক্ষিত ব্যাচ *
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="batch"
+                      required
+                      value={formData.batch}
+                      onChange={(e) => {
+                        setFormData({ ...formData, batch: e.target.value });
+                        if (fieldErrors.batch) setFieldErrors((p) => ({ ...p, batch: false }));
+                      }}
+                      className={`w-full appearance-none rounded-2xl border px-4 py-3 pr-10 font-body text-xs sm:text-sm outline-none transition-colors cursor-pointer ${
+                        fieldErrors.batch
+                          ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                          : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                      }`}
+                    >
+                      <option value="" disabled>
+                        ব্যাচ সিলেক্ট করুন
+                      </option>
+                      {batches.map((b) => (
+                        <option key={b.id} value={b.name}>
+                          {b.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-sky-700">
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* শিক্ষার্থীর ফোন ও অভিভাবকের ফোন */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                    শিক্ষার্থীর ফোন / WhatsApp নম্বর *
+                  </label>
+                  <input
+                    name="phone"
+                    type="tel"
+                    required
+                    maxLength={11}
+                    value={formData.phone}
+                    onChange={handlePhoneChange}
+                    className={`w-full rounded-2xl border px-4 py-3 font-body text-xs sm:text-sm outline-none transition-colors ${
+                      fieldErrors.phone
+                        ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                        : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                    }`}
+                    placeholder="01XXXXXXXXX (১১ ডিজিট)"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
+                    অভিভাবকের মোবাইল নম্বর *
+                  </label>
+                  <input
+                    name="guardianPhone"
+                    type="tel"
+                    required
+                    maxLength={11}
+                    value={formData.guardianPhone}
+                    onChange={handleGuardianPhoneChange}
+                    className={`w-full rounded-2xl border px-4 py-3 font-body text-xs sm:text-sm outline-none transition-colors ${
+                      fieldErrors.guardianPhone
+                        ? "border-red-400 bg-red-50/30 focus:border-red-600"
+                        : "border-sky-200/80 bg-sky-50/20 focus:border-sky-600 focus:bg-white"
+                    }`}
+                    placeholder="01XXXXXXXXX (১১ ডিজিট)"
+                  />
+                </div>
+              </div>
+
+              {/* সাবমিট বাটন */}
+              <div className="pt-3">
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full rounded-full bg-sky-600 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 disabled:opacity-60"
                 >
-                  {GROUP_OPTIONS.map((grp) => (
-                    <option key={grp} value={grp}>
-                      {grp}
-                    </option>
-                  ))}
-                </select>
+                  {isSubmitting ? "জমা হচ্ছে..." : "ভর্তি আবেদন জমা দিন"}
+                </motion.button>
               </div>
-
-              <div>
-                <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                  কাঙ্ক্ষিত ব্যাচ *
-                </label>
-                <select
-                  name="batch"
-                  required
-                  value={formData.batch}
-                  onChange={(e) => setFormData({ ...formData, batch: e.target.value })}
-                  className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                >
-                  {batches.map((b) => (
-                    <option key={b.id} value={b.name}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* শিক্ষার্থীর ফোন ও অভিভাবকের ফোন */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                  শিক্ষার্থীর ফোন / WhatsApp নম্বর *
-                </label>
-                <input
-                  name="phone"
-                  type="tel"
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                  placeholder="01XXXXXXXXX"
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-xs sm:text-sm font-bold text-sky-950">
-                  অভিভাবকের মোবাইল নম্বর *
-                </label>
-                <input
-                  name="guardianPhone"
-                  type="tel"
-                  required
-                  value={formData.guardianPhone}
-                  onChange={(e) => setFormData({ ...formData, guardianPhone: e.target.value })}
-                  className="w-full rounded-xl border border-sky-200/80 bg-sky-50/20 px-3.5 py-2.5 text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                  placeholder="01XXXXXXXXX"
-                />
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                className="crystal-btn-solid w-full rounded-xl py-3 text-xs sm:text-sm font-bold disabled:opacity-60"
-              >
-                {isSubmitting ? "জমা হচ্ছে..." : "ভর্তি আবেদন জমা দিন ✓"}
-              </motion.button>
-            </div>
-          </form>
-        )}
-      </Reveal>
+            </form>
+          )}
+        </Reveal>
+      </div>
     </section>
   );
 }
