@@ -102,7 +102,7 @@ export default async function BlogPostPage({
           <div className="text-center sm:text-left">
             <p className="font-body text-base font-black text-sky-950">মোঃ আহসান উল্লাহ</p>
             <p className="font-body text-xs font-semibold text-sky-700">
-              প্রভাষক (HSC English &amp; ICT), চৌদ্দগ্রাম সরকারি কলেজ · ৪০তম বিসিএস (শিক্ষা ক্যাডার)
+              প্রভাষক, চৌদ্দগ্রাম সরকারি কলেজ · ৪০তম বিসিএস (সাধারণ শিক্ষা ক্যাডার)
             </p>
             <p className="mt-1 text-xs text-muted">
               প্রতিষ্ঠাতা ও প্রধান মেন্টর — Ahsan&apos;s Learning Academy

@@ -66,7 +66,7 @@ export default function Navbar() {
           </div>
           <div className="flex flex-col">
             <span className="text-sm font-bold leading-tight text-sky-950 sm:text-base">
-              Ahsan&apos;s Academy
+              Ahsan&apos;s Learning Academy
             </span>
             <span className="text-[10px] font-medium text-sky-700 leading-none">
               HSC English &amp; ICT
