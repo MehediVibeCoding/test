@@ -18,10 +18,10 @@ export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const [lang, setLang] = useState<"bn" | "en">("bn");
 
-  // স্ক্রল ডিটেকশন
+  // স্ক্রল ডিটেকশন — স্ক্রল করলে হালকা বটম-বর্ডার/ব্লার যোগ হবে, নাহলে বার সম্পূর্ণ ফ্ল্যাট/স্বচ্ছ
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 15);
+      setScrolled(window.scrollY > 8);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -38,11 +38,7 @@ export default function Navbar() {
   // ডার্ক মোড টগল হ্যান্ডলার
   const toggleTheme = () => {
     setIsDark(!isDark);
-    if (!isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    document.documentElement.classList.toggle("dark", !isDark);
   };
 
   // ভাষা পরিবর্তন হ্যান্ডলার (ডেমো টগল)
@@ -51,31 +47,26 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full px-3 pt-2 sm:px-6 sm:pt-3">
-      <nav
-        className={`mx-auto flex max-w-6xl items-center justify-between rounded-2xl border px-3.5 py-2.5 transition-all duration-300 sm:px-5 sm:py-3 ${
-          scrolled
-            ? "border-sky-200/80 bg-white/90 shadow-sm backdrop-blur-md"
-            : "border-sky-100/60 bg-white/70 shadow-sm backdrop-blur-sm"
-        }`}
-      >
-        {/* ব্র্যান্ড লোগো ও নাম — ক্লিক করলে স্মুথ স্ক্রলে উপরে যাবে, URL-এ # যোগ হবে না */}
-        <ScrollLink targetId="top" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-sky-700 to-sky-500 font-bold text-white shadow-sm">
-            AU
-          </div>
-          <div className="flex flex-col">
-            <span className="text-sm font-bold leading-tight text-sky-950 sm:text-base">
-              Ahsan&apos;s Learning Academy
-            </span>
-            <span className="text-[10px] font-medium text-sky-700 leading-none">
-              HSC English &amp; ICT
-            </span>
-          </div>
+    <header
+      className={`sticky top-0 z-50 w-full transition-colors duration-300 ${
+        scrolled
+          ? "border-b border-sky-100 bg-white/95 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
+        {/* বাম পাশে: শুধু একাডেমির নাম ও তার নিচে স্লোগান — কোনো লোগো নেই */}
+        <ScrollLink targetId="top" className="flex flex-col leading-tight">
+          <span className="text-sm font-bold text-sky-950 sm:text-base">
+            Ahsan&apos;s Learning Academy
+          </span>
+          <span className="text-[10px] font-semibold tracking-wide text-sky-700 sm:text-[11px]">
+            Better Learning, Brighter Future
+          </span>
         </ScrollLink>
 
-        {/* ডেক্সটপ মেনু লিংক — স্মুথ স্ক্রল, URL-এ # যোগ হবে না */}
-        <ul className="hidden items-center gap-5 text-sm font-medium text-ink-800 lg:flex">
+        {/* মাঝখানে: ডেক্সটপ মেনু লিংক */}
+        <ul className="hidden items-center gap-6 text-sm font-medium text-ink-800 lg:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.id}>
               <ScrollLink
@@ -88,16 +79,17 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* ডানদিকের কন্ট্রোল: থিম, ভাষা ও ভর্তি বাটন */}
-        <div className="flex items-center gap-2">
-          {/* ভাষা পরিবর্তন বাটন */}
+        {/* ডানদিকে: ভাষা/থিম আইকন (ব্যাকগ্রাউন্ড ছাড়া) + একটিমাত্র সলিড ভর্তি বাটন */}
+        <div className="flex items-center gap-3.5 sm:gap-4">
+          {/* ভাষা পরিবর্তন — শুধু আইকন, কোনো বক্স/ব্যাকগ্রাউন্ড নেই */}
           <button
             onClick={toggleLanguage}
+            aria-label="ভাষা পরিবর্তন করুন"
             title="ভাষা পরিবর্তন / Switch Language"
-            className="flex h-8 items-center gap-1 rounded-lg border border-sky-100 bg-sky-50/80 px-2 text-xs font-semibold text-sky-900 transition-colors hover:bg-sky-100"
+            className="flex items-center gap-1 text-sky-700 transition-colors hover:text-sky-900"
           >
             <svg
-              className="h-3.5 w-3.5 text-sky-700"
+              className="h-[18px] w-[18px]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -105,99 +97,104 @@ export default function Navbar() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={1.75}
                 d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
               />
             </svg>
-            <span>{lang === "bn" ? "বাং" : "EN"}</span>
+            <span className="hidden text-xs font-semibold sm:inline">
+              {lang === "bn" ? "বাং" : "EN"}
+            </span>
           </button>
 
-          {/* লাইট / ডার্ক মোড টগল বাটন */}
+          {/* লাইট / ডার্ক মোড টগল — শুধু আইকন, কোনো বক্স/ব্যাকগ্রাউন্ড নেই */}
           <button
             onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-sky-100 bg-sky-50/80 text-sky-800 transition-colors hover:bg-sky-100"
+            aria-label="থিম পরিবর্তন করুন"
+            className="text-sky-700 transition-colors hover:text-sky-900"
           >
             {isDark ? (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={1.75}
                   d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                 />
               </svg>
             ) : (
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={1.75}
                   d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
                 />
               </svg>
             )}
           </button>
 
-          {/* ভর্তি ফরম বাটন (ডেক্সটপ) — ক্রিস্টাল লিকুইড গ্লাস + স্প্রিং ট্যাপ */}
+          {/* ভর্তি ফরম বাটন (ডেক্সটপ/ট্যাব) — একটিমাত্র সলিড কালার বাটন */}
           <ScrollLink
             targetId="admission"
-            className="crystal-btn hidden rounded-xl px-4 py-2 text-xs font-bold sm:inline-flex sm:items-center sm:justify-center"
+            className="crystal-btn-solid hidden rounded-xl px-4 py-2 text-xs font-bold sm:inline-flex sm:items-center sm:justify-center"
           >
             ভর্তি হও
           </ScrollLink>
 
-          {/* মোবাইল আধুনিক স্টাইলিশ ৩-ডট/মেনু বাটন */}
+          {/* মোবাইল হ্যামবার্গার মেনু বাটন — কোনো বক্স/বর্ডার নেই */}
           <button
             aria-label={open ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-sky-200/80 bg-white text-sky-950 shadow-sm transition-colors hover:bg-sky-50 lg:hidden"
+            className="flex h-8 w-8 items-center justify-center text-sky-950 lg:hidden"
           >
-            <div className="flex flex-col items-center justify-center gap-1">
-              <span
-                className={`block h-1 w-1 rounded-full bg-sky-950 transition-all duration-300 ${
-                  open ? "scale-125 bg-red-600" : ""
-                }`}
-              />
-              <span
-                className={`block h-1 w-1 rounded-full bg-sky-950 transition-all duration-300 ${
-                  open ? "scale-125 bg-red-600" : ""
-                }`}
-              />
-              <span
-                className={`block h-1 w-1 rounded-full bg-sky-950 transition-all duration-300 ${
-                  open ? "scale-125 bg-red-600" : ""
-                }`}
-              />
-            </div>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {open ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.75}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.75}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
           </button>
         </div>
-      </nav>
+      </div>
 
-      {/* মোবাইল ড্রয়ার মেনু */}
+      {/* মোবাইল ড্রপডাউন মেনু */}
       <div
-        className={`mt-2 overflow-hidden rounded-2xl border border-sky-100 bg-white/95 shadow-md backdrop-blur-md transition-all duration-300 lg:hidden ${
-          open ? "max-h-96 opacity-100 p-4" : "pointer-events-none max-h-0 opacity-0 p-0"
+        className={`overflow-hidden bg-white/95 backdrop-blur-md transition-all duration-300 lg:hidden ${
+          open
+            ? "max-h-96 border-b border-sky-100 opacity-100"
+            : "pointer-events-none max-h-0 opacity-0"
         }`}
       >
-        <div className="flex flex-col gap-2">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-3 sm:px-6">
           {NAV_LINKS.map((link) => (
             <ScrollLink
               key={link.id}
               targetId={link.id}
               onNavigate={() => setOpen(false)}
-              className="rounded-xl px-3 py-2 text-sm font-medium text-ink-800 transition-colors hover:bg-sky-50 hover:text-sky-700"
+              className="rounded-lg px-2 py-2.5 text-sm font-medium text-ink-800 transition-colors hover:bg-sky-50 hover:text-sky-700"
             >
               {link.label}
             </ScrollLink>
           ))}
+          {/* শুধু ছোট মোবাইলে (যেখানে টপ বারে বাটনটা দেখা যায় না) ড্রপডাউনেও বাটন দেখানো হচ্ছে */}
           <ScrollLink
             targetId="admission"
             onNavigate={() => setOpen(false)}
-            className="crystal-btn mt-2 flex items-center justify-center rounded-xl px-4 py-2.5 text-center text-sm font-bold"
+            className="crystal-btn-solid mt-1 flex items-center justify-center rounded-xl px-4 py-2.5 text-center text-sm font-bold sm:hidden"
           >
-            ভর্তি ফর্ম পূরণ করো
+            ভর্তি হও
           </ScrollLink>
         </div>
       </div>

@@ -48,7 +48,7 @@ const headlineWipeVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative -mt-[58px] overflow-hidden px-4 pt-[74px] pb-6 sm:-mt-[68px] sm:pt-[90px] md:pb-10"
+      className="relative overflow-hidden px-4 pt-10 pb-6 sm:pt-14 md:pb-10"
       style={{
         background:
           "radial-gradient(ellipse 65% 50% at 5% 30%, rgba(56, 189, 248, 0.35) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 95% 45%, rgba(14, 165, 233, 0.30) 0%, transparent 65%), linear-gradient(180deg, #e0f2fe 0%, #f0f7fe 55%, #ffffff 100%)",
@@ -64,13 +64,6 @@ export default function Hero() {
           animate="show"
           className="order-2 text-center md:order-1 md:text-left"
         >
-          <motion.p
-            variants={lineVariants}
-            className="font-display text-xs sm:text-sm font-bold tracking-wide text-sky-700"
-          >
-            Better Learning, Brighter Future
-          </motion.p>
-
           <motion.h1
             variants={headlineWipeVariants}
             className="mt-1 text-3xl font-bold leading-tight text-sky-950 sm:text-5xl lg:text-6xl"
@@ -81,7 +74,7 @@ export default function Hero() {
 
           <motion.div variants={lineVariants} className="mt-2.5 space-y-1">
             <p className="text-sm sm:text-base font-bold text-sky-900">
-              Founder &amp; CEO — Ahsan&apos;s Learning Academy
+              প্রতিষ্ঠাতা ও মেন্টর — Ahsan&apos;s Learning Academy
             </p>
             <p className="text-xs sm:text-sm font-semibold text-sky-800">
               প্রভাষক, চৌদ্দগ্রাম সরকারি কলেজ · ৪০তম বিসিএস (সাধারণ শিক্ষা ক্যাডার)
@@ -159,7 +152,7 @@ export default function Hero() {
           <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[400px]">
             <Image
               src="/images/ahsan-hero.webp"
-              alt="Md. Ahsan Ullah — Founder & CEO, Ahsan's Learning Academy"
+              alt="Md. Ahsan Ullah — প্রতিষ্ঠাতা ও মেন্টর, Ahsan's Learning Academy"
               width={900}
               height={1350}
               priority
