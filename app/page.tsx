@@ -16,13 +16,17 @@ import AdmissionForm from "@/components/AdmissionForm";
 import Footer from "@/components/Footer";
 import { getActiveBatches } from "@/lib/academyData";
 
-export const dynamic = "force-dynamic";
+// ⚡ Next.js 15 Incremental Static Regeneration (ISR):
+// প্রতি ৬০ সেকেন্ড পর পর এজ-ক্যাশ ব্যাকগ্রাউন্ডে রিভ্যালিডেট হবে, ফলে ব্যবহারকারীরা পাবেন ০ মিলিসেকেন্ডে ইনস্ট্যান্ট লোড।
+// আর অ্যাডমিন প্যানেল থেকে কোনো পরিবর্তন হলে সাথে সাথে revalidatePath("/") দিয়ে লাইভ রিফ্রেশ হবে।
+export const revalidate = 60;
 
 export default async function Home() {
+  // ডাটাবেজ থেকে সক্রিয় ব্যাচসমূহ ফেচ করা
   const batches = await getActiveBatches();
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-[#f8fafc]">
       {/* ১. শীর্ষ ন্যাভবার */}
       <Navbar />
 
