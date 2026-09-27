@@ -47,7 +47,7 @@ const headlineWipeVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative overflow-hidden pt-2 pb-12 sm:pt-4 md:pb-16"
+      className="relative overflow-hidden pt-28 pb-12 sm:pt-32 md:pt-36 md:pb-16"
       style={{
         background:
           "radial-gradient(ellipse 65% 50% at 5% 20%, rgba(56, 189, 248, 0.35) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 95% 35%, rgba(14, 165, 233, 0.25) 0%, transparent 65%), linear-gradient(180deg, #def1fe 0%, #f0f7fe 65%, #ffffff 100%)",
