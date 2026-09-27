@@ -2,7 +2,7 @@ import Link from "next/link";
 import Reveal from "./Reveal";
 import { getPublishedBlogPosts } from "@/lib/academyData";
 
-// হোমপেজের ৩টি ব্লগের জন্য ৩টি সফট প্যাস্টেল কালার থিম (বেগুনি সম্পূর্ণ বাদ)
+// হোমপেজের ৩টি ব্লগের জন্য ৩টি সফট প্যাস্টেল কালার ও ম্যাচিং হেডিং হোভার থিম
 const BLOG_PASTEL_THEMES = [
   {
     cardBg: "bg-[#f0f9ff]/85 border-[#bae6fd]/70 hover:border-[#38bdf8]",
@@ -10,6 +10,7 @@ const BLOG_PASTEL_THEMES = [
     btnStyle:
       "border-[#bae6fd] bg-[#e0f2fe]/90 text-[#0369a1] group-hover:bg-[#0284c7] group-hover:text-white group-hover:border-[#0284c7]",
     iconColor: "text-[#0284c7]",
+    titleHover: "group-hover:text-[#0284c7]",
   },
   {
     cardBg: "bg-[#ecfdf5]/85 border-[#a7f3d0]/70 hover:border-[#34d399]",
@@ -17,6 +18,7 @@ const BLOG_PASTEL_THEMES = [
     btnStyle:
       "border-[#a7f3d0] bg-[#d1fae5]/90 text-[#047857] group-hover:bg-[#059669] group-hover:text-white group-hover:border-[#059669]",
     iconColor: "text-[#059669]",
+    titleHover: "group-hover:text-[#059669]",
   },
   {
     cardBg: "bg-[#fffbeb]/85 border-[#fde68a]/70 hover:border-[#fbbf24]",
@@ -24,6 +26,7 @@ const BLOG_PASTEL_THEMES = [
     btnStyle:
       "border-[#fde68a] bg-[#fef3c7]/90 text-[#b45309] group-hover:bg-[#d97706] group-hover:text-white group-hover:border-[#d97706]",
     iconColor: "text-[#d97706]",
+    titleHover: "group-hover:text-[#d97706]",
   },
 ];
 
@@ -77,8 +80,8 @@ export default async function BlogPreview() {
                       </span>
                     </div>
 
-                    {/* ব্লগের শিরোনাম */}
-                    <h3 className="mt-5 font-body text-lg font-black leading-snug text-sky-950 transition-colors group-hover:text-sky-700 sm:text-[19px] line-clamp-2">
+                    {/* ব্লগের শিরোনাম (হোভার করলে কার্ডের নিজস্ব প্যাস্টেল রঙে পরিবর্তন হবে) */}
+                    <h3 className={`mt-5 font-body text-lg font-black leading-snug text-sky-950 transition-colors sm:text-[19px] line-clamp-2 ${theme.titleHover}`}>
                       {post.title}
                     </h3>
 
