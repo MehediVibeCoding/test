@@ -1,15 +1,32 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, FormEvent, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
-import { submitPublicReview, type PublicReviewInput } from "@/app/actions/review";
+import {
+  submitPublicReview,
+  checkReviewStatus,
+  type PublicReviewInput,
+} from "@/app/actions/review";
 import type { Testimonial } from "@/lib/academyData";
 
-const STORAGE_KEY = "ala_user_pending_review";
+const STORAGE_KEY = "ala_user_pending_review_v2";
+const TIMESTAMPS_KEY = "ala_review_daily_timestamps_v2";
+const MAX_DAILY_REVIEWS = 2;
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
 const MAX_QUOTE_LENGTH = 500;
 const MAX_NAME_LENGTH = 60;
 const MAX_BATCH_LENGTH = 30;
+
+type StoredReview = {
+  id: string;
+  name: string;
+  role_type: "শিক্ষার্থী" | "অভিভাবক";
+  batch_year: string;
+  quote: string;
+  submittedAt: number;
+};
 
 const EMPTY_FORM: PublicReviewInput = {
   name: "",
@@ -23,13 +40,42 @@ function sanitizeInput(str: string): string {
   return str.replace(/[<>]/g, "").trim();
 }
 
-// নামের প্রথম অক্ষরগুলো দিয়ে সুন্দর অ্যাভাটার ইনিশিয়াল তৈরি
+// নামের প্রথম অক্ষর দিয়ে অ্যাভাটার তৈরি
 function getInitials(name: string): string {
   const clean = name.trim();
   if (!clean) return "AU";
   const parts = clean.split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+// বিগত ২৪ ঘণ্টায় মোট কয়টি রিভিউ সাবমিট হয়েছে তা গণনা
+function getRecentSubmissionsCount(): number {
+  try {
+    const raw = localStorage.getItem(TIMESTAMPS_KEY);
+    if (!raw) return 0;
+    const timestamps: number[] = JSON.parse(raw);
+    const now = Date.now();
+    const valid = timestamps.filter((t) => now - t < TWENTY_FOUR_HOURS_MS);
+    localStorage.setItem(TIMESTAMPS_KEY, JSON.stringify(valid));
+    return valid.length;
+  } catch {
+    return 0;
+  }
+}
+
+// নতুন সাবমিশনের টাইমস্ট্যাম্প সংরক্ষণ
+function recordSubmissionTimestamp() {
+  try {
+    const raw = localStorage.getItem(TIMESTAMPS_KEY);
+    const timestamps: number[] = raw ? JSON.parse(raw) : [];
+    const now = Date.now();
+    const valid = timestamps.filter((t) => now - t < TWENTY_FOUR_HOURS_MS);
+    valid.push(now);
+    localStorage.setItem(TIMESTAMPS_KEY, JSON.stringify(valid));
+  } catch {
+    // fallback
+  }
 }
 
 export default function TestimonialsClient({
@@ -44,23 +90,67 @@ export default function TestimonialsClient({
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
 
   // ব্রাউজারে সংরক্ষিত পেন্ডিং রিভিউ
-  const [localPendingReview, setLocalPendingReview] = useState<Testimonial | null>(null);
+  const [localPendingReview, setLocalPendingReview] = useState<StoredReview | null>(null);
 
-  useEffect(() => {
+  // রিজেক্ট হলে ১-টাইম নোটিশ দেখানোর স্টেট
+  const [rejectedNotice, setRejectedNotice] = useState<boolean>(false);
+
+  // ২৪ ঘণ্টার লিমিট স্টেট
+  const [isDailyLimitReached, setIsDailyLimitReached] = useState(false);
+
+  // পেজ লোড হলে সংরক্ষিত রিভিউ স্ট্যাটাস যাচাই ও সিঙ্ক
+  const syncReviewStatus = useCallback(async () => {
+    // ১. ডেইলি লিমিট চেক
+    const count = getRecentSubmissionsCount();
+    if (count >= MAX_DAILY_REVIEWS) {
+      setIsDailyLimitReached(true);
+    } else {
+      setIsDailyLimitReached(false);
+    }
+
+    // ২. লোকাল স্টোরেজ থেকে পেন্ডিং রিভিউ যাচাই
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setLocalPendingReview(parsed);
+      if (!saved) return;
+      const parsed: StoredReview = JSON.parse(saved);
+
+      if (parsed && parsed.id) {
+        // সার্ভার থেকে লাইভ স্ট্যাটাস চেক
+        const result = await checkReviewStatus(parsed.id);
+
+        if (result.status === "approved") {
+          // অ্যাডমিন অনুমোদন করেছেন -> লোকাল পেন্ডিং থেকে মুছে দাও (কারণ এটা এখন লাইভ ফিডে দৃশ্যমান)
+          localStorage.removeItem(STORAGE_KEY);
+          setLocalPendingReview(null);
+        } else if (result.status === "rejected") {
+          // অ্যাডমিন বাতিল/মুছে দিয়েছেন -> লোকাল থেকে মুছে ১-টাইম নোটিশ অন করো
+          localStorage.removeItem(STORAGE_KEY);
+          setLocalPendingReview(null);
+          setRejectedNotice(true);
+        } else {
+          // এখনো পেন্ডিং অবস্থায় আছে -> প্রিভিউ কার্ডে রাখো
+          setLocalPendingReview(parsed);
+        }
       }
     } catch {
       // fallback
     }
   }, []);
 
+  useEffect(() => {
+    syncReviewStatus();
+  }, [syncReviewStatus]);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setErrorMessage(null);
+
+    // দৈনিক ২টির বেশি হলে ব্লক
+    if (getRecentSubmissionsCount() >= MAX_DAILY_REVIEWS) {
+      setErrorMessage("আপনি আজকের জন্য সর্বোচ্চ ২টি রিভিউ প্রদান করেছেন। অনুগ্রহ করে আগামীকাল চেষ্টা করুন।");
+      setIsDailyLimitReached(true);
+      return;
+    }
 
     const cleanName = sanitizeInput(formData.name);
     const cleanQuote = sanitizeInput(formData.quote);
@@ -78,39 +168,51 @@ export default function TestimonialsClient({
 
     setIsSubmitting(true);
 
-    const payload: PublicReviewInput = {
-      name: cleanName.slice(0, MAX_NAME_LENGTH),
-      role_type: formData.role_type,
-      batch_year: cleanBatch.slice(0, MAX_BATCH_LENGTH),
-      quote: cleanQuote.slice(0, MAX_QUOTE_LENGTH),
-    };
-
-    const res = await submitPublicReview(payload);
-    setIsSubmitting(false);
-
-    if (!res.ok) {
-      setErrorMessage(res.error);
-      return;
-    }
-
-    const pendingItem: Testimonial = {
-      id: "local_pending",
-      name: payload.name,
-      role: `${payload.role_type}, ${payload.batch_year}`,
-      type: payload.role_type,
-      year: payload.batch_year,
-      quote: payload.quote,
-      isFeatured: false,
-    };
-
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(pendingItem));
-      setLocalPendingReview(pendingItem);
-    } catch {
-      // fallback
-    }
+      const payload: PublicReviewInput = {
+        name: cleanName.slice(0, MAX_NAME_LENGTH),
+        role_type: formData.role_type,
+        batch_year: cleanBatch.slice(0, MAX_BATCH_LENGTH),
+        quote: cleanQuote.slice(0, MAX_QUOTE_LENGTH),
+      };
 
-    setSubmittedSuccess(true);
+      const res = await submitPublicReview(payload);
+
+      if (!res.ok) {
+        setErrorMessage(res.error);
+        return;
+      }
+
+      // নতুন রিভিউ আইডি সহ লোকাল স্টোরেজে সেভ
+      const storedItem: StoredReview = {
+        id: res.reviewId,
+        name: payload.name,
+        role_type: payload.role_type,
+        batch_year: payload.batch_year,
+        quote: payload.quote,
+        submittedAt: Date.now(),
+      };
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(storedItem));
+        recordSubmissionTimestamp();
+        setLocalPendingReview(storedItem);
+      } catch {
+        // fallback
+      }
+
+      // সাবমিশনের পর কাউন্ট আপডেট
+      if (getRecentSubmissionsCount() >= MAX_DAILY_REVIEWS) {
+        setIsDailyLimitReached(true);
+      }
+
+      setSubmittedSuccess(true);
+    } catch (err) {
+      console.error("Review submission network error:", err);
+      setErrorMessage("ইন্টারনেট সংযোগে ত্রুটি হয়েছে। আপনার কানেকশন চেক করে আবার চেষ্টা করুন।");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleCloseModal() {
@@ -123,7 +225,7 @@ export default function TestimonialsClient({
   return (
     <section className="relative px-6 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-gradient-to-b from-sky-50/40 via-white to-white">
       <div className="mx-auto max-w-7xl">
-        {/* সেকশন হেডার (টাইট স্পেসিং সহ) */}
+        {/* সেকশন হেডার */}
         <Reveal className="mb-8 text-center sm:mb-10">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             শিক্ষার্থী ও অভিভাবক প্রতিক্রিয়া
@@ -136,7 +238,42 @@ export default function TestimonialsClient({
           </p>
         </Reveal>
 
-        {/* ৩টি প্রিমিয়াম রিভিউ কার্ড গ্রিড (অ্যাভাটার ও ক্লিন লেআউট সহ) */}
+        {/* ১. রিজেক্ট হলে ১-টাইম নোটিশ ব্যানার (নোটিশ বন্ধ করলে চিরতরে মুছে যাবে) */}
+        <AnimatePresence>
+          {rejectedNotice && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-8 overflow-hidden rounded-2xl border border-amber-200 bg-amber-50/80 p-4 shadow-xs"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-200/80 text-amber-900 text-xs font-black">
+                    i
+                  </span>
+                  <div>
+                    <p className="font-body text-[13px] font-bold text-amber-950">
+                      আপনার পূর্ববর্তী রিভিউটি পর্যালোচনার পর বাতিল করা হয়েছে
+                    </p>
+                    <p className="font-body text-[11.5px] text-amber-900/80 mt-0.5">
+                      নীতিমালা অনুযায়ী প্রাসঙ্গিক অভিজ্ঞতা নিয়ে আপনি নতুন রিভিউ প্রদান করতে পারবেন।
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRejectedNotice(false)}
+                  className="rounded-lg bg-white/80 px-2.5 py-1 font-body text-[11px] font-bold text-amber-900 hover:bg-white transition-colors"
+                >
+                  ঠিক আছে ✕
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ৩টি মনোটোন প্রিমিয়াম রিভিউ কার্ড গ্রিড */}
         <div className="grid gap-6 md:grid-cols-3">
           {featured.map((t, i) => {
             const isGuardian = t.type === "অভিভাবক";
@@ -162,7 +299,6 @@ export default function TestimonialsClient({
                   {/* পরিচয় ও অ্যাভাটার (অভিভাবকের ক্ষেত্রে ডুপ্লিকেট টেক্সট রিমুভ) */}
                   <figcaption className="mt-6 flex items-center justify-between border-t border-sky-100/80 pt-4">
                     <div className="flex items-center gap-3">
-                      {/* ইউজার ইনিশিয়াল অ্যাভাটার */}
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-50 font-body text-xs font-black text-sky-800 border border-sky-200/60">
                         {initials}
                       </div>
@@ -170,8 +306,7 @@ export default function TestimonialsClient({
                         <span className="block font-body text-sm font-bold text-sky-950 sm:text-[15px]">
                           {t.name}
                         </span>
-                        {/* শুধুমাত্র শিক্ষার্থীর ক্ষেত্রে ব্যাচ দেখাবে, অভিভাবকের ক্ষেত্রে ডুপ্লিকেট লেখা বাদ */}
-                        {!isGuardian && t.year && t.year !== "অভিভাবক" && (
+                        {!isGuardian && t.year && t.year !== "শিক্ষার্থী" && (
                           <span className="block font-body text-xs font-semibold text-sky-700 mt-0.5">
                             {t.year}
                           </span>
@@ -179,7 +314,6 @@ export default function TestimonialsClient({
                       </div>
                     </div>
 
-                    {/* রোল ব্যাজ */}
                     <span
                       className={`rounded-full px-3 py-1 font-body text-xs font-bold ${
                         isGuardian
@@ -196,36 +330,48 @@ export default function TestimonialsClient({
           })}
         </div>
 
-        {/* ব্যবহারকারীর নিজস্ব লোকাল পেন্ডিং রিভিউ কার্ড */}
+        {/* ব্যবহারকারীর নিজস্ব লোকাল পেন্ডিং রিভিউ কার্ড (শুধুমাত্র অনুমোদনের অপেক্ষায় থাকলেই দৃশ্যমান) */}
         {localPendingReview && (
           <Reveal delay={100} className="mt-6">
-            <div className="rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/40 p-6 shadow-xs">
+            <div className="rounded-3xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-6 shadow-xs">
               <div className="mb-2.5 flex items-center justify-between">
-                <span className="rounded-full bg-amber-100 px-3 py-1 font-body text-xs font-bold text-amber-900">
-                  আপনার রিভিউটি জমা হয়েছে (অনুমোদনের অপেক্ষায়)
+                <span className="rounded-full bg-sky-100 px-3 py-1 font-body text-xs font-bold text-sky-900">
+                  আপনার রিভিউটি জমা হয়েছে (অ্যাডমিন অনুমোদনের অপেক্ষায়)
                 </span>
                 <span className="font-body text-xs font-semibold text-ink-800/60">শুধুমাত্র আপনি দেখতে পাচ্ছেন</span>
               </div>
               <p className="font-body text-sm leading-[1.75] text-ink-800">
                 {localPendingReview.quote}
               </p>
-              <div className="mt-4 flex items-center justify-between border-t border-amber-200/70 pt-3 font-body text-xs font-bold text-sky-950">
+              <div className="mt-4 flex items-center justify-between border-t border-sky-200/70 pt-3 font-body text-xs font-bold text-sky-950">
                 <span>{localPendingReview.name}</span>
-                <span className="text-sky-700 font-semibold">{localPendingReview.year || localPendingReview.role}</span>
+                <span className="text-sky-700 font-semibold">{localPendingReview.batch_year || localPendingReview.role_type}</span>
               </div>
             </div>
           </Reveal>
         )}
 
-        {/* প্লাস আইকন যুক্ত প্রিমিয়াম রিভিউ বাটন (টাইট স্পেসিং সহ) */}
+        {/* রিভিউ বাটন (২৪ ঘণ্টায় ২টি লিমিট চেক সহ) */}
         <Reveal delay={120} className="mt-8 text-center sm:mt-10">
-          <button
-            onClick={() => setModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
-          >
-            <span className="text-base font-black leading-none">+</span>
-            <span>আপনার মতামত ও পড়ার অভিজ্ঞতা শেয়ার করুন</span>
-          </button>
+          <div className="inline-flex flex-col items-center gap-1.5">
+            <button
+              disabled={isDailyLimitReached}
+              onClick={() => setModalOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="text-base font-black leading-none">+</span>
+              <span>
+                {isDailyLimitReached
+                  ? "আজকের রিভিউ লিমিট পূর্ণ হয়েছে"
+                  : "আপনার মতামত ও পড়ার অভিজ্ঞতা শেয়ার করুন"}
+              </span>
+            </button>
+            {isDailyLimitReached && (
+              <span className="font-body text-[11px] font-semibold text-muted">
+                (আপনি আজকের জন্য সর্বোচ্চ ২টি রিভিউ দিয়েছেন। আগামীকাল আবার মতামত দিতে পারবেন।)
+              </span>
+            )}
+          </div>
         </Reveal>
       </div>
 
@@ -258,7 +404,7 @@ export default function TestimonialsClient({
                     মতামত সফলভাবে জমা হয়েছে
                   </h3>
                   <p className="mt-2 font-body text-xs sm:text-sm leading-relaxed text-ink-800/80">
-                    ধন্যবাদ, <b className="text-sky-950">{formData.name}</b>। আপনার মূল্যবান অভিজ্ঞতা শেয়ার করার জন্য আমরা আন্তরিকভাবে কৃতজ্ঞ।
+                    ধন্যবাদ, <b className="text-sky-950">{formData.name}</b>। আপনার মূল্যবান অভিজ্ঞতা শেয়ার করার জন্য আমরা আন্তরিকভাবে কৃতজ্ঞ। অ্যাডমিন অনুমোদনের পর এটি ওয়েবসাইটে যুক্ত হবে।
                   </p>
                   <button
                     onClick={handleCloseModal}
@@ -310,7 +456,6 @@ export default function TestimonialsClient({
 
                     {/* ভূমিকা ও শিক্ষাবর্ষ */}
                     <div className="grid grid-cols-2 gap-3">
-                      {/* কাস্টম অ্যারো ড্রপডাউন */}
                       <div>
                         <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
                           আপনার ভূমিকা
