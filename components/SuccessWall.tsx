@@ -1,107 +1,85 @@
 import Reveal from "./Reveal";
 import { getSuccessToppers } from "@/lib/academyData";
 
-// ⚠️ গুরুত্বপূর্ণ: এগুলো সম্পূর্ণ কাল্পনিক নাম ও রেজাল্ট — শুধু ডাটাবেজ খালি থাকা অবস্থায় দেখানো হয়।
-// লঞ্চের আগে অবশ্যই আসল কৃতি শিক্ষার্থীদের তথ্য success_toppers টেবিলে যোগ করতে হবে।
-// আসল তথ্য ছাড়া এটা লাইভ থাকলে ভুয়া রেজাল্ট দেখানো হবে, যা বিশ্বাসযোগ্যতার জন্য ক্ষতিকর।
-const FALLBACK_TOPPERS = [
-  {
-    id: "f1",
-    name: "সাদিয়া তাসনিম",
-    batch: "HSC 2025",
-    result: "GPA 5.00",
-    subject: "English A+, ICT A+",
-    college: "চৌদ্দগ্রাম সরকারি কলেজ",
-    photoUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-  },
-  {
-    id: "f2",
-    name: "রাফিদ হাসান",
-    batch: "HSC 2025",
-    result: "GPA 5.00",
-    subject: "English A+",
-    college: "চৌদ্দগ্রাম সরকারি কলেজ",
-    photoUrl: null,
-  },
-  {
-    id: "f3",
-    name: "তানজিলা আক্তার",
-    batch: "HSC 2024",
-    result: "GPA 5.00",
-    subject: "ICT A+",
-    college: "চৌদ্দগ্রাম আদর্শ মহিলা কলেজ",
-    photoUrl: null,
-  },
-  {
-    id: "f4",
-    name: "সাকিব মাহমুদ",
-    batch: "HSC 2024",
-    result: "GPA 4.92",
-    subject: "English A+",
-    college: "কাশিনগর ডিগ্রি কলেজ",
-    photoUrl: null,
-  },
-];
-
 export default async function SuccessWall() {
-  const dbToppers = await getSuccessToppers();
-  const toppers = dbToppers.length > 0 ? dbToppers : FALLBACK_TOPPERS;
+  // শুধুমাত্র ডাটাবেজ থেকে আসল কৃতি শিক্ষার্থীদের তথ্য ফেচ করা (কোনো ফেক ডামি ডাটা ছাড়া)
+  const toppers = await getSuccessToppers();
 
   return (
-    <section id="results" className="bg-sky-100/30 px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="mb-10 text-center">
-          <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
+    <section id="results" className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-sky-100/30">
+      <div className="mx-auto max-w-7xl">
+        {/* সেকশন হেডার */}
+        <Reveal className="mb-8 text-center sm:mb-12">
+          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             সাফল্যের গল্প
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
-            কৃতি শিক্ষার্থীদের দেয়াল
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
+            কৃতি শিক্ষার্থীদের দেয়াল
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-            গত ব্যাচের যারা এই একাডেমি থেকে পড়ে ভালো ফলাফল অর্জন করেছে, তাদের নিয়েই আমাদের
-            প্রকৃত গর্ব।
+          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
+            আমাদের একাডেমি থেকে পড়ে যারা বোর্ড পরীক্ষায় সেরা ফলাফল অর্জন করেছে, তাদের নিয়ে আমাদের অহংকার।
           </p>
         </Reveal>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {toppers.map((student, i) => (
-            <Reveal key={student.id || i} delay={i * 80}>
-              <div className="hover-lift flex h-full flex-col items-center rounded-2xl border border-sky-100 bg-white p-5 text-center shadow-sm transition-all hover:border-sky-300">
-                {/* বৃত্তাকার ছবি ফ্রেম */}
-                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-sky-300/80 bg-sky-50 text-sky-600 shadow-xs">
-                  {student.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={student.photoUrl}
-                      alt={student.name}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="font-display text-[22px] font-black text-sky-700">
-                      {student.name.slice(0, 1)}
-                    </span>
-                  )}
+        {/* কৃতি শিক্ষার্থী কার্ড গ্রিড */}
+        {toppers.length === 0 ? (
+          <div className="mx-auto max-w-md rounded-3xl border border-sky-100 bg-white p-8 text-center shadow-xs">
+            <p className="font-body text-base font-bold text-sky-950">শীঘ্রই কৃতি শিক্ষার্থীদের তালিকা প্রকাশিত হবে</p>
+            <p className="mt-1 font-body text-xs text-ink-800/70">বোর্ড পরীক্ষার ফলাফল প্রকাশের পর এই দেয়াল হালনাগাদ করা হবে।</p>
+          </div>
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {toppers.map((student, i) => (
+              <Reveal key={student.id || i} delay={i * 60}>
+                <div className="group flex h-full flex-col items-center justify-between rounded-3xl border border-sky-100 bg-white p-6 text-center shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
+                  <div className="flex flex-col items-center w-full">
+                    {/* বৃত্তাকার ছবি ফ্রেম */}
+                    <div className="relative mb-3.5 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-sky-200 bg-slate-100 shadow-sm">
+                      {student.photoUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={student.photoUrl}
+                          alt={student.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        /* ছবি না থাকলে: মার্জিত ছাই/ধূসর কালারের শালীন প্রোফাইল সিলুয়েট অ্যাভাটার */
+                        <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400">
+                          <svg className="h-11 w-11 text-slate-400" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.686 2 6 4.686 6 8c0 2.242 1.233 4.195 3.057 5.228C5.467 14.52 3 17.95 3 22h18c0-4.05-2.467-7.48-6.057-8.772C16.767 12.195 18 10.242 18 8c0-3.314-2.686-6-6-6zm0 2c2.206 0 4 1.794 4 4 0 1.488-.813 2.784-2.016 3.483L12 12.6l-1.984-1.117C8.813 10.784 8 9.488 8 8c0-2.206 1.794-4 4-4zm0 10.5c3.86 0 7 2.467 7 5.5H5c0-3.033 3.14-5.5 7-5.5z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* নাম ও ব্যাচ */}
+                    <h3 className="font-body text-[15px] font-black tracking-tight text-sky-950">
+                      {student.name}
+                    </h3>
+                    <p className="font-body text-[11px] font-bold text-sky-700 mt-0.5">
+                      {student.batch}
+                    </p>
+
+                    {/* রেজাল্ট ব্যাজ */}
+                    <div className="mt-3 flex flex-wrap justify-center gap-1.5">
+                      <span className="rounded-lg bg-emerald-50 px-2.5 py-0.5 font-body text-[11px] font-black text-emerald-800 border border-emerald-200">
+                        🏆 {student.result}
+                      </span>
+                      <span className="rounded-lg bg-sky-50 px-2.5 py-0.5 font-body text-[11px] font-bold text-sky-800 border border-sky-200">
+                        {student.subject}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* কলেজ নাম */}
+                  <p className="mt-4 w-full border-t border-sky-100/80 pt-2.5 font-body text-[11.5px] font-medium text-ink-800/75 truncate" title={student.college}>
+                    🏛️ {student.college}
+                  </p>
                 </div>
-
-                <p className="mt-3 text-sm font-bold text-sky-950">{student.name}</p>
-                <p className="text-[11px] font-semibold text-sky-700">{student.batch}</p>
-
-                <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                  <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200/60">
-                    🏆 {student.result}
-                  </span>
-                  <span className="rounded-md bg-sky-50 px-2 py-0.5 text-[11px] font-bold text-sky-700 border border-sky-200/60">
-                    {student.subject}
-                  </span>
-                </div>
-
-                <p className="mt-3 w-full border-t border-sky-100/80 pt-2.5 text-[11px] text-ink-800/70 truncate" title={student.college}>
-                  🏛️ {student.college}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
