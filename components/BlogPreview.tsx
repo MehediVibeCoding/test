@@ -2,6 +2,31 @@ import Link from "next/link";
 import Reveal from "./Reveal";
 import { getPublishedBlogPosts } from "@/lib/academyData";
 
+// হোমপেজের ৩টি ব্লগের জন্য ৩টি সফট প্যাস্টেল কালার থিম (বেগুনি সম্পূর্ণ বাদ)
+const BLOG_PASTEL_THEMES = [
+  {
+    cardBg: "bg-[#f0f9ff]/85 border-[#bae6fd]/70 hover:border-[#38bdf8]",
+    badgeBg: "bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]",
+    btnStyle:
+      "border-[#bae6fd] bg-[#e0f2fe]/90 text-[#0369a1] group-hover:bg-[#0284c7] group-hover:text-white group-hover:border-[#0284c7]",
+    iconColor: "text-[#0284c7]",
+  },
+  {
+    cardBg: "bg-[#ecfdf5]/85 border-[#a7f3d0]/70 hover:border-[#34d399]",
+    badgeBg: "bg-[#d1fae5] text-[#047857] border border-[#a7f3d0]",
+    btnStyle:
+      "border-[#a7f3d0] bg-[#d1fae5]/90 text-[#047857] group-hover:bg-[#059669] group-hover:text-white group-hover:border-[#059669]",
+    iconColor: "text-[#059669]",
+  },
+  {
+    cardBg: "bg-[#fffbeb]/85 border-[#fde68a]/70 hover:border-[#fbbf24]",
+    badgeBg: "bg-[#fef3c7] text-[#b45309] border border-[#fde68a]",
+    btnStyle:
+      "border-[#fde68a] bg-[#fef3c7]/90 text-[#b45309] group-hover:bg-[#d97706] group-hover:text-white group-hover:border-[#d97706]",
+    iconColor: "text-[#d97706]",
+  },
+];
+
 export default async function BlogPreview() {
   const posts = await getPublishedBlogPosts(3);
 
@@ -30,45 +55,51 @@ export default async function BlogPreview() {
           </Link>
         </Reveal>
 
-        {/* প্রিমিয়াম ব্লগ কার্ড গ্রিড */}
+        {/* ৩টি ৩-কালারের সফট প্যাস্টেল ব্লগ কার্ড গ্রিড */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post, i) => (
-            <Reveal key={post.id} delay={i * 70}>
-              <Link
-                href={post.href}
-                className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5"
-              >
-                <div>
-                  {/* তারিখ ব্যাজ */}
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 rounded-full border border-sky-200/80 bg-sky-50 px-3 py-1 font-body text-xs font-bold text-sky-800">
-                      <svg className="h-3.5 w-3.5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span>{post.date}</span>
-                    </span>
+          {posts.map((post, i) => {
+            const theme = BLOG_PASTEL_THEMES[i % BLOG_PASTEL_THEMES.length];
+
+            return (
+              <Reveal key={post.id} delay={i * 70}>
+                <Link
+                  href={post.href}
+                  className={`group flex h-full flex-col justify-between rounded-3xl border p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-sky-950/5 ${theme.cardBg}`}
+                >
+                  <div>
+                    {/* তারিখ ব্যাজ */}
+                    <div className="flex items-center justify-between">
+                      <span className={`flex items-center gap-1.5 rounded-full px-3.5 py-1 font-body text-xs font-bold ${theme.badgeBg}`}>
+                        <svg className={`h-3.5 w-3.5 ${theme.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>{post.date}</span>
+                      </span>
+                    </div>
+
+                    {/* ব্লগের শিরোনাম */}
+                    <h3 className="mt-5 font-body text-lg font-black leading-snug text-sky-950 transition-colors group-hover:text-sky-700 sm:text-[19px] line-clamp-2">
+                      {post.title}
+                    </h3>
+
+                    {/* সংক্ষিপ্ত ভূমিকা */}
+                    <p className="mt-3 font-body text-sm leading-[1.75] text-ink-800/80 line-clamp-3">
+                      {post.excerpt}
+                    </p>
                   </div>
 
-                  {/* ব্লগের শিরোনাম */}
-                  <h3 className="mt-5 font-body text-lg font-black leading-snug text-sky-950 transition-colors group-hover:text-sky-700 sm:text-[19px] line-clamp-2">
-                    {post.title}
-                  </h3>
-
-                  {/* সংক্ষিপ্ত ভূমিকা */}
-                  <p className="mt-3 font-body text-sm leading-[1.75] text-ink-800/80 line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                </div>
-
-                {/* রিড আর্টিকেল পিল বাটন */}
-                <div className="mt-7 border-t border-sky-100/80 pt-4">
-                  <span className="inline-flex w-full items-center justify-center rounded-full border border-sky-200/80 bg-sky-50/50 py-2.5 text-center font-body text-xs font-bold text-sky-900 transition-all group-hover:border-sky-600 group-hover:bg-sky-600 group-hover:text-white sm:text-sm">
-                    সম্পূর্ণ আর্টিকেল পড়ুন
-                  </span>
-                </div>
-              </Link>
-            </Reveal>
-          ))}
+                  {/* রিড আর্টিকেল পিল বাটন */}
+                  <div className="mt-7 border-t border-sky-100/80 pt-4">
+                    <span
+                      className={`inline-flex w-full items-center justify-center rounded-full border py-2.5 text-center font-body text-xs font-bold transition-all sm:text-sm ${theme.btnStyle}`}
+                    >
+                      সম্পূর্ণ আর্টিকেল পড়ুন
+                    </span>
+                  </div>
+                </Link>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
