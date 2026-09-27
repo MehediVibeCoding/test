@@ -18,7 +18,7 @@ const EMPTY_FORM: PublicReviewInput = {
   quote: "",
 };
 
-// সাধারণ স্ক্রিপ্ট ও ট্যাগ স্যানিটাইজার
+// স্ক্রিপ্ট ও ট্যাগ স্যানিটাইজার
 function sanitizeInput(str: string): string {
   return str.replace(/[<>]/g, "").trim();
 }
@@ -45,7 +45,7 @@ export default function TestimonialsClient({
         setLocalPendingReview(parsed);
       }
     } catch {
-      // localStorage error fallback
+      // fallback
     }
   }, []);
 
@@ -63,7 +63,7 @@ export default function TestimonialsClient({
     }
 
     if (cleanQuote.length < 10) {
-      setErrorMessage("আপনার মতামত বা রিভিউ কমপক্ষে ১০ অক্ষরের হতে হবে।");
+      setErrorMessage("আপনার মতামত বা রিভিউ বক্তব্য কমপক্ষে ১০ অক্ষরের হতে হবে।");
       return;
     }
 
@@ -127,29 +127,26 @@ export default function TestimonialsClient({
           </p>
         </Reveal>
 
-        {/* ৩টি মনোটোন লাক্সারি রিভিউ কার্ড গ্রিড */}
+        {/* ৩টি মনোটোন প্রিমিয়াম রিভিউ কার্ড গ্রিড (কোনো কোটেশন মার্ক বা ডুপ্লিকেট রোল ছাড়া) */}
         <div className="grid gap-6 md:grid-cols-3">
           {featured.map((t, i) => (
             <Reveal key={t.id || t.name} delay={i * 70}>
               <figure className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
                 <div>
-                  {/* কোটেশন মার্ক আইকন */}
-                  <svg className="h-7 w-7 text-sky-300/80 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                  </svg>
-
-                  <blockquote className="font-body text-sm sm:text-[14.5px] italic leading-[1.8] text-ink-800/90">
-                    &ldquo;{t.quote}&rdquo;
-                  </blockquote>
+                  {/* বক্তব্য টেক্সট (স্বাভাবিক ও পরিচ্ছন্ন) */}
+                  <p className="font-body text-sm sm:text-[14.5px] leading-[1.8] text-ink-800/90">
+                    {t.quote}
+                  </p>
                 </div>
 
+                {/* পরিচয় ও ভূমিকা ব্যাজ (একক ও স্পষ্ট) */}
                 <figcaption className="mt-6 flex items-center justify-between border-t border-sky-100/80 pt-4">
                   <div>
                     <span className="block font-body text-sm font-bold text-sky-950 sm:text-[15px]">
                       {t.name}
                     </span>
                     <span className="block font-body text-xs font-semibold text-sky-700 mt-0.5">
-                      {t.role || t.type}
+                      {t.year || t.role}
                     </span>
                   </div>
                   <span
@@ -167,7 +164,7 @@ export default function TestimonialsClient({
           ))}
         </div>
 
-        {/* ব্যবহারকারীর নিজস্ব পেন্ডিং রিভিউ কার্ড */}
+        {/* ব্যবহারকারীর লোকাল পেন্ডিং রিভিউ কার্ড */}
         {localPendingReview && (
           <Reveal delay={100} className="mt-8">
             <div className="rounded-3xl border-2 border-dashed border-amber-300 bg-amber-50/40 p-6 sm:p-7 shadow-xs">
@@ -177,24 +174,25 @@ export default function TestimonialsClient({
                 </span>
                 <span className="font-body text-xs font-semibold text-ink-800/60">শুধুমাত্র আপনি দেখতে পাচ্ছেন</span>
               </div>
-              <blockquote className="font-body text-sm italic leading-[1.75] text-ink-800">
-                &ldquo;{localPendingReview.quote}&rdquo;
-              </blockquote>
+              <p className="font-body text-sm leading-[1.75] text-ink-800">
+                {localPendingReview.quote}
+              </p>
               <div className="mt-4 flex items-center justify-between border-t border-amber-200/70 pt-3 font-body text-xs font-bold text-sky-950">
                 <span>{localPendingReview.name}</span>
-                <span className="text-sky-700 font-semibold">{localPendingReview.role}</span>
+                <span className="text-sky-700 font-semibold">{localPendingReview.year || localPendingReview.role}</span>
               </div>
             </div>
           </Reveal>
         )}
 
-        {/* নতুন রিভিউ শেয়ার করার প্রিমিয়াম বাটন */}
+        {/* প্লাস আইকন যুক্ত প্রিমিয়াম রিভিউ বাটন */}
         <Reveal delay={120} className="mt-14 text-center">
           <button
             onClick={() => setModalOpen(true)}
-            className="rounded-full bg-sky-600 px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
+            className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
           >
-            আপনার মতামত ও পড়ার অভিজ্ঞতা শেয়ার করুন
+            <span className="text-base font-black leading-none">+</span>
+            <span>আপনার মতামত ও পড়ার অভিজ্ঞতা শেয়ার করুন</span>
           </button>
         </Reveal>
       </div>
@@ -263,15 +261,15 @@ export default function TestimonialsClient({
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* পূর্ণ নাম */}
+                    {/* পূর্ণ নাম (কোনো স্টার বা নির্দিষ্ট ব্যক্তির নাম ছাড়া) */}
                     <div>
                       <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                        আপনার পূর্ণ নাম *
+                        আপনার পূর্ণ নাম
                       </label>
                       <input
                         required
                         maxLength={MAX_NAME_LENGTH}
-                        placeholder="যেমন: তানভীর আহমেদ"
+                        placeholder="আপনার পূর্ণ নাম লিখুন"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full rounded-2xl border border-sky-200/80 bg-sky-50/30 px-4 py-2.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
@@ -280,28 +278,36 @@ export default function TestimonialsClient({
 
                     {/* ভূমিকা ও শিক্ষাবর্ষ */}
                     <div className="grid grid-cols-2 gap-3">
+                      {/* কাস্টম অ্যারো ড্রপডাউন */}
                       <div>
                         <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                          আপনার ভূমিকা *
+                          আপনার ভূমিকা
                         </label>
-                        <select
-                          value={formData.role_type}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              role_type: e.target.value as "শিক্ষার্থী" | "অভিভাবক",
-                            })
-                          }
-                          className="w-full rounded-2xl border border-sky-200/80 bg-sky-50/30 px-3.5 py-2.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
-                        >
-                          <option value="শিক্ষার্থী">শিক্ষার্থী</option>
-                          <option value="অভিভাবক">অভিভাবক</option>
-                        </select>
+                        <div className="relative">
+                          <select
+                            value={formData.role_type}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                role_type: e.target.value as "শিক্ষার্থী" | "অভিভাবক",
+                              })
+                            }
+                            className="w-full appearance-none rounded-2xl border border-sky-200/80 bg-sky-50/30 px-4 py-2.5 pr-9 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white cursor-pointer"
+                          >
+                            <option value="শিক্ষার্থী">শিক্ষার্থী</option>
+                            <option value="অভিভাবক">অভিভাবক</option>
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-sky-700">
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
 
                       <div>
                         <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                          ব্যাচ বা শিক্ষাবর্ষ *
+                          ব্যাচ বা শিক্ষাবর্ষ
                         </label>
                         <input
                           required
@@ -316,11 +322,11 @@ export default function TestimonialsClient({
                       </div>
                     </div>
 
-                    {/* রিভিউ বক্তব্য ও লাইভ ক্যারেক্টার কাউন্টার */}
+                    {/* মতামত ও লাইভ ক্যারেক্টার কাউন্টার */}
                     <div>
                       <div className="mb-1 flex items-center justify-between">
                         <label className="font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                          আপনার মতামত বা রিভিউ বক্তব্য *
+                          আপনার মতামত বা রিভিউ বক্তব্য
                         </label>
                         <span className="font-body text-[11px] font-semibold text-ink-800/60">
                           {formData.quote.length} / {MAX_QUOTE_LENGTH} অক্ষর
@@ -330,14 +336,14 @@ export default function TestimonialsClient({
                         rows={4}
                         required
                         maxLength={MAX_QUOTE_LENGTH}
-                        placeholder="স্যারের ক্লাসের অভিজ্ঞতা ও গাইডলাইন আপনাকে কীভাবে সাহায্য করেছে লিখুন..."
+                        placeholder="স্যারের ক্লাসের অভিজ্ঞতা ও গাইডলাইন সম্পর্কে আপনার মতামত লিখুন..."
                         value={formData.quote}
                         onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
                         className="w-full resize-none rounded-2xl border border-sky-200/80 bg-sky-50/30 p-3.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
                       />
                     </div>
 
-                    {/* ফর্ম কন্ট্রোল বাটন */}
+                    {/* বাটন */}
                     <div className="flex justify-end gap-2.5 pt-2">
                       <button
                         type="button"
