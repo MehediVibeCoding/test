@@ -54,17 +54,17 @@ export default function Hero() {
       }}
     >
       <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:px-12">
-        {/* ১. টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে সুষম স্পেসিংয়ে) */}
+        {/* ১. টেক্সট কন্টেন্ট কলাম */}
         <motion.div
           variants={textContainerVariants}
           initial="hidden"
           animate="show"
           className="order-2 text-center md:order-1 md:text-left -mt-2 sm:mt-0"
         >
-          {/* স্টাইলিশ ডিসপ্লে ফন্টে নাম */}
+          {/* স্লোগানের মতো বোল্ড ও স্টাইলিশ ইটালিক ডিসপ্লে ফন্টে নাম */}
           <motion.h1
             variants={headlineWipeVariants}
-            className="font-display font-black tracking-tight text-sky-950 text-3xl sm:text-5xl lg:text-6xl leading-tight"
+            className="font-display font-black italic tracking-tight text-sky-950 text-3xl sm:text-5xl lg:text-6xl leading-tight"
             style={{ willChange: "clip-path, opacity" }}
           >
             Md. Ahsan Ullah
@@ -119,7 +119,7 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* অ্যাকশন বাটনসমূহ (সিগনেচার স্কাই-ব্লু + হোয়াইট পিল বাটন) */}
+          {/* অ্যাকশন বাটনসমূহ */}
           <motion.div
             variants={lineVariants}
             className="mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:justify-start"
@@ -139,7 +139,7 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* ২. ছবির কলাম (সফট ব্যাকড্রপ আভা ও স্মুথ বটম ফেড মাস্ক সহ) */}
+        {/* ২. ছবির কলাম */}
         <motion.div
           variants={imageVariants}
           initial="hidden"
@@ -150,7 +150,7 @@ export default function Hero() {
             {/* ছবির পেছনের সফট আভা */}
             <div className="absolute -inset-4 rounded-full bg-gradient-to-t from-sky-300/30 via-sky-200/20 to-transparent blur-2xl pointer-events-none" />
 
-            {/* স্যারের ছবি (নিচের সোজা কাটিং অংশ ব্যাকগ্রাউন্ডের সাথে মাখনের মতো ফেড হয়ে মিশে যাবে) */}
+            {/* স্যারের ছবি (নিচের অংশ ব্যাকগ্রাউন্ডের সাথে মাখনের মতো ফেড হয়ে মিশে যাবে) */}
             <Image
               src="/images/ahsan-hero.webp"
               alt="Md. Ahsan Ullah — প্রতিষ্ঠাতা ও মেন্টর, Ahsan's Learning Academy"
