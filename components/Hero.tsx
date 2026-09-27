@@ -7,7 +7,7 @@ import CountUp from "./CountUp";
 
 // ছবির কলাম: নিচ থেকে স্মুথলি স্লাইড-আপ হয়ে আসবে
 const imageVariants = {
-  hidden: { opacity: 0, y: 48, scale: 0.96 },
+  hidden: { opacity: 0, y: 40, scale: 0.96 },
   show: {
     opacity: 1,
     y: 0,
@@ -20,7 +20,7 @@ const imageVariants = {
 const textContainerVariants = {
   hidden: {},
   show: {
-    transition: { delayChildren: 0.35, staggerChildren: 0.1 },
+    transition: { delayChildren: 0.3, staggerChildren: 0.1 },
   },
 };
 
@@ -47,23 +47,24 @@ const headlineWipeVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative overflow-hidden pt-28 pb-12 sm:pt-32 md:pt-36 md:pb-16"
+      className="relative overflow-hidden pt-24 pb-12 sm:pt-32 md:pt-36 md:pb-20"
       style={{
         background:
-          "radial-gradient(ellipse 65% 50% at 5% 20%, rgba(56, 189, 248, 0.35) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 95% 35%, rgba(14, 165, 233, 0.25) 0%, transparent 65%), linear-gradient(180deg, #def1fe 0%, #f0f7fe 65%, #ffffff 100%)",
+          "radial-gradient(ellipse 70% 55% at 10% 20%, rgba(56, 189, 248, 0.35) 0%, transparent 65%), radial-gradient(ellipse 65% 50% at 90% 35%, rgba(14, 165, 233, 0.25) 0%, transparent 65%), linear-gradient(180deg, #def1fe 0%, #f0f7fe 65%, #ffffff 100%)",
       }}
     >
-      <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr] lg:px-12">
-        {/* ১. টেক্সট কন্টেন্ট কলাম */}
+      <div className="relative mx-auto grid max-w-7xl items-center gap-6 px-6 sm:px-8 md:grid-cols-[1.1fr_0.9fr] md:gap-8 lg:px-12">
+        {/* ১. টেক্সট কন্টেন্ট কলাম (ডেস্কটপে বাঁয়ে, মোবাইলে ছবির নিচে সুষম স্পেসিংয়ে) */}
         <motion.div
           variants={textContainerVariants}
           initial="hidden"
           animate="show"
-          className="order-2 text-center md:order-1 md:text-left"
+          className="order-2 text-center md:order-1 md:text-left -mt-2 sm:mt-0"
         >
+          {/* স্টাইলিশ ডিসপ্লে ফন্টে নাম */}
           <motion.h1
             variants={headlineWipeVariants}
-            className="font-body text-3xl font-black tracking-tight text-sky-950 sm:text-5xl lg:text-6xl"
+            className="font-display font-black tracking-tight text-sky-950 text-3xl sm:text-5xl lg:text-6xl leading-tight"
             style={{ willChange: "clip-path, opacity" }}
           >
             Md. Ahsan Ullah
@@ -82,9 +83,9 @@ export default function Hero() {
             variants={lineVariants}
             className="mx-auto mt-4 max-w-lg font-body text-xs leading-relaxed text-ink-800/90 sm:text-sm md:mx-0"
           >
-            ইংরেজি ও আইসিটির মতো গুরুত্বপূর্ণ বিষয়ে HSC শিক্ষার্থীদের ভীতি দূর করে বাস্তবধর্মী টেকনিক,
-            নিয়মিত প্র্যাকটিস ও সঠিক গাইডলাইনের মাধ্যমে বোর্ড পরীক্ষায় সর্বোচ্চ ফলাফল অর্জনে
-            আন্তরিকভাবে সহায়তা করা হয়।
+            ইংরেজি ও আইসিটির মতো গুরুত্বপূর্ণ বিষয়ে HSC শিক্ষার্থীদের ভীতি দূর করে বাস্তবধর্মী টেকনিক,
+            নিয়মিত প্র্যাকটিস ও সঠিক গাইডলাইনের মাধ্যমে বোর্ড পরীক্ষায় সর্বোচ্চ ফলাফল অর্জনে
+            আন্তরিকভাবে সহায়তা করা হয়।
           </motion.p>
 
           {/* স্ট্যাটাস কাউন্টার */}
@@ -114,45 +115,49 @@ export default function Hero() {
               <p className="font-body text-xl font-black text-sky-950 sm:text-2xl">
                 <CountUp end={100} suffix="%" duration={1300} delay={800} />
               </p>
-              <p className="font-body text-[11px] font-medium text-ink-800/70">বোর্ড সিলেবাস কেয়ার</p>
+              <p className="font-body text-[11px] font-medium text-ink-800/70">বোর্ড সিলেবাস কেয়ার</p>
             </div>
           </motion.div>
 
-          {/* অ্যাকশন বাটনসমূহ (সিগনেচার স্কাই-ব্লু + পিউর হোয়াইট পিল বাটন) */}
+          {/* অ্যাকশন বাটনসমূহ (সিগনেচার স্কাই-ব্লু + হোয়াইট পিল বাটন) */}
           <motion.div
             variants={lineVariants}
             className="mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:justify-start"
           >
             <ScrollLink
               targetId="admission"
-              className="inline-flex items-center justify-center rounded-full bg-sky-600 px-6 py-3 font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:text-sm"
+              className="inline-flex items-center justify-center rounded-full bg-sky-600 px-7 py-3 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
             >
               প্রাইভেট ব্যাচে ভর্তি হও →
             </ScrollLink>
             <ScrollLink
               targetId="class-diary"
-              className="inline-flex items-center justify-center rounded-full border border-sky-200/80 bg-white px-6 py-3 font-body text-xs font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95 sm:text-sm"
+              className="inline-flex items-center justify-center rounded-full border border-sky-200/80 bg-white px-7 py-3 font-body text-xs sm:text-sm font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95"
             >
               আজকের ক্লাস নোট দেখো
             </ScrollLink>
           </motion.div>
         </motion.div>
 
-        {/* ২. ছবির কলাম */}
+        {/* ২. ছবির কলাম (সফট ব্যাকড্রপ আভা ও স্মুথ বটম ফেড মাস্ক সহ) */}
         <motion.div
           variants={imageVariants}
           initial="hidden"
           animate="show"
-          className="order-1 flex justify-center md:order-2"
+          className="order-1 flex justify-center md:order-2 relative"
         >
-          <div className="relative w-full max-w-[290px] sm:max-w-[350px] md:max-w-[420px]">
+          <div className="relative w-full max-w-[270px] sm:max-w-[340px] md:max-w-[420px]">
+            {/* ছবির পেছনের সফট আভা */}
+            <div className="absolute -inset-4 rounded-full bg-gradient-to-t from-sky-300/30 via-sky-200/20 to-transparent blur-2xl pointer-events-none" />
+
+            {/* স্যারের ছবি (নিচের সোজা কাটিং অংশ ব্যাকগ্রাউন্ডের সাথে মাখনের মতো ফেড হয়ে মিশে যাবে) */}
             <Image
               src="/images/ahsan-hero.webp"
               alt="Md. Ahsan Ullah — প্রতিষ্ঠাতা ও মেন্টর, Ahsan's Learning Academy"
               width={900}
               height={1350}
               priority
-              className="h-auto w-full object-contain select-none [mask-image:linear-gradient(to_bottom,black_85%,transparent_99%)] [-webkit-mask-image:linear-gradient(to_bottom,black_85%,transparent_99%)]"
+              className="relative z-10 h-auto w-full object-contain select-none [mask-image:linear-gradient(to_bottom,black_65%,transparent_98%)] [-webkit-mask-image:linear-gradient(to_bottom,black_65%,transparent_98%)]"
             />
           </div>
         </motion.div>
