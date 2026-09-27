@@ -32,27 +32,27 @@ const FAQS = [
 ];
 
 export default function FAQ() {
-  // ডিফল্টভাবে সব প্রশ্ন বন্ধ থাকবে (openIndex = null)
+  // ডিফল্টভাবে সব প্রশ্ন বন্ধ থাকবে
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-white">
+    <section id="faq" className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-white">
       <div className="mx-auto max-w-4xl">
-        {/* সেকশন হেডার */}
-        <Reveal className="mb-12 text-center sm:mb-16">
+        {/* সেকশন হেডার (টাইট স্পেসিং সহ) */}
+        <Reveal className="mb-6 text-center sm:mb-10">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             সাধারণ জিজ্ঞাসা
           </span>
-          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
             ভর্তির আগে যা জানা দরকার
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
             ভর্তি সংক্রান্ত কোনো দ্বিধা থাকলে নিচে সচরাচর জিজ্ঞাসিত প্রশ্নগুলোর উত্তর দেখে নাও।
           </p>
         </Reveal>
 
-        {/* প্রিমিয়াম অ্যাকর্ডিয়ন তালিকা */}
-        <Reveal delay={80} className="space-y-4">
+        {/* প্রিমিয়াম অ্যাকর্ডিয়ন তালিকা (টাইট স্পেসিং সহ) */}
+        <Reveal delay={80} className="space-y-3 sm:space-y-3.5">
           {FAQS.map((item, i) => {
             const isOpen = openIndex === i;
             return (
@@ -63,7 +63,7 @@ export default function FAQ() {
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-4 p-5 text-left sm:p-6"
+                  className="flex w-full items-center justify-between gap-4 p-4 text-left sm:p-5"
                 >
                   <span className="font-body text-sm sm:text-base font-bold text-sky-950 leading-snug">
                     {item.q}
@@ -71,7 +71,7 @@ export default function FAQ() {
                   <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
                     transition={{ duration: 0.25 }}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-50 font-body text-base font-bold text-sky-700"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-50 font-body text-base font-bold text-sky-700"
                   >
                     +
                   </motion.span>
@@ -86,7 +86,7 @@ export default function FAQ() {
                       transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="border-t border-sky-100/70 px-5 pt-4 pb-5 sm:px-6 sm:pb-6 font-body text-xs sm:text-sm leading-[1.8] text-ink-800/85">
+                      <p className="border-t border-sky-100/70 px-4 pt-3.5 pb-4 sm:px-5 sm:pb-5 font-body text-xs sm:text-sm leading-[1.8] text-ink-800/85">
                         {item.a}
                       </p>
                     </motion.div>
