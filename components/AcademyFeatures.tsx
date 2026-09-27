@@ -47,43 +47,43 @@ const FEATURES = [
 
 export default function AcademyFeatures() {
   return (
-    <section id="why-us" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-white">
+    <section id="why-us" className="relative px-6 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-white">
       <div className="mx-auto max-w-7xl">
-        {/* ক্লিন ও স্বাভাবিক সেকশন হেডার */}
-        <Reveal className="mb-14 text-center sm:mb-18">
+        {/* সেকশন হেডার ও পারফেক্ট ২-লাইনের সাবটাইটেল */}
+        <Reveal className="mb-10 text-center sm:mb-14">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             আমাদের বিশেষত্ব
           </span>
-          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
             কেন আমাদের একাডেমিতে পড়বে?
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
-            আমরা শুধু গতানুগতিক পড়াই না; প্রতিটি শিক্ষার্থীর শেখার ধরন বুঝে তাদের আন্তরিক যত্ন সহকারে বোর্ড পরীক্ষার সর্বোচ্চ ফলাফলের জন্য গড়ে তুলি।
+          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
+            আমরা শুধু গতানুগতিক পড়াই না; প্রতিটি শিক্ষার্থীর শেখার ধরন বুঝে যত্ন নিয়ে বোর্ড পরীক্ষার সর্বোচ্চ ফলাফলের জন্য গড়ে তুলি।
           </p>
         </Reveal>
 
-        {/* ৬টি আইকন-মুক্ত সফট প্যাস্টেল মিনিমাল কার্ড গ্রিড */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/* ৬টি আইকন-মুক্ত সফট প্যাস্টেল কার্ড গ্রিড */}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((item, idx) => (
             <Reveal key={item.title} delay={idx * 60}>
               <div
-                className={`hover-lift flex h-full flex-col justify-between rounded-3xl border p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${item.cardBg}`}
+                className={`hover-lift flex h-full flex-col justify-between rounded-3xl border p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-md ${item.cardBg}`}
               >
                 <div>
                   {/* কার্ডের শুরুর ট্যাগ পিল */}
                   <div className="flex items-center justify-between">
-                    <span className={`inline-flex rounded-full px-3.5 py-1 font-body text-xs font-bold ${item.badgeBg}`}>
+                    <span className={`inline-flex rounded-full px-3 py-1 font-body text-xs font-bold ${item.badgeBg}`}>
                       {item.tag}
                     </span>
                   </div>
 
                   {/* কার্ড শিরোনাম */}
-                  <h3 className="mt-6 font-body text-base font-bold leading-snug text-sky-950 sm:text-[18px]">
+                  <h3 className="mt-5 font-body text-base font-bold leading-snug text-sky-950 sm:text-[17.5px]">
                     {item.title}
                   </h3>
 
                   {/* কার্ড বিবরণ */}
-                  <p className="mt-3 font-body text-sm leading-[1.8] text-ink-800/85 sm:text-[14.5px]">
+                  <p className="mt-2.5 font-body text-[13.5px] leading-[1.75] text-ink-800/85 sm:text-[14px]">
                     {item.desc}
                   </p>
                 </div>
