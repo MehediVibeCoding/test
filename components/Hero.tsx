@@ -1,9 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import ScrollLink from "./ScrollLink";
 import CountUp from "./CountUp";
+
+const SUBMISSION_LOCK_KEY = "ala_admission_locked_session";
+const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 
 // ছবির কলাম: নিচ থেকে স্মুথলি স্লাইড-আপ হয়ে আসবে
 const imageVariants = {
@@ -45,6 +49,24 @@ const headlineWipeVariants = {
 };
 
 export default function Hero() {
+  const [isLocked, setIsLocked] = useState(false);
+
+  // ২ ঘণ্টার লক সেশন চেক (localStorage)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SUBMISSION_LOCK_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const elapsed = Date.now() - parsed.timestamp;
+        if (elapsed < TWO_HOURS_IN_MS && parsed.data) {
+          setIsLocked(true);
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }, []);
+
   return (
     <section
       className="relative overflow-hidden pt-24 pb-12 sm:pt-32 md:pt-36 md:pb-20"
@@ -119,14 +141,18 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* অ্যাকশন বাটনসমূহ */}
+          {/* অ্যাকশন বাটনসমূহ (লক অবস্থায় ভর্তি বাটন সরাসরি ডিসেবল্ড) */}
           <motion.div
             variants={lineVariants}
             className="mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:justify-start"
           >
             <ScrollLink
               targetId="admission"
-              className="inline-flex items-center justify-center rounded-full bg-sky-600 px-7 py-3 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95"
+              className={`inline-flex items-center justify-center rounded-full px-7 py-3 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all ${
+                isLocked
+                  ? "bg-sky-600 opacity-50 cursor-not-allowed pointer-events-none"
+                  : "bg-sky-600 hover:bg-sky-700 active:scale-95"
+              }`}
             >
               প্রাইভেট ব্যাচে ভর্তি হও →
             </ScrollLink>
@@ -150,7 +176,7 @@ export default function Hero() {
             {/* ছবির পেছনের সফট আভা */}
             <div className="absolute -inset-4 rounded-full bg-gradient-to-t from-sky-300/30 via-sky-200/20 to-transparent blur-2xl pointer-events-none" />
 
-            {/* স্যারের ছবি (নিচের অংশ ব্যাকগ্রাউন্ডের সাথে মাখনের মতো ফেড হয়ে মিশে যাবে) */}
+            {/* স্যারের ছবি */}
             <Image
               src="/images/ahsan-hero.webp"
               alt="Md. Ahsan Ullah — প্রতিষ্ঠাতা ও মেন্টর, Ahsan's Learning Academy"
