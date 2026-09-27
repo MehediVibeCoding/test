@@ -27,8 +27,8 @@ const INITIAL_FORM: FormDataState = {
   name: "",
   college: "",
   roll: "",
-  group: "", // ডিফল্টভাবে ফাঁকা (সিলেক্ট করুন)
-  batch: "", // ডিফল্টভাবে ফাঁকা (সিলেক্ট করুন)
+  group: "",
+  batch: "",
   phone: "",
   guardianPhone: "",
 };
@@ -38,21 +38,20 @@ function isValidBdPhone(phone: string): boolean {
   return /^01[3-9]\d{8}$/.test(phone.trim());
 }
 
-// নাম ও টেক্সট ফিল্টার (শুধুমাত্র বাংলা ও ইংরেজি বর্ণমালা, স্পেস ও ডট গ্রহণ করবে - কোনো সংখ্যা বা বিশেষ চিহ্ন ঢুকতে দেবে না)
+// শুধুমাত্র বর্ণমালা ও স্পেস ফিল্টার (সংখ্যা বা চিহ্ন ব্লক)
 function filterAlphaOnly(value: string): string {
   return value.replace(/[^a-zA-Z\u0980-\u09FF\s.]/g, "");
 }
 
-// ফোন নম্বর ফিল্টার (শুধুমাত্র ইংরেজি সংখ্যা গ্রহণ করবে, সর্বোচ্চ ১১ ডিজিট)
+// শুধুমাত্র ইংরেজি সংখ্যা ফিল্টার (সর্বোচ্চ ১১ ডিজিট)
 function filterPhoneOnly(value: string): string {
-  // বাংলা ডিজিট থাকলে তা স্বয়ংক্রিয়ভাবে ইংরেজি সংখ্যায় রূপান্তর
   const englishDigits = value.replace(/[০-৯]/g, (d) =>
     String("০১২৩৪৫৬৭৮৯".indexOf(d))
   );
   return englishDigits.replace(/\D/g, "").slice(0, 11);
 }
 
-// কলেজ রোলের ফিল্টার (সংখ্যা, বর্ণ ও হাইফেন গ্রহণ করবে)
+// কলেজ রোল ফিল্টার
 function filterRollOnly(value: string): string {
   return value.replace(/[^a-zA-Z0-9\u0980-\u09FF-]/g, "").slice(0, 20);
 }
@@ -64,7 +63,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
 
-  // ২ ঘণ্টার ডুপ্লিকেট সাবমিশন লক চেক (localStorage)
+  // ২ ঘণ্টার ডুপ্লিকেট সাবমিশন লক চেক
   useEffect(() => {
     try {
       const saved = localStorage.getItem(SUBMISSION_LOCK_KEY);
@@ -82,7 +81,6 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
     }
   }, []);
 
-  // ইনপুট হ্যান্ডলারসমূহ (কঠোর রিয়েল-টাইম ক্যারেক্টার ফিল্টারিং)
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const val = filterAlphaOnly(e.target.value).slice(0, 60);
     setFormData((prev) => ({ ...prev, name: val }));
@@ -113,7 +111,6 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
     if (fieldErrors.guardianPhone) setFieldErrors((prev) => ({ ...prev, guardianPhone: false }));
   };
 
-  // ফর্ম সাবমিশন
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrorMessage(null);
@@ -159,7 +156,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
       return;
     }
 
-    // ২ ঘণ্টার জন্য লোকাল স্টোরেজে লক সেট করা
+    // ২ ঘণ্টার জন্য লক ডেটা সংরক্ষণ
     const sessionData = {
       timestamp: Date.now(),
       data: formData,
@@ -174,86 +171,86 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
   }
 
   return (
-    <section id="admission" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-white">
+    <section id="admission" className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-white">
       <div className="mx-auto max-w-3xl">
-        {/* সেকশন হেডার */}
-        <Reveal className="mb-12 text-center sm:mb-16">
+        {/* সেকশন হেডার (টাইট স্পেসিং সহ) */}
+        <Reveal className="mb-6 text-center sm:mb-10">
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             ভর্তি আবেদন
           </span>
-          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
             প্রাইভেট ব্যাচে আসন নিশ্চিত করো
           </h2>
-          <p className="mx-auto mt-3 max-w-lg font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+          <p className="mx-auto mt-2.5 max-w-lg font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
             তোমার সঠিক তথ্য দিয়ে নিচের ফরমটি পূরণ করো। একাডেমি থেকে দ্রুত তোমার সাথে যোগাযোগ করে ব্যাচ ও ক্লাসের সময় কনফার্ম করা হবে।
           </p>
         </Reveal>
 
         <Reveal delay={80}>
           {submittedData ? (
-            /* ই-কমার্স ইনভয়েস স্টাইল কনফার্মেশন সামারি কার্ড */
-            <div className="overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-xl shadow-emerald-950/5">
-              {/* টপ সাকসেস হেডার */}
-              <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-center text-white sm:p-8">
-                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-2xl backdrop-blur-sm">
-                  ✓
+            /* সফট প্যাস্টেল মিন্ট গ্রিন ইনভয়েস রিসিপ্ট কার্ড */
+            <div className="overflow-hidden rounded-3xl border border-[#a7f3d0] bg-[#ecfdf5]/40 p-6 sm:p-8 shadow-xs">
+              {/* বোল্ড সার্কুলার টিক ও ধন্যবাদ বার্তা */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left border-b border-[#a7f3d0]/80 pb-6">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d1fae5] text-[#047857] border border-[#a7f3d0] shadow-xs">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.8} d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-                <h3 className="font-body text-xl font-black sm:text-2xl">
-                  আবেদন সফলভাবে গৃহীত হয়েছে
-                </h3>
-                <p className="mt-1 font-body text-xs sm:text-sm text-emerald-100">
-                  ভর্তি আবেদনের তথ্য সিস্টেমে সংরক্ষিত আছে
-                </p>
+                <div>
+                  <h3 className="font-body text-lg font-black text-sky-950 sm:text-xl">
+                    ধন্যবাদ, {submittedData.name}
+                  </h3>
+                  <p className="mt-1 font-body text-xs sm:text-sm leading-relaxed text-ink-800/85">
+                    তোমার আবেদনের তথ্য সফলভাবে সংরক্ষণ করা হয়েছে। একাডেমি থেকে দ্রুত তোমার সাথে কল অথবা হোয়াটসঅ্যাপে যোগাযোগ করে ব্যাচ কনফার্ম করা হবে।
+                  </p>
+                </div>
               </div>
 
-              {/* জমা দেওয়া তথ্যের সামারি ইনভয়েস টেবিল */}
-              <div className="p-6 sm:p-8">
-                <div className="mb-6 rounded-2xl bg-emerald-50/70 border border-emerald-100 p-4 text-center font-body text-xs sm:text-sm leading-relaxed text-emerald-950">
-                  ধন্যবাদ, <span className="font-black text-emerald-900">{submittedData.name}</span>। তোমার আবেদনের তথ্য সফলভাবে সংরক্ষণ করা হয়েছে। একাডেমি থেকে দ্রুত তোমার সাথে কল অথবা হোয়াটসঅ্যাপে যোগাযোগ করে ব্যাচ কনফার্ম করা হবে।
-                </div>
-
-                <div className="overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/60 font-body text-xs sm:text-sm">
-                  <div className="divide-y divide-slate-100">
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">শিক্ষার্থীর নাম</span>
-                      <span className="font-bold text-sky-950">{submittedData.name}</span>
-                    </div>
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">কলেজের নাম</span>
-                      <span className="font-bold text-sky-950">{submittedData.college}</span>
-                    </div>
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">কলেজ রোল</span>
-                      <span className="font-bold text-sky-950">{submittedData.roll}</span>
-                    </div>
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">বিভাগ / গ্রুপ</span>
-                      <span className="font-bold text-sky-950">{submittedData.group}</span>
-                    </div>
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">নির্বাচিত ব্যাচ</span>
-                      <span className="font-bold text-sky-700">{submittedData.batch}</span>
-                    </div>
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">শিক্ষার্থীর মোবাইল</span>
-                      <span className="font-bold text-sky-950">{submittedData.phone}</span>
-                    </div>
-                    <div className="flex justify-between p-3.5 sm:px-5">
-                      <span className="font-semibold text-slate-500">অভিভাবকের মোবাইল</span>
-                      <span className="font-bold text-sky-950">{submittedData.guardianPhone}</span>
-                    </div>
+              {/* শিক্ষার্থীর তথ্যের প্রিমিয়াম রিসিপ্ট টেবিল */}
+              <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 bg-white font-body text-xs sm:text-sm shadow-xs">
+                <div className="divide-y divide-slate-100">
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">শিক্ষার্থীর নাম</span>
+                    <span className="font-bold text-sky-950">{submittedData.name}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">কলেজের নাম</span>
+                    <span className="font-bold text-sky-950">{submittedData.college}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">কলেজ রোল</span>
+                    <span className="font-bold text-sky-950">{submittedData.roll}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">বিভাগ / গ্রুপ</span>
+                    <span className="font-bold text-sky-950">{submittedData.group}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">নির্বাচিত ব্যাচ</span>
+                    <span className="rounded-full bg-sky-50 px-3 py-0.5 font-bold text-sky-700 border border-sky-200/60">
+                      {submittedData.batch}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">শিক্ষার্থীর মোবাইল</span>
+                    <span className="font-bold text-sky-950">{submittedData.phone}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3.5 sm:px-5">
+                    <span className="font-semibold text-slate-500">অভিভাবকের মোবাইল</span>
+                    <span className="font-bold text-sky-950">{submittedData.guardianPhone}</span>
                   </div>
                 </div>
               </div>
             </div>
           ) : (
-            /* আবেদন ফর্ম */
+            /* আবেদন ফর্ম (কোনো স্টার চিহ্ন ছাড়া সম্পূর্ণ পরিচ্ছন্ন লেবেল) */
             <form
               onSubmit={handleSubmit}
-              className="space-y-5 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-9"
+              className="space-y-4 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-8"
             >
               {errorMessage && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 p-4 font-body text-xs sm:text-sm font-semibold text-red-700">
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-3.5 font-body text-xs sm:text-sm font-semibold text-red-700">
                   {errorMessage}
                 </div>
               )}
@@ -261,7 +258,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
               {/* শিক্ষার্থীর নাম */}
               <div>
                 <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                  শিক্ষার্থীর পূর্ণ নাম *
+                  শিক্ষার্থীর পূর্ণ নাম
                 </label>
                 <input
                   name="name"
@@ -281,7 +278,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                    কলেজের নাম *
+                    কলেজের নাম
                   </label>
                   <input
                     name="college"
@@ -299,7 +296,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
 
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                    কলেজ রোল নম্বর *
+                    কলেজ রোল নম্বর
                   </label>
                   <input
                     name="roll"
@@ -320,7 +317,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                    বিভাগ / গ্রুপ *
+                    বিভাগ / গ্রুপ
                   </label>
                   <div className="relative">
                     <select
@@ -356,7 +353,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
 
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                    কাঙ্ক্ষিত ব্যাচ *
+                    কাঙ্ক্ষিত ব্যাচ
                   </label>
                   <div className="relative">
                     <select
@@ -395,7 +392,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                    শিক্ষার্থীর ফোন / WhatsApp নম্বর *
+                    শিক্ষার্থীর ফোন / WhatsApp নম্বর
                   </label>
                   <input
                     name="phone"
@@ -415,7 +412,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
 
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950">
-                    অভিভাবকের মোবাইল নম্বর *
+                    অভিভাবকের মোবাইল নম্বর
                   </label>
                   <input
                     name="guardianPhone"
@@ -435,7 +432,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps) {
               </div>
 
               {/* সাবমিট বাটন */}
-              <div className="pt-3">
+              <div className="pt-2">
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
