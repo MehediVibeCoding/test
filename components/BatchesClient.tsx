@@ -21,62 +21,68 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
   }
 
   return (
-    <section id="batches" className="bg-sky-100/30 px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-6xl">
-        <Reveal className="mb-12 text-center">
-          <span className="inline-flex rounded-full bg-sky-100 px-3.5 py-1 text-xs font-bold text-sky-800">
+    <section id="batches" className="relative px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-gradient-to-b from-white via-sky-50/40 to-white">
+      <div className="mx-auto max-w-7xl">
+        {/* সেকশন হেডার */}
+        <Reveal className="mb-14 text-center sm:mb-18">
+          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             অফলাইন ও প্রাইভেট ব্যাচ
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-sky-950 sm:text-3xl lg:text-4xl">
+          <h2 className="mt-3.5 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[40px]">
             চলমান ব্যাচসমূহ (HSC 27 ও HSC 28)
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-xs sm:text-sm text-ink-800/80 leading-relaxed">
-            তোমার সুবিধামতো ব্যাচ নির্বাচন করে আগে থেকেই আসন নিশ্চিত করো। প্রতিটি ব্যাচে নির্দিষ্ট
-            সংখ্যক শিক্ষার্থী নিয়ে অত্যন্ত যত্নসহকারে পড়ানো হয়।
+          <p className="mx-auto mt-3 max-w-2xl font-body text-[15px] leading-[1.8] text-ink-800/80 sm:text-base">
+            তোমার সুবিধামতো ব্যাচ নির্বাচন করে আগে থেকেই আসন নিশ্চিত করো। প্রতিটি ব্যাচে নির্দিষ্ট সংখ্যক শিক্ষার্থী নিয়ে অত্যন্ত যত্নসহকারে পড়ানো হয়।
           </p>
         </Reveal>
 
-        {/* ৬টি ব্যাচ কার্ড গ্রিড (কোনো নীল ৩ডি শ্যাডো নেই, সাধারণ সফট শ্যাডো) */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {/* প্রিমিয়াম ব্যাচ কার্ড গ্রিড */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {batches.map((batch, i) => (
             <Reveal key={batch.id} delay={i * 60}>
-              <div className="hover-lift flex h-full flex-col justify-between rounded-2xl border border-sky-100 bg-white p-5 shadow-sm transition-all hover:border-sky-300">
+              <div className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-7 sm:p-8 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
                 <div>
+                  {/* টপ ব্যাজ ও কোহোর্ট ট্যাগ */}
                   <div className="flex items-center justify-between">
-                    <span className="rounded-md bg-sky-50 px-2.5 py-1 text-[11px] font-bold text-sky-700">
+                    <span className="rounded-full border border-sky-200/80 bg-sky-50 px-3.5 py-1 font-body text-xs font-bold text-sky-800">
                       {batch.badge}
                     </span>
-                    <span className="text-[11px] font-medium text-ink-800/60">{batch.targetCohort}</span>
+                    <span className="rounded-full bg-slate-100 px-3 py-0.5 font-body text-xs font-medium text-slate-600">
+                      {batch.targetCohort}
+                    </span>
                   </div>
 
-                  <h3 className="mt-3 text-base font-bold text-sky-950">
+                  {/* ব্যাচের নাম */}
+                  <h3 className="mt-5 font-body text-lg font-black leading-snug text-sky-950 sm:text-[19px]">
                     {batch.name}
                   </h3>
 
-                  <p className="mt-2 text-xs font-semibold text-sky-700 flex items-center gap-1.5">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {/* সময়সূচী ক্যাপসুল বক্স */}
+                  <div className="mt-3.5 flex items-center gap-2 rounded-2xl border border-sky-100 bg-sky-50/70 px-3.5 py-2.5 font-body text-xs font-bold text-sky-800">
+                    <svg className="h-4 w-4 shrink-0 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {batch.schedule}
-                  </p>
+                    <span>{batch.schedule}</span>
+                  </div>
 
-                  <ul className="mt-4 space-y-2 border-t border-sky-100/80 pt-3 text-xs text-ink-800/85">
+                  {/* ব্যাচ ফিচার তালিকা (সূক্ষ্ম রিং-বুলেট পয়েন্ট সহ) */}
+                  <ul className="mt-5 space-y-2.5 border-t border-sky-100/80 pt-4 font-body text-[13.5px] sm:text-sm text-ink-800/85">
                     {batch.features.map((feat) => (
-                      <li key={feat} className="flex items-start gap-1.5">
-                        <span className="font-bold text-sky-600">✓</span>
-                        <span>{feat}</span>
+                      <li key={feat} className="flex items-start gap-2.5">
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full border-2 border-sky-500 bg-white" />
+                        <span className="leading-relaxed">{feat}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* সাধারণ মার্জিত ফ্ল্যাট বাটন (কোনো কৃত্রিম গ্লো নেই) */}
-                <div className="mt-5 border-t border-sky-100/80 pt-3">
+                {/* ক্লিন পিল বাটন (কোনো অ্যারো চিহ্ন ছাড়া) */}
+                <div className="mt-7 border-t border-sky-100/80 pt-4">
                   <button
                     onClick={() => handleSelectBatch(batch.name)}
-                    className="w-full rounded-xl bg-sky-600 py-2.5 text-center text-xs sm:text-sm font-bold text-white transition-colors hover:bg-sky-700"
+                    className="w-full rounded-full bg-sky-600 py-3 text-center font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:text-sm"
                   >
-                    ভর্তি ফরম পূরণ করো →
+                    ভর্তি ফরম পূরণ করো
                   </button>
                 </div>
               </div>
