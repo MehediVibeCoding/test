@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
 import Reveal from "./Reveal";
 import type { ClassDiaryEntry } from "@/lib/academyData";
@@ -10,94 +9,44 @@ type ClassDiaryClientProps = {
 };
 
 export default function ClassDiaryClient({ entries }: ClassDiaryClientProps) {
-  // হোমপেজে শুধুমাত্র HSC 26 ও HSC 27 ব্যাচের সহজ ফিল্টার
-  const [selectedCohort, setSelectedCohort] = useState<"all" | "26" | "27">("all");
-
-  // হোমপেজে প্রদর্শনের জন্য ফিল্টার করা সর্বশেষ ৩টি ক্লাস ডায়েরি
-  const displayEntries = useMemo(() => {
-    let list = entries;
-
-    if (selectedCohort === "26") {
-      list = entries.filter((e) => e.batch.includes("26") || e.batch.includes("২৬"));
-    } else if (selectedCohort === "27") {
-      list = entries.filter((e) => e.batch.includes("27") || e.batch.includes("২৭"));
-    }
-
-    // রিসেন্ট পাবলিশ অনুযায়ী সবসময় শীর্ষ ৩টি কার্ড
-    return list.slice(0, 3);
-  }, [entries, selectedCohort]);
+  // হোমপেজে সর্বদা সর্বশেষ ৩টি ক্লাস ডায়েরি কার্ড
+  const displayEntries = entries.slice(0, 3);
 
   return (
     <section id="class-diary" className="relative px-6 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-white">
       <div className="mx-auto max-w-7xl">
-        {/* ১. সেকশন হেডার (কোনো বাড়ির কাজ শব্দ ছাড়া) */}
+        {/* ১. সেকশন হেডার ও আপনার মার্ক করা পজিশনে 'সবগুলো দেখুন' বাটন (কোনো অ্যারো ছাড়া) */}
         <Reveal className="mb-8 sm:mb-12">
           {/* টপ ব্যাজ */}
           <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
             ডিজিটাল ক্লাস ডায়েরি
           </span>
 
-          {/* হেডার ও ডানপাশের 'সবগুলো দেখুন →' বাটন */}
-          <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h2 className="font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px] leading-tight">
-                আজকের ক্লাস ডায়েরি
-              </h2>
-              <p className="mt-2 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
-                প্রতিদিনের ক্লাসের মূল বিষয়বস্তু, লেকচার নোট ও গুরুত্বপূর্ণ শিট সহজে খুঁজে নাও।
-              </p>
-            </div>
+          {/* শিরোনাম ও তার সরাসরি ডানপাশে 'সবগুলো দেখুন' বাটন */}
+          <div className="mt-3 flex items-center justify-between gap-4">
+            <h2 className="font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px] leading-tight">
+              আজকের ক্লাস ডায়েরি
+            </h2>
 
-            {/* ডানপাশে সব ডায়েরি দেখার নীল বাটন */}
             <Link
               href="/class-diary"
-              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-sky-600 px-6 py-2.5 font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:text-sm self-start sm:self-auto"
+              className="inline-flex shrink-0 items-center justify-center rounded-full bg-sky-600 px-5 py-2 font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:px-6 sm:py-2.5 sm:text-sm"
             >
-              <span>সবগুলো দেখুন</span>
-              <span>→</span>
+              সবগুলো দেখুন
             </Link>
           </div>
+
+          {/* সাবটাইটেল */}
+          <p className="mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
+            প্রতিদিনের ক্লাসের মূল বিষয়বস্তু, লেকচার নোট ও গুরুত্বপূর্ণ শিট সহজে খুঁজে নাও।
+          </p>
         </Reveal>
 
-        {/* ২. ব্যাচ ফিল্টার বোতামসমূহ (এইচএসসি ২৬ ও এইচএসসি ২৭) */}
-        <Reveal className="mb-8 flex items-center gap-2" delay={80}>
-          <button
-            onClick={() => setSelectedCohort("all")}
-            className={`rounded-full px-4 py-1.5 font-body text-xs font-bold transition-all ${
-              selectedCohort === "all"
-                ? "bg-sky-950 text-white shadow-xs"
-                : "border border-sky-100 bg-sky-50/60 text-sky-900 hover:bg-sky-100"
-            }`}
-          >
-            সকল ব্যাচ
-          </button>
-          <button
-            onClick={() => setSelectedCohort("26")}
-            className={`rounded-full px-4 py-1.5 font-body text-xs font-bold transition-all ${
-              selectedCohort === "26"
-                ? "bg-sky-950 text-white shadow-xs"
-                : "border border-sky-100 bg-sky-50/60 text-sky-900 hover:bg-sky-100"
-            }`}
-          >
-            এইচএসসি ২৬
-          </button>
-          <button
-            onClick={() => setSelectedCohort("27")}
-            className={`rounded-full px-4 py-1.5 font-body text-xs font-bold transition-all ${
-              selectedCohort === "27"
-                ? "bg-sky-950 text-white shadow-xs"
-                : "border border-sky-100 bg-sky-50/60 text-sky-900 hover:bg-sky-100"
-            }`}
-          >
-            এইচএসসি ২৭
-          </button>
-        </Reveal>
-
-        {/* ৩. সর্বশেষ ৩টি ক্লাস ডায়েরি কার্ড গ্রিড */}
+        {/* ২. সরাসরি সর্বশেষ ৩টি ক্লাস ডায়েরি কার্ড গ্রিড (হোমপেজে কোনো ফিল্টার বাটন ছাড়া) */}
         {displayEntries.length === 0 ? (
           <div className="mx-auto max-w-md rounded-3xl border border-sky-100 bg-sky-50/40 p-8 text-center">
-            <p className="font-body text-base font-bold text-sky-950">এই ব্যাচের কোনো ক্লাস নোট পাওয়া যায়নি</p>
-            <p className="mt-1 font-body text-xs text-ink-800/70">শীঘ্রই পরবর্তী ক্লাসের ডায়েরি হালনাগাদ করা হবে।</p>
+            <p className="font-body text-base font-bold text-sky-950">শীঘ্রই নতুন ক্লাস নোট প্রকাশিত হবে</p>
+            <p className="mt-1 font-body text-xs text-ink-800/70">নিয়মিত ক্লাসের আপডেট দেখতে চোখ রাখুন।</p>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -123,7 +72,9 @@ export default function ClassDiaryClient({ entries }: ClassDiaryClientProps) {
 
                     {/* ক্লাসের মূল বিষয়বস্তু */}
                     <h3 className="mt-5 font-body text-lg font-black leading-snug text-sky-950 transition-colors group-hover:text-sky-700 sm:text-[19px] line-clamp-2">
-                      {entry.topic}
+                      <Link href={`/class-diary/${entry.id}`}>
+                        {entry.topic}
+                      </Link>
                     </h3>
 
                     {/* ক্লাসের সারসংক্ষেপ নোট */}
@@ -132,7 +83,7 @@ export default function ClassDiaryClient({ entries }: ClassDiaryClientProps) {
                     </p>
                   </div>
 
-                  {/* ডেডিকেটেড ক্লাস ডায়েরি বিস্তারিত পেজের লিংক বাটন */}
+                  {/* একক বিস্তারিত পেজের বাটন */}
                   <div className="mt-6 border-t border-sky-100/80 pt-4">
                     <Link
                       href={`/class-diary/${entry.id}`}
