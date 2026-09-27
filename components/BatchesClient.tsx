@@ -31,14 +31,7 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
   }, []);
 
   function handleSelectBatch(batchName: string) {
-    if (isLocked) {
-      // আবেদন সম্পন্ন থাকলে সরাসরি রিসিটে স্ক্রল করবে
-      const admissionSection = document.getElementById("admission");
-      if (admissionSection) {
-        admissionSection.scrollIntoView({ behavior: "smooth" });
-      }
-      return;
-    }
+    if (isLocked) return;
 
     const selectElem = document.querySelector<HTMLSelectElement>('select[name="batch"]');
     if (selectElem) {
@@ -107,17 +100,14 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
                   </ul>
                 </div>
 
-                {/* ২ ঘণ্টার লক সমন্বিত পিল বাটন */}
+                {/* ২ ঘণ্টার লক সমন্বিত পিল বাটন (টেক্সট অপরিবর্তিত, সরাসরি ডিসেবল্ড) */}
                 <div className="mt-7 border-t border-sky-100/80 pt-4">
                   <button
+                    disabled={isLocked}
                     onClick={() => handleSelectBatch(batch.name)}
-                    className={`w-full rounded-full py-3 text-center font-body text-xs font-bold transition-all sm:text-sm ${
-                      isLocked
-                        ? "bg-emerald-600 text-white shadow-xs"
-                        : "bg-sky-600 text-white shadow-sm hover:bg-sky-700 active:scale-95"
-                    }`}
+                    className="w-full rounded-full bg-sky-600 py-3 text-center font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
                   >
-                    {isLocked ? "আবেদন সম্পন্ন হয়েছে" : "ভর্তি ফরম পূরণ করো"}
+                    ভর্তি ফরম পূরণ করো
                   </button>
                 </div>
               </div>
