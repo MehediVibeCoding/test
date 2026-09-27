@@ -37,9 +37,9 @@ export default function Navbar() {
   };
 
   return (
-    <header className="relative w-full z-40 bg-transparent">
+    <header className="absolute top-0 inset-x-0 z-50 w-full bg-transparent">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6 pb-2 sm:px-8 lg:px-12">
-        {/* ১. বাম পাশে: একাডেমির নাম ও নিচে স্লোগান (রেফারেন্স স্টাইলে কোনো ব্যাকগ্রাউন্ড ছাড়া) */}
+        {/* ১. বাম পাশে: একাডেমির নাম ও স্লোগান (হিরো ব্যাকগ্রাউন্ডের ওপর সরাসরি) */}
         <ScrollLink targetId="top" className="flex flex-col text-left group">
           <span className="font-body text-base font-black tracking-tight text-sky-950 transition-colors group-hover:text-sky-700 sm:text-lg">
             Ahsan&apos;s Learning Academy
@@ -62,11 +62,10 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* ৩. ডানপাশে: প্রিমিয়াম ক্যাপসুল সুইচার + সিগনেচার স্কাই-ব্লু ভর্তি বাটন */}
+        {/* ৩. ডানপাশে: ক্যাপসুল সুইচার + স্কাই-ব্লু ভর্তি বাটন */}
         <div className="flex items-center gap-3.5 sm:gap-4">
-          {/* প্রিমিয়াম পিল টগল ফ্রেম (ভাষা ও ডার্ক মোড) */}
+          {/* ভাষা ও ডার্ক মোড ক্যাপসুল */}
           <div className="flex items-center gap-1 rounded-full border border-sky-200/80 bg-white/70 p-1 shadow-xs backdrop-blur-sm">
-            {/* ভাষা পরিবর্তন টগল */}
             <button
               onClick={toggleLanguage}
               aria-label="ভাষা পরিবর্তন করুন"
@@ -91,7 +90,6 @@ export default function Navbar() {
 
             <span className="h-3 w-px bg-sky-200" />
 
-            {/* লাইট / ডার্ক মোড টগল */}
             <button
               onClick={toggleTheme}
               aria-label="থিম পরিবর্তন করুন"
@@ -120,7 +118,7 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* ব্র্যান্ড স্কাই-ব্লু ভর্তি বাটন */}
+          {/* ব্র্যান্ড স্কাই-ব্লু বাটন */}
           <ScrollLink
             targetId="admission"
             className="hidden rounded-full bg-sky-600 px-6 py-2.5 font-body text-xs font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 sm:inline-flex sm:items-center sm:justify-center"
@@ -128,7 +126,7 @@ export default function Navbar() {
             ভর্তি হও
           </ScrollLink>
 
-          {/* মোবাইল হ্যামবার্গার বাটন */}
+          {/* মোবাইল মেনু বাটন */}
           <button
             aria-label={open ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
             aria-expanded={open}
