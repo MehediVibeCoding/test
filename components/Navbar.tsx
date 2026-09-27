@@ -40,12 +40,12 @@ export default function Navbar() {
   return (
     <header className="absolute top-0 inset-x-0 z-50 w-full bg-transparent">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 pt-5 pb-2 sm:px-8 lg:px-12">
-        {/* ১. বাম পাশে: একাডেমির নাম ও নিচে মাঝ বরাবর অ্যালাইন করা স্টাইলিশ ইটালিক স্লোগান */}
-        <ScrollLink targetId="top" className="flex flex-col items-center text-center group cursor-pointer">
-          <span className="font-body text-base font-black tracking-tight text-sky-950 transition-colors group-hover:text-sky-700 sm:text-lg">
+        {/* ১. বাম পাশে: টাইট স্পেসিং ও মাঝ বরাবর অ্যালাইন করা নাম ও ইটালিক স্লোগান */}
+        <ScrollLink targetId="top" className="flex flex-col items-center text-center group cursor-pointer leading-tight">
+          <span className="font-body text-base font-black tracking-tight text-sky-950 transition-colors group-hover:text-sky-700 sm:text-lg leading-tight">
             Ahsan&apos;s Learning Academy
           </span>
-          <span className="font-display italic text-[11px] font-semibold tracking-wide text-sky-700 sm:text-xs">
+          <span className="font-display italic text-[11px] font-semibold tracking-wide text-sky-700 sm:text-xs -mt-0.5 leading-tight">
             Better Learning, Brighter Future
           </span>
         </ScrollLink>
@@ -63,7 +63,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* ৩. ডানপাশে: মিনিমাল আইকন ক্যাপসুল (নো 'বাং' টেক্সট) + স্কাই-ব্লু ভর্তি বাটন */}
+        {/* ৩. ডানপাশে: মিনিমাল আইকন ক্যাপসুল + স্কাই-ব্লু ভর্তি বাটন */}
         <div className="flex items-center gap-3.5 sm:gap-4">
           {/* স্লিক মিনিমাল পিল টগল ফ্রেম */}
           <div className="flex items-center gap-1.5 rounded-full border border-sky-200/80 bg-white/80 p-1.5 shadow-xs backdrop-blur-sm">
@@ -123,7 +123,7 @@ export default function Navbar() {
             ভর্তি হও
           </ScrollLink>
 
-          {/* মোবাইল মেনু বাটন (স্লিক সার্কুলার ডিজাইন) */}
+          {/* মোবাইল মেনু বাটন */}
           <button
             aria-label={open ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
             aria-expanded={open}
@@ -143,7 +143,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* প্রিমিয়াম ড্রিবল-গ্রেড মোবাইল ড্রয়ার মেনু */}
+      {/* মোবাইল ড্রপডাউন মেনু */}
       <AnimatePresence>
         {open && (
           <motion.div
