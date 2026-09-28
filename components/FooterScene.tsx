@@ -26,17 +26,12 @@ export default function FooterScene() {
   return (
     <section
       aria-label="Footer Scene"
-      className="relative w-full overflow-hidden -mb-[1px] bg-white dark:bg-[#070f1a] transition-colors"
-      style={{
-        background: `linear-gradient(to bottom, var(--scene-above, #ffffff) 0%, var(--scene-above, #ffffff) 50%, var(--scene-footer, #0a1f33) 50%, var(--scene-footer, #0a1f33) 100%)`,
-      }}
+      className="relative w-full overflow-hidden -mb-[2px] bg-[linear-gradient(to_bottom,#ffffff_50%,#0a1f33_50%)] dark:bg-[linear-gradient(to_bottom,#070f1a_50%,#06111e_50%)] transition-colors"
     >
       <div
         className="w-full"
         style={
           {
-            "--scene-above": "#ffffff",
-            "--scene-footer": "#0a1f33",
             "--wave-h": "clamp(28px, 5vw, 80px)",
             WebkitMaskImage: MASK_IMAGE,
             maskImage: MASK_IMAGE,
