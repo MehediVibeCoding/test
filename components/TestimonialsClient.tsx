@@ -3,11 +3,14 @@
 import { useEffect, useState, FormEvent, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
+import EduDoodles from "./EduDoodles";
 import {
   submitPublicReview,
   checkReviewStatus,
   type PublicReviewInput,
 } from "@/app/actions/review";
+import { useShine } from "@/hooks/useShine";
+import { useApp } from "@/context/AppContext";
 import type { Testimonial } from "@/lib/academyData";
 
 const STORAGE_KEY = "ala_user_pending_review_v2";
@@ -35,12 +38,10 @@ const EMPTY_FORM: PublicReviewInput = {
   quote: "",
 };
 
-// স্ক্রিপ্ট ও ট্যাগ স্যানিটাইজার
 function sanitizeInput(str: string): string {
   return str.replace(/[<>]/g, "").trim();
 }
 
-// নামের প্রথম অক্ষর দিয়ে অ্যাভাটার তৈরি
 function getInitials(name: string): string {
   const clean = name.trim();
   if (!clean) return "AU";
@@ -49,7 +50,6 @@ function getInitials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-// বিগত ২৪ ঘণ্টায় মোট কয়টি রিভিউ সাবমিট হয়েছে তা গণনা
 function getRecentSubmissionsCount(): number {
   try {
     const raw = localStorage.getItem(TIMESTAMPS_KEY);
@@ -64,7 +64,6 @@ function getRecentSubmissionsCount(): number {
   }
 }
 
-// নতুন সাবমিশনের টাইমস্ট্যাম্প সংরক্ষণ
 function recordSubmissionTimestamp() {
   try {
     const raw = localStorage.getItem(TIMESTAMPS_KEY);
@@ -78,29 +77,46 @@ function recordSubmissionTimestamp() {
   }
 }
 
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const reviewCardVariants = {
+  hidden: { opacity: 0, y: 25, scale: 0.96 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
+
 export default function TestimonialsClient({
   featured,
 }: {
   featured: Testimonial[];
 }) {
+  const { language, t } = useApp();
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState<PublicReviewInput>(EMPTY_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
-
-  // ব্রাউজারে সংরক্ষিত পেন্ডিং রিভিউ
   const [localPendingReview, setLocalPendingReview] = useState<StoredReview | null>(null);
-
-  // রিজেক্ট হলে ১-টাইম নোটিশ দেখানোর স্টেট
   const [rejectedNotice, setRejectedNotice] = useState<boolean>(false);
-
-  // ২৪ ঘণ্টার লিমিট স্টেট
   const [isDailyLimitReached, setIsDailyLimitReached] = useState(false);
 
-  // পেজ লোড হলে সংরক্ষিত রিভিউ স্ট্যাটাস যাচাই ও সিঙ্ক
+  // বাটন ঝিলিক অ্যানিমেশন
+  const { ref: feedbackBtnRef, shineClass } = useShine<HTMLButtonElement>(
+    !isDailyLimitReached
+  );
+
   const syncReviewStatus = useCallback(async () => {
-    // ১. ডেইলি লিমিট চেক
     const count = getRecentSubmissionsCount();
     if (count >= MAX_DAILY_REVIEWS) {
       setIsDailyLimitReached(true);
@@ -108,27 +124,22 @@ export default function TestimonialsClient({
       setIsDailyLimitReached(false);
     }
 
-    // ২. লোকাল স্টোরেজ থেকে পেন্ডিং রিভিউ যাচাই
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (!saved) return;
       const parsed: StoredReview = JSON.parse(saved);
 
       if (parsed && parsed.id) {
-        // সার্ভার থেকে লাইভ স্ট্যাটাস চেক
         const result = await checkReviewStatus(parsed.id);
 
         if (result.status === "approved") {
-          // অ্যাডমিন অনুমোদন করেছেন -> লোকাল পেন্ডিং থেকে মুছে দাও (কারণ এটা এখন লাইভ ফিডে দৃশ্যমান)
           localStorage.removeItem(STORAGE_KEY);
           setLocalPendingReview(null);
         } else if (result.status === "rejected") {
-          // অ্যাডমিন বাতিল/মুছে দিয়েছেন -> লোকাল থেকে মুছে ১-টাইম নোটিশ অন করো
           localStorage.removeItem(STORAGE_KEY);
           setLocalPendingReview(null);
           setRejectedNotice(true);
         } else {
-          // এখনো পেন্ডিং অবস্থায় আছে -> প্রিভিউ কার্ডে রাখো
           setLocalPendingReview(parsed);
         }
       }
@@ -145,9 +156,12 @@ export default function TestimonialsClient({
     e.preventDefault();
     setErrorMessage(null);
 
-    // দৈনিক ২টির বেশি হলে ব্লক
     if (getRecentSubmissionsCount() >= MAX_DAILY_REVIEWS) {
-      setErrorMessage("আপনি আজকের জন্য সর্বোচ্চ ২টি রিভিউ প্রদান করেছেন। অনুগ্রহ করে আগামীকাল চেষ্টা করুন।");
+      setErrorMessage(
+        language === "bn"
+          ? "আপনি আজকের জন্য সর্বোচ্চ ২টি রিভিউ প্রদান করেছেন। অনুগ্রহ করে আগামীকাল চেষ্টা করুন।"
+          : "You have submitted the maximum of 2 reviews for today. Please try again tomorrow."
+      );
       setIsDailyLimitReached(true);
       return;
     }
@@ -157,12 +171,20 @@ export default function TestimonialsClient({
     const cleanBatch = sanitizeInput(formData.batch_year);
 
     if (cleanName.length < 2) {
-      setErrorMessage("অনুগ্রহ করে আপনার সঠিক পূর্ণ নাম লিখুন।");
+      setErrorMessage(
+        language === "bn"
+          ? "অনুগ্রহ করে আপনার সঠিক পূর্ণ নাম লিখুন।"
+          : "Please enter your full name."
+      );
       return;
     }
 
     if (cleanQuote.length < 10) {
-      setErrorMessage("আপনার মতামত বা রিভিউ বক্তব্য কমপক্ষে ১০ অক্ষরের হতে হবে।");
+      setErrorMessage(
+        language === "bn"
+          ? "আপনার মতামত বা রিভিউ বক্তব্য কমপক্ষে ১০ অক্ষরের হতে হবে।"
+          : "Your review must be at least 10 characters long."
+      );
       return;
     }
 
@@ -183,7 +205,6 @@ export default function TestimonialsClient({
         return;
       }
 
-      // নতুন রিভিউ আইডি সহ লোকাল স্টোরেজে সেভ
       const storedItem: StoredReview = {
         id: res.reviewId,
         name: payload.name,
@@ -201,7 +222,6 @@ export default function TestimonialsClient({
         // fallback
       }
 
-      // সাবমিশনের পর কাউন্ট আপডেট
       if (getRecentSubmissionsCount() >= MAX_DAILY_REVIEWS) {
         setIsDailyLimitReached(true);
       }
@@ -209,7 +229,11 @@ export default function TestimonialsClient({
       setSubmittedSuccess(true);
     } catch (err) {
       console.error("Review submission network error:", err);
-      setErrorMessage("ইন্টারনেট সংযোগে ত্রুটি হয়েছে। আপনার কানেকশন চেক করে আবার চেষ্টা করুন।");
+      setErrorMessage(
+        language === "bn"
+          ? "ইন্টারনেট সংযোগে ত্রুটি হয়েছে। আপনার কানেকশন চেক করে আবার চেষ্টা করুন।"
+          : "Network error. Please check your internet connection and try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -223,50 +247,53 @@ export default function TestimonialsClient({
   }
 
   return (
-    <section className="relative px-6 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-gradient-to-b from-sky-50/40 via-white to-white">
-      <div className="mx-auto max-w-7xl">
+    <section className="relative px-6 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-gradient-to-b from-sky-50/40 via-white to-white dark:from-[#070f1a] dark:via-[#091b2e] dark:to-[#070f1a] overflow-hidden transition-colors">
+      {/* ব্যাকগ্রাউন্ড এডুকেশন অ্যাকসেন্ট ডুডলস */}
+      <EduDoodles variant="section" />
+
+      <div className="relative z-10 mx-auto max-w-7xl">
         {/* সেকশন হেডার */}
         <Reveal className="mb-8 text-center sm:mb-10">
-          <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
-            শিক্ষার্থী ও অভিভাবক প্রতিক্রিয়া
+          <span className="inline-flex rounded-full bg-sky-100 dark:bg-sky-900/60 px-4 py-1 font-body text-xs font-bold text-sky-800 dark:text-sky-300">
+            {t.testimonials.tag}
           </span>
-          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px]">
-            শিক্ষার্থী ও অভিভাবকরা যা বলেন
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 dark:text-white sm:text-4xl lg:text-[38px]">
+            {t.testimonials.title}
           </h2>
-          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
-            আমাদের একাডেমি থেকে পড়ে শিক্ষার্থী ও অভিভাবকদের বাস্তব অভিজ্ঞতা ও অভিমত।
+          <p className="mx-auto mt-2.5 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 dark:text-slate-300 sm:text-[15px]">
+            {t.testimonials.subtitle}
           </p>
         </Reveal>
 
-        {/* ১. রিজেক্ট হলে ১-টাইম নোটিশ ব্যানার (নোটিশ বন্ধ করলে চিরতরে মুছে যাবে) */}
+        {/* রিজেক্ট নোটিশ ব্যানার */}
         <AnimatePresence>
           {rejectedNotice && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mb-8 overflow-hidden rounded-2xl border border-amber-200 bg-amber-50/80 p-4 shadow-xs"
+              className="mb-8 overflow-hidden rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/40 p-4 shadow-xs"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-200/80 text-amber-900 text-xs font-black">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-200/80 dark:bg-amber-800 text-amber-900 dark:text-amber-200 text-xs font-black">
                     i
                   </span>
                   <div>
-                    <p className="font-body text-[13px] font-bold text-amber-950">
-                      আপনার পূর্ববর্তী রিভিউটি পর্যালোচনার পর বাতিল করা হয়েছে
+                    <p className="font-body text-[13px] font-bold text-amber-950 dark:text-amber-200">
+                      {t.testimonials.rejectedNoticeTitle}
                     </p>
-                    <p className="font-body text-[11.5px] text-amber-900/80 mt-0.5">
-                      নীতিমালা অনুযায়ী প্রাসঙ্গিক অভিজ্ঞতা নিয়ে আপনি নতুন রিভিউ প্রদান করতে পারবেন।
+                    <p className="font-body text-[11.5px] text-amber-900/80 dark:text-amber-300/80 mt-0.5">
+                      {t.testimonials.rejectedNoticeDesc}
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setRejectedNotice(false)}
-                  className="rounded-lg bg-white/80 px-2.5 py-1 font-body text-[11px] font-bold text-amber-900 hover:bg-white transition-colors"
+                  className="rounded-lg bg-white/80 dark:bg-slate-800 px-2.5 py-1 font-body text-[11px] font-bold text-amber-900 dark:text-amber-200 hover:bg-white transition-colors"
                 >
-                  ঠিক আছে ✕
+                  ✕
                 </button>
               </div>
             </motion.div>
@@ -274,41 +301,46 @@ export default function TestimonialsClient({
         </AnimatePresence>
 
         {/* ৩টি মনোটোন প্রিমিয়াম রিভিউ কার্ড গ্রিড */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {featured.map((t, i) => {
-            const isGuardian = t.type === "অভিভাবক";
-            const initials = getInitials(t.name);
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid gap-6 md:grid-cols-3"
+        >
+          {featured.map((item) => {
+            const isGuardian = item.type === "অভিভাবক";
+            const initials = getInitials(item.name);
 
             return (
-              <Reveal key={t.id || t.name} delay={i * 70}>
-                <figure className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 bg-white p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 hover:shadow-xl hover:shadow-sky-950/5">
+              <motion.div key={item.id || item.name} variants={reviewCardVariants}>
+                <figure className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/80 p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-xl hover:shadow-sky-950/5">
                   <div>
-                    {/* কোটেশন মার্ক অ্যাকসেন্ট */}
+                    {/* কোটেশন মার্ক */}
                     <div className="mb-3.5 text-sky-400">
                       <svg className="h-6 w-6 opacity-60" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                       </svg>
                     </div>
 
-                    {/* বক্তব্য টেক্সট */}
-                    <p className="font-body text-sm sm:text-[14.5px] leading-[1.75] text-ink-800/90">
-                      {t.quote}
+                    <p className="font-body text-sm sm:text-[14.5px] leading-[1.75] text-ink-800/90 dark:text-slate-200">
+                      {item.quote}
                     </p>
                   </div>
 
-                  {/* পরিচয় ও অ্যাভাটার (অভিভাবকের ক্ষেত্রে ডুপ্লিকেট টেক্সট রিমুভ) */}
-                  <figcaption className="mt-6 flex items-center justify-between border-t border-sky-100/80 pt-4">
+                  {/* পরিচয় ও অ্যাভাটার */}
+                  <figcaption className="mt-6 flex items-center justify-between border-t border-sky-100/80 dark:border-slate-800 pt-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-50 font-body text-xs font-black text-sky-800 border border-sky-200/60">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-50 dark:bg-slate-800 font-body text-xs font-black text-sky-800 dark:text-sky-300 border border-sky-200/60 dark:border-slate-700">
                         {initials}
                       </div>
                       <div>
-                        <span className="block font-body text-sm font-bold text-sky-950 sm:text-[15px]">
-                          {t.name}
+                        <span className="block font-body text-sm font-bold text-sky-950 dark:text-white sm:text-[15px]">
+                          {item.name}
                         </span>
-                        {!isGuardian && t.year && t.year !== "শিক্ষার্থী" && (
-                          <span className="block font-body text-xs font-semibold text-sky-700 mt-0.5">
-                            {t.year}
+                        {!isGuardian && item.year && item.year !== "শিক্ষার্থী" && (
+                          <span className="block font-body text-xs font-semibold text-sky-700 dark:text-sky-400 mt-0.5">
+                            {item.year}
                           </span>
                         )}
                       </div>
@@ -317,60 +349,64 @@ export default function TestimonialsClient({
                     <span
                       className={`rounded-full px-3 py-1 font-body text-xs font-bold ${
                         isGuardian
-                          ? "border border-amber-200/80 bg-amber-50 text-amber-800"
-                          : "border border-sky-200/80 bg-sky-50 text-sky-800"
+                          ? "border border-amber-200/80 dark:border-amber-800 bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300"
+                          : "border border-sky-200/80 dark:border-sky-800 bg-sky-50 dark:bg-sky-950 text-sky-800 dark:text-sky-300"
                       }`}
                     >
-                      {t.type}
+                      {isGuardian ? t.testimonials.guardianOption : t.testimonials.studentOption}
                     </span>
                   </figcaption>
                 </figure>
-              </Reveal>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
 
-        {/* ব্যবহারকারীর নিজস্ব লোকাল পেন্ডিং রিভিউ কার্ড (শুধুমাত্র অনুমোদনের অপেক্ষায় থাকলেই দৃশ্যমান) */}
+        {/* ব্যবহারকারীর নিজস্ব লোকাল পেন্ডিং রিভিউ কার্ড */}
         {localPendingReview && (
           <Reveal delay={100} className="mt-6">
-            <div className="rounded-3xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-6 shadow-xs">
+            <div className="rounded-3xl border-2 border-dashed border-sky-300 dark:border-sky-700 bg-sky-50/40 dark:bg-slate-900/60 p-6 shadow-xs">
               <div className="mb-2.5 flex items-center justify-between">
-                <span className="rounded-full bg-sky-100 px-3 py-1 font-body text-xs font-bold text-sky-900">
-                  আপনার রিভিউটি জমা হয়েছে (অ্যাডমিন অনুমোদনের অপেক্ষায়)
+                <span className="rounded-full bg-sky-100 dark:bg-sky-900 px-3 py-1 font-body text-xs font-bold text-sky-900 dark:text-sky-200">
+                  {language === "bn"
+                    ? "আপনার রিভিউটি জমা হয়েছে (অ্যাডমিন অনুমোদনের অপেক্ষায়)"
+                    : "Your review is submitted (Awaiting Admin Approval)"}
                 </span>
-                <span className="font-body text-xs font-semibold text-ink-800/60">শুধুমাত্র আপনি দেখতে পাচ্ছেন</span>
+                <span className="font-body text-xs font-semibold text-ink-800/60 dark:text-slate-400">
+                  {language === "bn" ? "শুধুমাত্র আপনি দেখতে পাচ্ছেন" : "Visible only to you"}
+                </span>
               </div>
-              <p className="font-body text-sm leading-[1.75] text-ink-800">
+              <p className="font-body text-sm leading-[1.75] text-ink-800 dark:text-slate-200">
                 {localPendingReview.quote}
               </p>
-              <div className="mt-4 flex items-center justify-between border-t border-sky-200/70 pt-3 font-body text-xs font-bold text-sky-950">
+              <div className="mt-4 flex items-center justify-between border-t border-sky-200/70 dark:border-slate-800 pt-3 font-body text-xs font-bold text-sky-950 dark:text-white">
                 <span>{localPendingReview.name}</span>
-                <span className="text-sky-700 font-semibold">{localPendingReview.batch_year || localPendingReview.role_type}</span>
+                <span className="text-sky-700 dark:text-sky-300 font-semibold">{localPendingReview.batch_year || localPendingReview.role_type}</span>
               </div>
             </div>
           </Reveal>
         )}
 
-        {/* রিভিউ বাটন (২৪ ঘণ্টায় ২টি লিমিট চেক সহ) */}
+        {/* রিভিউ বাটন (ঝিলিক অ্যানিমেশন সহ) */}
         <Reveal delay={120} className="mt-8 text-center sm:mt-10">
           <div className="inline-flex flex-col items-center gap-1.5">
             <button
+              ref={feedbackBtnRef}
               disabled={isDailyLimitReached}
               onClick={() => setModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all ${shineClass} ${
+                isDailyLimitReached
+                  ? "bg-slate-400 opacity-50 cursor-not-allowed"
+                  : "btn-gradient active:scale-95"
+              }`}
             >
               <span className="text-base font-black leading-none">+</span>
               <span>
                 {isDailyLimitReached
-                  ? "আজকের রিভিউ লিমিট পূর্ণ হয়েছে"
-                  : "আপনার মতামত ও পড়ার অভিজ্ঞতা শেয়ার করুন"}
+                  ? t.testimonials.limitReached
+                  : t.testimonials.feedbackCta}
               </span>
             </button>
-            {isDailyLimitReached && (
-              <span className="font-body text-[11px] font-semibold text-muted">
-                (আপনি আজকের জন্য সর্বোচ্চ ২টি রিভিউ দিয়েছেন। আগামীকাল আবার মতামত দিতে পারবেন।)
-              </span>
-            )}
           </div>
         </Reveal>
       </div>
@@ -384,81 +420,79 @@ export default function TestimonialsClient({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseModal}
-              className="absolute inset-0 bg-sky-950/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-sky-950/60 dark:bg-black/75 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-sky-100 bg-white p-6 shadow-2xl sm:p-8"
+              className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-sky-100 dark:border-sky-900 bg-white dark:bg-slate-900 p-6 shadow-2xl sm:p-8"
             >
               {submittedSuccess ? (
                 <div className="py-6 text-center">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
                     <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h3 className="font-body text-lg font-bold text-sky-950 sm:text-xl">
-                    মতামত সফলভাবে জমা হয়েছে
+                  <h3 className="font-body text-lg font-bold text-sky-950 dark:text-white sm:text-xl">
+                    {t.testimonials.successTitle}
                   </h3>
-                  <p className="mt-2 font-body text-xs sm:text-sm leading-relaxed text-ink-800/80">
-                    ধন্যবাদ, <b className="text-sky-950">{formData.name}</b>। আপনার মূল্যবান অভিজ্ঞতা শেয়ার করার জন্য আমরা আন্তরিকভাবে কৃতজ্ঞ। অ্যাডমিন অনুমোদনের পর এটি ওয়েবসাইটে যুক্ত হবে।
+                  <p className="mt-2 font-body text-xs sm:text-sm leading-relaxed text-ink-800/80 dark:text-slate-300">
+                    {t.testimonials.successDesc}
                   </p>
                   <button
                     onClick={handleCloseModal}
-                    className="mt-6 rounded-full bg-sky-600 px-7 py-2.5 font-body text-xs sm:text-sm font-bold text-white transition-all hover:bg-sky-700 active:scale-95"
+                    className="mt-6 btn-gradient rounded-full px-7 py-2.5 font-body text-xs sm:text-sm font-bold text-white shadow-xs"
                   >
-                    ঠিক আছে
+                    OK
                   </button>
                 </div>
               ) : (
                 <>
-                  <div className="mb-5 flex items-start justify-between gap-3 border-b border-sky-100 pb-3.5">
+                  <div className="mb-5 flex items-start justify-between gap-3 border-b border-sky-100 dark:border-slate-800 pb-3.5">
                     <div>
-                      <h3 className="font-body text-base font-bold text-sky-950 sm:text-lg">
-                        আপনার মতামত বা অভিজ্ঞতা লিখুন
+                      <h3 className="font-body text-base font-bold text-sky-950 dark:text-white sm:text-lg">
+                        {t.testimonials.modalTitle}
                       </h3>
-                      <p className="font-body text-xs text-ink-800/70 mt-0.5">
-                        ক্লাসের অভিজ্ঞতা ও স্যারের পাঠদান সম্পর্কে আপনার মতামত
+                      <p className="font-body text-xs text-ink-800/70 dark:text-slate-400 mt-0.5">
+                        {t.testimonials.modalSubtitle}
                       </p>
                     </div>
                     <button
                       onClick={handleCloseModal}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 text-xs font-bold text-sky-950 hover:bg-sky-100"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 dark:bg-slate-800 text-xs font-bold text-sky-950 dark:text-white hover:bg-sky-100"
                     >
                       ✕
                     </button>
                   </div>
 
                   {errorMessage && (
-                    <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-3.5 font-body text-xs font-semibold text-red-700">
+                    <div className="mb-4 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 p-3.5 font-body text-xs font-semibold text-red-700 dark:text-red-300">
                       {errorMessage}
                     </div>
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* পূর্ণ নাম */}
                     <div>
-                      <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                        আপনার পূর্ণ নাম
+                      <label className="mb-1 block font-body text-xs font-bold text-sky-950 dark:text-white sm:text-[13px]">
+                        {t.testimonials.nameLabel}
                       </label>
                       <input
                         required
                         maxLength={MAX_NAME_LENGTH}
-                        placeholder="আপনার পূর্ণ নাম লিখুন"
+                        placeholder={language === "bn" ? "আপনার পূর্ণ নাম লিখুন" : "Enter your full name"}
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full rounded-2xl border border-sky-200/80 bg-sky-50/30 px-4 py-2.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
+                        className="w-full rounded-2xl border border-sky-200/80 dark:border-slate-700 bg-sky-50/30 dark:bg-slate-800/50 px-4 py-2.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white dark:focus:bg-slate-800 dark:text-white"
                       />
                     </div>
 
-                    {/* ভূমিকা ও শিক্ষাবর্ষ */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                          আপনার ভূমিকা
+                        <label className="mb-1 block font-body text-xs font-bold text-sky-950 dark:text-white sm:text-[13px]">
+                          {t.testimonials.roleLabel}
                         </label>
                         <div className="relative">
                           <select
@@ -469,12 +503,12 @@ export default function TestimonialsClient({
                                 role_type: e.target.value as "শিক্ষার্থী" | "অভিভাবক",
                               })
                             }
-                            className="w-full appearance-none rounded-2xl border border-sky-200/80 bg-sky-50/30 px-4 py-2.5 pr-9 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white cursor-pointer"
+                            className="w-full appearance-none rounded-2xl border border-sky-200/80 dark:border-slate-700 bg-sky-50/30 dark:bg-slate-800/50 px-4 py-2.5 pr-9 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white dark:focus:bg-slate-800 cursor-pointer dark:text-white"
                           >
-                            <option value="শিক্ষার্থী">শিক্ষার্থী</option>
-                            <option value="অভিভাবক">অভিভাবক</option>
+                            <option value="শিক্ষার্থী" className="dark:bg-slate-900">{t.testimonials.studentOption}</option>
+                            <option value="অভিভাবক" className="dark:bg-slate-900">{t.testimonials.guardianOption}</option>
                           </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-sky-700">
+                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-sky-700 dark:text-sky-300">
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
@@ -483,58 +517,60 @@ export default function TestimonialsClient({
                       </div>
 
                       <div>
-                        <label className="mb-1 block font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                          ব্যাচ বা শিক্ষাবর্ষ
+                        <label className="mb-1 block font-body text-xs font-bold text-sky-950 dark:text-white sm:text-[13px]">
+                          {t.testimonials.batchLabel}
                         </label>
                         <input
                           required
                           maxLength={MAX_BATCH_LENGTH}
-                          placeholder="যেমন: HSC 2026"
+                          placeholder={language === "bn" ? "যেমন: HSC 2026" : "e.g. HSC 2026"}
                           value={formData.batch_year}
                           onChange={(e) =>
                             setFormData({ ...formData, batch_year: e.target.value })
                           }
-                          className="w-full rounded-2xl border border-sky-200/80 bg-sky-50/30 px-4 py-2.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
+                          className="w-full rounded-2xl border border-sky-200/80 dark:border-slate-700 bg-sky-50/30 dark:bg-slate-800/50 px-4 py-2.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white dark:focus:bg-slate-800 dark:text-white"
                         />
                       </div>
                     </div>
 
-                    {/* মতামত ও লাইভ ক্যারেক্টার কাউন্টার */}
                     <div>
                       <div className="mb-1 flex items-center justify-between">
-                        <label className="font-body text-xs font-bold text-sky-950 sm:text-[13px]">
-                          আপনার মতামত বা রিভিউ বক্তব্য
+                        <label className="font-body text-xs font-bold text-sky-950 dark:text-white sm:text-[13px]">
+                          {t.testimonials.quoteLabel}
                         </label>
-                        <span className="font-body text-[11px] font-semibold text-ink-800/60">
-                          {formData.quote.length} / {MAX_QUOTE_LENGTH} অক্ষর
+                        <span className="font-body text-[11px] font-semibold text-ink-800/60 dark:text-slate-400">
+                          {formData.quote.length} / {MAX_QUOTE_LENGTH}
                         </span>
                       </div>
                       <textarea
                         rows={4}
                         required
                         maxLength={MAX_QUOTE_LENGTH}
-                        placeholder="স্যারের ক্লাসের অভিজ্ঞতা ও গাইডলাইন সম্পর্কে আপনার মতামত লিখুন..."
+                        placeholder={
+                          language === "bn"
+                            ? "স্যারের ক্লাসের অভিজ্ঞতা ও গাইডলাইন সম্পর্কে আপনার মতামত লিখুন..."
+                            : "Share your thoughts on teaching quality and classroom guidance..."
+                        }
                         value={formData.quote}
                         onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
-                        className="w-full resize-none rounded-2xl border border-sky-200/80 bg-sky-50/30 p-3.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white"
+                        className="w-full resize-none rounded-2xl border border-sky-200/80 dark:border-slate-700 bg-sky-50/30 dark:bg-slate-800/50 p-3.5 font-body text-xs sm:text-sm outline-none transition-colors focus:border-sky-600 focus:bg-white dark:focus:bg-slate-800 dark:text-white"
                       />
                     </div>
 
-                    {/* বাটন */}
                     <div className="flex justify-end gap-2.5 pt-2">
                       <button
                         type="button"
                         onClick={handleCloseModal}
-                        className="rounded-full border border-slate-200 bg-white px-5 py-2 font-body text-xs font-semibold text-ink-800 hover:bg-slate-50 sm:text-sm"
+                        className="rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-5 py-2 font-body text-xs font-semibold text-ink-800 dark:text-slate-200 hover:bg-slate-50"
                       >
-                        বাতিল
+                        {t.testimonials.cancelBtn}
                       </button>
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="rounded-full bg-sky-600 px-6 py-2 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-sky-700 active:scale-95 disabled:opacity-60"
+                        className="btn-gradient rounded-full px-6 py-2 font-body text-xs sm:text-sm font-bold text-white shadow-sm active:scale-95 disabled:opacity-60"
                       >
-                        {isSubmitting ? "জমা হচ্ছে..." : "মতামত জমা দিন"}
+                        {isSubmitting ? "..." : t.testimonials.submitBtn}
                       </button>
                     </div>
                   </form>
