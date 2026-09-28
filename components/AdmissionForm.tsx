@@ -160,7 +160,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
         setErrorMessage(
           language === "bn"
             ? "অনুগ্রহ করে বিভাগ ও কাঙ্ক্ষিত ব্যাচ নির্বাচন করুন।"
-            : "Please select your group and preferred batch."
+            : "Please select your academic group and preferred batch."
         );
       } else {
         setErrorMessage(
@@ -219,6 +219,17 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
     { value: "ব্যবসায় শিক্ষা বিভাগ", label: t.admission.businessGroup },
   ];
 
+  // রসিদে বিভাগ প্রদর্শনের ভাষা রূপান্তর (ইংরেজি মোডে সঠিক অনুবাদ)
+  const submittedGroupDisplay = useMemo(() => {
+    if (!submittedData) return "";
+    if (language === "en") {
+      if (submittedData.group.includes("বিজ্ঞান")) return t.admission.scienceGroup;
+      if (submittedData.group.includes("মানবিক")) return t.admission.humanitiesGroup;
+      if (submittedData.group.includes("ব্যবসায়")) return t.admission.businessGroup;
+    }
+    return submittedData.group;
+  }, [submittedData, language, t]);
+
   return (
     <section
       id="admission"
@@ -241,9 +252,10 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
 
         <Reveal delay={80}>
           {submittedData ? (
-            <div className="overflow-hidden rounded-3xl border border-[#a7f3d0] dark:border-emerald-800 bg-[#ecfdf5]/50 dark:bg-[#0b241d]/70 p-6 sm:p-8 shadow-xs backdrop-blur-sm">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left border-b border-[#a7f3d0]/80 dark:border-emerald-800/80 pb-6">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d1fae5] dark:bg-emerald-900 text-[#047857] dark:text-emerald-300 border border-[#a7f3d0] dark:border-emerald-700 shadow-xs">
+            /* ডার্ক ও লাইট মোডে সুষম সফট প্যাস্টেল মিন্ট/ইমারেল্ড ইনভয়েস রসিদ */
+            <div className="overflow-hidden rounded-3xl border border-[#a7f3d0] dark:border-emerald-700/60 bg-[#ecfdf5]/80 dark:bg-[#062c21]/80 p-6 sm:p-8 shadow-xs backdrop-blur-md">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left border-b border-[#a7f3d0]/80 dark:border-emerald-700/50 pb-6">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d1fae5] dark:bg-emerald-900 text-[#047857] dark:text-emerald-300 border border-[#a7f3d0] dark:border-emerald-600 shadow-xs">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.8} d="M5 13l4 4L19 7" />
                   </svg>
@@ -252,43 +264,44 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
                   <h3 className="font-body text-lg font-black text-sky-950 dark:text-white sm:text-xl">
                     {t.admission.thankYou}, {submittedData.name}
                   </h3>
-                  <p className="mt-1 font-body text-xs sm:text-sm leading-relaxed text-ink-800/85 dark:text-slate-300">
+                  <p className="mt-1 font-body text-xs sm:text-sm leading-relaxed text-ink-800/85 dark:text-emerald-100/90">
                     {t.admission.successMsg}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900/90 font-body text-xs sm:text-sm shadow-xs">
-                <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {/* রসিদ টেবিল (ডার্ক মোডে সুষম গ্রিন-গ্লাস কনট্রাস্ট সহ) */}
+              <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-emerald-700/50 bg-white/90 dark:bg-[#083528]/90 font-body text-xs sm:text-sm shadow-xs backdrop-blur-sm">
+                <div className="divide-y divide-slate-100 dark:divide-emerald-800/40">
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.studentName}</span>
-                    <span className="font-bold text-sky-950 dark:text-white">{submittedData.name}</span>
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.studentName}</span>
+                    <span className="font-bold text-sky-950 dark:text-emerald-50">{submittedData.name}</span>
                   </div>
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.collegeName}</span>
-                    <span className="font-bold text-sky-950 dark:text-white">{submittedData.college}</span>
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.collegeName}</span>
+                    <span className="font-bold text-sky-950 dark:text-emerald-50">{submittedData.college}</span>
                   </div>
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.rollNumber}</span>
-                    <span className="font-bold text-sky-950 dark:text-white">{submittedData.roll}</span>
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.rollNumber}</span>
+                    <span className="font-bold text-sky-950 dark:text-emerald-50">{submittedData.roll}</span>
                   </div>
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.group}</span>
-                    <span className="font-bold text-sky-950 dark:text-white">{submittedData.group}</span>
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.group}</span>
+                    <span className="font-bold text-sky-950 dark:text-emerald-50">{submittedGroupDisplay}</span>
                   </div>
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.selectedBatch}</span>
-                    <span className="rounded-full bg-sky-50 dark:bg-sky-950 px-3 py-0.5 font-bold text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800">
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.selectedBatch}</span>
+                    <span className="rounded-full bg-sky-50 dark:bg-emerald-900/60 px-3 py-0.5 font-bold text-sky-700 dark:text-emerald-300 border border-sky-200/60 dark:border-emerald-700/50">
                       {submittedData.batch}
                     </span>
                   </div>
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.studentPhone}</span>
-                    <span className="font-bold text-sky-950 dark:text-white">{submittedData.phone}</span>
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.studentPhone}</span>
+                    <span className="font-bold text-sky-950 dark:text-emerald-50">{submittedData.phone}</span>
                   </div>
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
-                    <span className="font-semibold text-slate-500 dark:text-slate-400">{t.admission.guardianPhone}</span>
-                    <span className="font-bold text-sky-950 dark:text-white">{submittedData.guardianPhone}</span>
+                    <span className="font-semibold text-slate-500 dark:text-emerald-200/70">{t.admission.guardianPhone}</span>
+                    <span className="font-bold text-sky-950 dark:text-emerald-50">{submittedData.guardianPhone}</span>
                   </div>
                 </div>
               </div>
