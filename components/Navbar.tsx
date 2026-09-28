@@ -6,8 +6,12 @@ import Link from "next/link";
 import ScrollLink from "./ScrollLink";
 import { useApp } from "@/context/AppContext";
 
+const SUBMISSION_LOCK_KEY = "ala_admission_locked_session";
+const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   const { language, theme, toggleLanguage, toggleTheme, t } = useApp();
 
   // মোবাইল মেনু খোলা অবস্থায় বডি স্ক্রল লক
@@ -17,6 +21,22 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  // ২ ঘণ্টার লক সেশন চেক (ভর্তি বাটন ডিসেবল্ড করার জন্য)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(SUBMISSION_LOCK_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const elapsed = Date.now() - parsed.timestamp;
+        if (elapsed < TWO_HOURS_IN_MS && parsed.data) {
+          setIsLocked(true);
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }, []);
 
   const navLinks = [
     { label: t.nav.about, id: "about" },
@@ -119,10 +139,14 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* ব্র্যান্ড ভর্তি বাটন (ডেস্কটপ) */}
+          {/* ব্র্যান্ড ভর্তি বাটন (ডেস্কটপ - ২ ঘণ্টার লক সমন্বিত) */}
           <ScrollLink
             targetId="admission"
-            className="hidden btn-gradient rounded-full px-5 py-2 font-body text-xs font-bold text-white shadow-xs sm:inline-flex sm:items-center sm:justify-center"
+            className={`hidden rounded-full px-5 py-2 font-body text-xs font-bold shadow-xs sm:inline-flex sm:items-center sm:justify-center transition-all ${
+              isLocked
+                ? "bg-slate-400 text-white opacity-50 cursor-not-allowed pointer-events-none"
+                : "btn-gradient text-white active:scale-95"
+            }`}
           >
             {t.nav.enrollBtn}
           </ScrollLink>
@@ -182,7 +206,11 @@ export default function Navbar() {
               <ScrollLink
                 targetId="admission"
                 onNavigate={() => setOpen(false)}
-                className="mt-3 flex items-center justify-center btn-gradient rounded-full py-3 text-center font-body text-sm font-bold text-white shadow-sm"
+                className={`mt-3 flex items-center justify-center rounded-full py-3 text-center font-body text-sm font-bold shadow-sm ${
+                  isLocked
+                    ? "bg-slate-400 text-white opacity-50 cursor-not-allowed pointer-events-none"
+                    : "btn-gradient text-white active:scale-95"
+                }`}
               >
                 {t.nav.enrollBtn}
               </ScrollLink>
