@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useApp } from "@/context/AppContext";
 
 const SOCIALS = [
   {
@@ -21,30 +21,20 @@ const SOCIALS = [
   },
 ];
 
-const NAV_LINKS = [
-  { label: "শিক্ষক পরিচিতি", href: "#about" },
-  { label: "কেন আমাদের একাডেমি", href: "#why-us" },
-  { label: "চলমান ব্যাচসমূহ", href: "#batches" },
-  { label: "দৈনন্দিন ক্লাস ডায়েরি", href: "/class-diary" },
-  { label: "ভিডিও লেকচার", href: "#videos" },
-  { label: "প্রাইভেট ব্যাচে ভর্তি", href: "#admission" },
-];
-
 export default function Footer() {
-  const [isDark, setIsDark] = useState(false);
-  const [lang, setLang] = useState<"bn" | "en">("bn");
+  const { language, theme, toggleLanguage, toggleTheme, t } = useApp();
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle("dark", !isDark);
-  };
-
-  const toggleLanguage = () => {
-    setLang(lang === "bn" ? "en" : "bn");
-  };
+  const navLinks = [
+    { label: t.nav.about, href: "#about" },
+    { label: t.nav.whyUs, href: "#why-us" },
+    { label: t.nav.batches, href: "#batches" },
+    { label: t.nav.classDiary, href: "/class-diary" },
+    { label: t.nav.videos, href: "#videos" },
+    { label: t.nav.enrollBtn, href: "#admission" },
+  ];
 
   return (
-    <footer className="relative bg-sky-950 px-6 pt-16 pb-12 sm:px-8 sm:pt-20 lg:px-12 text-slate-100">
+    <footer className="relative bg-[#0a1f33] dark:bg-[#06111e] px-6 pt-16 pb-12 sm:px-8 sm:pt-20 lg:px-12 text-slate-100 transition-colors">
       {/* টপ সূক্ষ্ম ডিভাইডার আভা */}
       <div
         className="absolute inset-x-0 top-0 h-px"
@@ -55,19 +45,19 @@ export default function Footer() {
       />
 
       <div className="mx-auto grid max-w-7xl gap-10 sm:gap-12 md:grid-cols-12">
-        {/* ১. ব্র্যান্ড পরিচিতি ও ভিশন (একাডেমিক টোন) */}
+        {/* ১. ব্র্যান্ড পরিচিতি ও সোশ্যাল আইকন (স্কাই-ব্লু থিমে রূপান্তরিত) */}
         <div className="md:col-span-5 flex flex-col items-start">
           <p className="font-body text-xl font-black tracking-tight text-white sm:text-2xl">
             Ahsan&apos;s Learning Academy
           </p>
           <p className="mt-1.5 font-body text-xs font-bold text-sky-400">
-            Better Learning, Brighter Future
+            {t.footer.brandTag}
           </p>
           <p className="mt-4 max-w-sm font-body text-xs sm:text-[13.5px] leading-[1.8] text-slate-300">
-            উচ্চমাধ্যমিক শিক্ষার্থীদের ইংরেজি ও আইসিটি বিষয়ে মৌলিক ধারণা স্পষ্টকরণ এবং বোর্ড পরীক্ষার সর্বোচ্চ প্রস্তুতির জন্য একটি নির্ভরযোগ্য ও আধুনিক শিক্ষা প্ল্যাটফর্ম।
+            {t.footer.vision}
           </p>
 
-          {/* সোশ্যাল লিংকস */}
+          {/* স্কাই-ব্লু থিম সোশ্যাল লিংকস */}
           <div className="mt-6 flex items-center gap-3">
             {SOCIALS.map((s) => (
               <a
@@ -76,9 +66,9 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-all hover:border-sky-400 hover:bg-sky-600 hover:text-white"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-400/40 bg-sky-500/10 text-sky-400 shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:border-sky-400 hover:bg-sky-500 hover:text-white active:scale-95"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                   <path d={s.path} />
                 </svg>
               </a>
@@ -89,10 +79,10 @@ export default function Footer() {
         {/* ২. দরকারি লিংকসমূহ */}
         <div className="md:col-span-3">
           <p className="font-body text-sm font-bold tracking-wide text-white sm:text-base">
-            প্রয়োজনীয় লিংক
+            {t.footer.quickLinks}
           </p>
           <ul className="mt-4 space-y-2.5 font-body text-xs sm:text-[13.5px] text-slate-300">
-            {NAV_LINKS.map((l) => (
+            {navLinks.map((l) => (
               <li key={l.label}>
                 <a href={l.href} className="transition-colors hover:text-sky-300">
                   {l.label}
@@ -102,10 +92,10 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* ৩. ক্যাম্পাস ও যোগাযোগ (নো-ইমোজি, শার্প SVG আইকন) */}
+        {/* ৩. ক্যাম্পাস ও যোগাযোগ */}
         <div className="md:col-span-4">
           <p className="font-body text-sm font-bold tracking-wide text-white sm:text-base">
-            ক্যাম্পাস ও যোগাযোগ
+            {t.footer.campusContact}
           </p>
           <ul className="mt-4 space-y-3.5 font-body text-xs sm:text-[13.5px] text-slate-300">
             <li className="flex items-start gap-3">
@@ -113,7 +103,7 @@ export default function Footer() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span className="leading-relaxed">কলেজ রোড, চৌদ্দগ্রাম সরকারি কলেজ সংলগ্ন, চৌদ্দগ্রাম, কুমিল্লা</span>
+              <span className="leading-relaxed">{t.location.address}</span>
             </li>
             <li className="flex items-center gap-3">
               <svg className="h-4 w-4 shrink-0 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +123,7 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-emerald-300"
               >
-                WhatsApp এ মেসেজ দিন
+                {language === "bn" ? "WhatsApp এ মেসেজ দিন" : "Message on WhatsApp"}
               </a>
             </li>
           </ul>
@@ -144,18 +134,18 @@ export default function Footer() {
       <div className="mx-auto mt-14 flex max-w-7xl flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 text-xs text-slate-400 sm:flex-row">
         {/* কপিরাইট, পলিসি ও ডেভেলপার ক্রেডিট */}
         <div className="flex flex-col items-center gap-2 sm:items-start text-center sm:text-left">
-          <p>© {new Date().getFullYear()} Ahsan&apos;s Learning Academy. সর্বস্বত্ব সংরক্ষিত।</p>
+          <p>© {new Date().getFullYear()} Ahsan&apos;s Learning Academy. {t.footer.rights}</p>
           <div className="flex flex-wrap items-center justify-center gap-3 text-[11.5px]">
             <Link href="/privacy-policy" className="transition-colors hover:text-white">
-              গোপনীয়তা নীতি
+              {t.footer.privacy}
             </Link>
             <span className="text-white/20">|</span>
             <Link href="/terms" className="transition-colors hover:text-white">
-              ব্যবহারের শর্তাবলী
+              {t.footer.terms}
             </Link>
             <span className="text-white/20">|</span>
             <span>
-              Developed by{" "}
+              {t.footer.developedBy}{" "}
               <a
                 href="https://www.facebook.com/share/19hpNhp7Tx/"
                 target="_blank"
@@ -168,20 +158,20 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* ভাষা ও থিম বাটন */}
+        {/* ভাষা ও থিম বাটন (গ্লোবাল স্টেট সিঙ্ক) */}
         <div className="flex items-center gap-2.5">
           <button
             onClick={toggleLanguage}
-            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-body text-xs text-slate-200 transition-all hover:bg-white/10 active:scale-95"
+            className="flex items-center gap-1.5 rounded-full border border-sky-400/30 bg-sky-500/10 px-4 py-1.5 font-body text-xs text-sky-300 transition-all hover:bg-sky-500/20 active:scale-95"
           >
-            <span>{lang === "bn" ? "Language: বাংলা" : "Language: English"}</span>
+            <span>{language === "bn" ? "Language: English" : "Language: বাংলা"}</span>
           </button>
 
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-body text-xs text-slate-200 transition-all hover:bg-white/10 active:scale-95"
+            className="flex items-center gap-1.5 rounded-full border border-sky-400/30 bg-sky-500/10 px-4 py-1.5 font-body text-xs text-sky-300 transition-all hover:bg-sky-500/20 active:scale-95"
           >
-            <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
+            <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
           </button>
         </div>
       </div>
