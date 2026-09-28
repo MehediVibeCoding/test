@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { optimizeImage } from "@/lib/image";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
+import { useApp } from "@/context/AppContext";
 
 // ডাটাবেজ ফাঁকা থাকলে ডেমো ফলব্যাক ছবি
 const FALLBACK_PHOTOS = [
@@ -35,13 +36,12 @@ const FALLBACK_PHOTOS = [
 
 type ShowcasePhoto = { id: string; imageUrl: string };
 
-// ছবি সার্ভার থেকে (ISR ক্যাশ সহ) prop হিসেবে আসে — ব্রাউজারে আলাদা ডাটাবেজ কল বা
-// ফলব্যাক-ছবি ঝলকানি নেই। ডাটাবেজ ফাঁকা থাকলে ডেমো ছবি দেখায়।
 export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photos?: ShowcasePhoto[] }) {
+  const { language } = useApp();
   const photos: ShowcasePhoto[] = dbPhotos.length > 0 ? dbPhotos : FALLBACK_PHOTOS;
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // প্রতি ৩টি ছবি নিয়ে একটি করে স্লাইড সেট তৈরি (১টি ১৬:৯ টপ + ২টি বটম স্প্লিট)
+  // প্রতি ৩টি ছবি নিয়ে একটি করে স্লাইড সেট তৈরি
   const slides = useMemo(() => {
     const chunks: { top: string; bottom1: string; bottom2: string }[] = [];
     for (let i = 0; i < photos.length; i += 3) {
@@ -60,58 +60,65 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
   const totalSlides = slides.length;
 
   const nextSlide = () => {
+    if (totalSlides <= 1) return;
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
   };
 
   const prevSlide = () => {
+    if (totalSlides <= 1) return;
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
   const currentSlide = slides[currentIndex];
 
   return (
-    <section id="campus-life" className="relative px-4 py-10 sm:px-8 sm:py-14 lg:py-16 lg:px-12 bg-white">
+    <section id="campus-life" className="relative px-4 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-white dark:bg-[#070f1a] transition-colors">
       <div className="mx-auto max-w-5xl">
-        {/* সেকশন হেডার ও ডেস্কটপ স্লাইডার কন্ট্রোল */}
-        <Reveal className="mb-6 sm:mb-10">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <span className="inline-flex rounded-full bg-sky-100 px-4 py-1 font-body text-xs font-bold text-sky-800">
-                রিয়েল ক্লাসরুম
-              </span>
-              <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 sm:text-4xl lg:text-[38px] leading-tight">
-                আমাদের ক্লাসরুম ও একাডেমি লাইফ
-              </h2>
-              <p className="mt-2 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 sm:text-[15px]">
-                আমাদের প্রতিদিনের ক্লাসরুম, পড়াশোনার পরিবেশ এবং শিক্ষার্থীদের যত্নের বাস্তব মুহূর্ত।
-              </p>
-            </div>
-
-            {/* ডেস্কটপ স্লাইডার নেভিগেশন অ্যারো */}
-            {totalSlides > 1 && (
-              <div className="hidden sm:flex items-center gap-2 self-end">
-                <button
-                  onClick={prevSlide}
-                  aria-label="পূর্ববর্তী ছবি"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sky-200 bg-sky-50 text-sky-900 transition-all hover:bg-sky-600 hover:text-white active:scale-95 shadow-xs"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={nextSlide}
-                  aria-label="পরবর্তী ছবি"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sky-200 bg-sky-50 text-sky-900 transition-all hover:bg-sky-600 hover:text-white active:scale-95 shadow-xs"
-                >
-                  →
-                </button>
-              </div>
-            )}
-          </div>
+        {/* সেকশন হেডার */}
+        <Reveal className="mb-8 text-center sm:mb-12">
+          <span className="inline-flex rounded-full bg-sky-100 dark:bg-sky-900/60 px-4 py-1 font-body text-xs font-bold text-sky-800 dark:text-sky-300">
+            {language === "bn" ? "রিয়েল ক্লাসরুম" : "Real Classroom"}
+          </span>
+          <h2 className="mt-3 font-body text-2xl font-black tracking-tight text-sky-950 dark:text-white sm:text-4xl lg:text-[38px] leading-tight">
+            {language === "bn" ? "আমাদের ক্লাসরুম ও একাডেমি লাইফ" : "Our Classroom & Academy Life"}
+          </h2>
+          <p className="mx-auto mt-2 max-w-xl font-body text-[14px] leading-[1.7] text-ink-800/80 dark:text-slate-300 sm:text-[15px]">
+            {language === "bn"
+              ? "আমাদের প্রতিদিনের ক্লাসরুম, পড়াশোনার পরিবেশ এবং শিক্ষার্থীদের যত্নের বাস্তব মুহূর্ত।"
+              : "Authentic moments inside our classrooms, active learning environment, and personalized student care."}
+          </p>
         </Reveal>
 
-        {/* 🎯 ১টি ১৬:৯ টপ ছবি + ২টি বটম স্প্লিট ছবি (কোনো ক্যাপশন ছাড়া সম্পূর্ণ ক্লিন) */}
+        {/* স্লাইডার কন্টেইনার (দুই পাশে ফ্লুয়িড প্রিমিয়াম নেভিগেশন বাটন সহ) */}
         <Reveal delay={80}>
-          <div className="relative">
+          <div className="relative group">
+            {/* ১. বাম পাশের নেভিগেশন তীর বাটন (Vertically Centered Overlay) */}
+            {totalSlides > 1 && (
+              <button
+                onClick={prevSlide}
+                aria-label="Previous Slide"
+                className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800 bg-white/90 dark:bg-slate-900/90 text-sky-950 dark:text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 hover:scale-105 active:scale-95"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* ২. ডান পাশের নেভিগেশন তীর বাটন (Vertically Centered Overlay) */}
+            {totalSlides > 1 && (
+              <button
+                onClick={nextSlide}
+                aria-label="Next Slide"
+                className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800 bg-white/90 dark:bg-slate-900/90 text-sky-950 dark:text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 hover:scale-105 active:scale-95"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
+            {/* স্লাইড কনটেন্ট (টাচ সোয়াইপ সহ) */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentIndex}
@@ -127,39 +134,39 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
                 }}
                 className="space-y-3 sm:space-y-4 touch-pan-y"
               >
-                {/* ১. টপ ১৬:৯ সাইজের বড় হিরো ছবি */}
-                <div className="relative aspect-video w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-sky-100 bg-slate-100 shadow-xs">
+                {/* টপ ১৬:৯ হিরো ছবি */}
+                <div className="relative aspect-video w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-sky-100 dark:border-sky-900 bg-slate-100 dark:bg-slate-800 shadow-xs">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={optimizeImage(currentSlide.top, 1200)}
- loading="lazy"
- decoding="async"
+                    loading="lazy"
+                    decoding="async"
                     alt="Classroom Main View"
                     className="h-full w-full object-cover select-none"
                     draggable={false}
                   />
                 </div>
 
-                {/* ২. নিচে সমান দুই ভাগে বিভক্ত ২টি ছবি */}
+                {/* নিচে সমান দুই ভাগে বিভক্ত ২টি ছবি */}
                 <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 bg-slate-100 shadow-xs">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 dark:border-sky-900 bg-slate-100 dark:bg-slate-800 shadow-xs">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={optimizeImage(currentSlide.bottom1, 800)}
- loading="lazy"
- decoding="async"
+                      loading="lazy"
+                      decoding="async"
                       alt="Classroom Sub View 1"
                       className="h-full w-full object-cover select-none"
                       draggable={false}
                     />
                   </div>
 
-                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 bg-slate-100 shadow-xs">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 dark:border-sky-900 bg-slate-100 dark:bg-slate-800 shadow-xs">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={optimizeImage(currentSlide.bottom2, 800)}
- loading="lazy"
- decoding="async"
+                      loading="lazy"
+                      decoding="async"
                       alt="Classroom Sub View 2"
                       className="h-full w-full object-cover select-none"
                       draggable={false}
@@ -169,9 +176,9 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
               </motion.div>
             </AnimatePresence>
 
-            {/* ডট পেজিনেশন ইন্ডিকেটর */}
+            {/* ডট পেজিনেশন */}
             {totalSlides > 1 && (
-              <div className="mt-5 flex items-center justify-center gap-1.5">
+              <div className="mt-6 flex items-center justify-center gap-1.5">
                 {slides.map((_, idx) => (
                   <button
                     key={idx}
@@ -179,8 +186,8 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
                     aria-label={`Slide ${idx + 1}`}
                     className={`h-2 rounded-full transition-all ${
                       currentIndex === idx
-                        ? "w-6 bg-sky-600"
-                        : "w-2 bg-sky-200 hover:bg-sky-300"
+                        ? "w-6 bg-sky-600 dark:bg-sky-400"
+                        : "w-2 bg-sky-200 dark:bg-slate-700 hover:bg-sky-300"
                     }`}
                   />
                 ))}
