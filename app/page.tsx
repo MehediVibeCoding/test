@@ -5,7 +5,6 @@ import AcademyFeatures from "@/components/AcademyFeatures";
 import RealClassroomShowcase from "@/components/RealClassroomShowcase";
 import Batches from "@/components/Batches";
 import FarewellGallery from "@/components/FarewellGallery";
-import ClassDiary from "@/components/ClassDiary";
 import VideoGallery from "@/components/VideoGallery";
 import BlogPreview from "@/components/BlogPreview";
 import Testimonials from "@/components/Testimonials";
@@ -15,7 +14,6 @@ import FAQ from "@/components/FAQ";
 import AdmissionForm from "@/components/AdmissionForm";
 import FooterScene from "@/components/FooterScene";
 import Footer from "@/components/Footer";
-import StickyMobileBar from "@/components/StickyMobileBar";
 import { getActiveBatches, getClassroomPhotos } from "@/lib/academyData";
 
 // ⚡ ISR: পেজ ক্যাশ হয়ে থাকে, প্রতি ৬০ সেকেন্ডে ব্যাকগ্রাউন্ডে নতুন ডেটা নেয়।
@@ -52,9 +50,6 @@ export default async function Home() {
       {/* ৭. বিদায় সংবর্ধনা ও স্মৃতি */}
       <FarewellGallery />
 
-      {/* ৮. আজকের ক্লাস ডায়েরি ও বাড়ির কাজ */}
-      <ClassDiary />
-
       {/* ৯. ভিডিও ক্লাস লেকচার */}
       <VideoGallery />
 
@@ -81,9 +76,6 @@ export default async function Home() {
 
       {/* ১৭. প্রিমিয়াম ফুটার */}
       <Footer />
-
-      {/* ১৭. মোবাইলে ফ্লোটিং কল/ভর্তি বার */}
-      <StickyMobileBar />
     </main>
   );
 }

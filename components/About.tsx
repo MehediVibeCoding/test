@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Reveal from "./Reveal";
+import TeacherPhotoSlider, { type Slide } from "./TeacherPhotoSlider";
+import { getTeacherPhotos } from "@/lib/academyData";
 
 const CREDENTIALS = [
   {
@@ -32,7 +33,26 @@ const CREDENTIALS = [
   },
 ];
 
-export default function About() {
+// প্রথম ছবি কোডে স্থায়ী — অ্যাডমিন থেকে মোছা যাবে না। মুছতে হলে এই লাইন বদলাতে হবে।
+// ছবি বদলালে ?v=... সংখ্যা বাড়ালে ব্রাউজার ক্যাশ ভেঙে নতুন ছবি আসবে।
+const PERMANENT_SLIDE: Slide = {
+  id: "permanent-1",
+  src: "/images/ahsan-about.webp?v=2",
+  alt: "Md. Ahsan Ullah — ডেস্কে কর্মরত অবস্থায়",
+};
+
+export default async function About() {
+  const extra = await getTeacherPhotos();
+  const slides: Slide[] = [
+    PERMANENT_SLIDE,
+    ...extra.map((p, i) => ({
+      id: p.id,
+      src: p.imageUrl,
+      alt: `Md. Ahsan Ullah — ছবি ${i + 2}`,
+      optimize: true,
+    })),
+  ];
+
   return (
     <section id="about" className="relative mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-28 lg:px-12 bg-white">
       {/* ১. স্ট্যান্ডার্ড সেকশন হেডার ও সিঙ্গেল-লাইন হেডলাইন */}
@@ -50,15 +70,7 @@ export default function About() {
         <Reveal className="lg:col-span-5 flex justify-center">
           <div className="relative w-full max-w-sm sm:max-w-md">
             <div className="overflow-hidden rounded-3xl border border-sky-100 bg-white p-3 shadow-xs">
-              <div className="overflow-hidden rounded-2xl bg-gradient-to-b from-sky-50 to-white">
-                <Image
-                  src="/images/ahsan-about.webp"
-                  alt="Md. Ahsan Ullah — ডেস্কে কর্মরত অবস্থায়"
-                  width={900}
-                  height={1104}
-                  className="h-auto w-full object-cover transition-transform duration-700 hover:scale-[1.02] select-none"
-                />
-              </div>
+              <TeacherPhotoSlider slides={slides} />
 
               {/* ছবির নিচের পরিচিতি */}
               <div className="mt-3 rounded-2xl bg-sky-50/70 p-3.5 text-center border border-sky-100/70">

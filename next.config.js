@@ -6,7 +6,8 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://img.youtube.com",
+  // অ্যাডমিন থেকে যেকোনো https ছবির লিংক বসানো যায় (শিক্ষকের স্লাইডার ইত্যাদি), তাই সব https ছবি অনুমোদিত
+  "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co",
   "frame-src https://maps.google.com https://www.google.com",

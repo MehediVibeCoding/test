@@ -101,7 +101,16 @@ export async function getAllPublishedBlogPosts(): Promise<BlogPostSummary[]> {
   return getPublishedBlogPosts(100);
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | null> {
+export async function getBlogPostBySlug(rawSlug: string): Promise<BlogPostDetail | null> {
+  // বাংলা স্লাগ ইউআরএলে percent-encoded হয়ে আসে (%E0%A6...), ডাটাবেজে আছে আসল বাংলা অক্ষরে।
+  // ডিকোড না করলে কোনো মিল পাওয়া যায় না এবং ৪০৪ দেখায়।
+  let slug = rawSlug;
+  try {
+    slug = decodeURIComponent(rawSlug);
+  } catch {
+    // ভাঙা এনকোডিং হলে যেমন আছে তেমনই ব্যবহার হবে
+  }
+
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase
@@ -389,5 +398,38 @@ export async function getTestimonials(): Promise<{
   } catch (err) {
     console.error("getTestimonials error:", err);
     return { featured: [], moreReviews: [] };
+  }
+}
+
+
+// ============================================================
+// TEACHER PHOTOS (শিক্ষক পরিচিতির স্লাইডার — প্রথম ছবি কোডে স্থায়ী, বাকিগুলো অ্যাডমিন থেকে)
+// ============================================================
+export type TeacherPhoto = {
+  id: string;
+  imageUrl: string;
+};
+
+export async function getTeacherPhotos(): Promise<TeacherPhoto[]> {
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("teacher_photos")
+      .select("id, image_url")
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("getTeacherPhotos failed:", error.message);
+      return [];
+    }
+
+    return (data ?? []).map((p) => ({
+      id: p.id as string,
+      imageUrl: p.image_url as string,
+    }));
+  } catch (err) {
+    console.error("getTeacherPhotos error:", err);
+    return [];
   }
 }

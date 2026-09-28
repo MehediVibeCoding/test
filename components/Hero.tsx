@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
 import ScrollLink from "./ScrollLink";
 import CountUp from "./CountUp";
@@ -156,12 +157,12 @@ export default function Hero() {
             >
               প্রাইভেট ব্যাচে ভর্তি হও →
             </ScrollLink>
-            <ScrollLink
-              targetId="class-diary"
+            <Link
+              href="/class-diary"
               className="inline-flex items-center justify-center rounded-full border border-sky-200/80 bg-white px-7 py-3 font-body text-xs sm:text-sm font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95"
             >
               আজকের ক্লাস নোট দেখো
-            </ScrollLink>
+            </Link>
           </motion.div>
         </motion.div>
 

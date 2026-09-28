@@ -25,7 +25,7 @@ const NAV_LINKS = [
   { label: "শিক্ষক পরিচিতি", href: "#about" },
   { label: "কেন আমাদের একাডেমি", href: "#why-us" },
   { label: "চলমান ব্যাচসমূহ", href: "#batches" },
-  { label: "দৈনন্দিন ক্লাস ডায়েরি", href: "#class-diary" },
+  { label: "দৈনন্দিন ক্লাস ডায়েরি", href: "/class-diary" },
   { label: "ভিডিও লেকচার", href: "#videos" },
   { label: "প্রাইভেট ব্যাচে ভর্তি", href: "#admission" },
 ];

@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
 import ScrollLink from "./ScrollLink";
 
-const NAV_LINKS = [
+// href থাকলে আলাদা পেজে যাবে, না থাকলে হোম পেজের সেকশনে স্ক্রল করবে
+const NAV_LINKS: { label: string; id: string; href?: string }[] = [
   { label: "পরিচিতি", id: "about" },
   { label: "কেন একাডেমি", id: "why-us" },
   { label: "ব্যাচসমূহ", id: "batches" },
-  { label: "ক্লাস ডায়েরি", id: "class-diary" },
+  { label: "ক্লাস ডায়েরি", id: "class-diary", href: "/class-diary" },
   { label: "ভিডিও", id: "videos" },
   { label: "যোগাযোগ", id: "contact" },
 ];
@@ -52,15 +54,25 @@ export default function Navbar() {
 
         {/* ২. মাঝখানে: ডেক্সটপ মেনু লিংকসমূহ */}
         <nav className="hidden items-center gap-7 text-[13.5px] font-semibold text-sky-950 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <ScrollLink
-              key={link.id}
-              targetId={link.id}
-              className="transition-colors hover:text-sky-600 focus:outline-none"
-            >
-              {link.label}
-            </ScrollLink>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.href ? (
+              <Link
+                key={link.id}
+                href={link.href}
+                className="transition-colors hover:text-sky-600 focus:outline-none"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <ScrollLink
+                key={link.id}
+                targetId={link.id}
+                className="transition-colors hover:text-sky-600 focus:outline-none"
+              >
+                {link.label}
+              </ScrollLink>
+            )
+          )}
         </nav>
 
         {/* ৩. ডানপাশে: মিনিমাল আইকন ক্যাপসুল + স্কাই-ব্লু ভর্তি বাটন */}
@@ -154,16 +166,27 @@ export default function Navbar() {
             className="absolute inset-x-4 top-full mt-2 overflow-hidden rounded-3xl border border-sky-100 bg-white/95 p-6 shadow-2xl backdrop-blur-xl lg:hidden"
           >
             <div className="flex flex-col gap-2.5">
-              {NAV_LINKS.map((link) => (
-                <ScrollLink
-                  key={link.id}
-                  targetId={link.id}
-                  onNavigate={() => setOpen(false)}
-                  className="rounded-2xl px-4 py-3 font-body text-sm font-bold text-sky-950 transition-colors hover:bg-sky-50 active:bg-sky-100"
-                >
-                  {link.label}
-                </ScrollLink>
-              ))}
+              {NAV_LINKS.map((link) =>
+                link.href ? (
+                  <Link
+                    key={link.id}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="rounded-2xl px-4 py-3 font-body text-sm font-bold text-sky-950 transition-colors hover:bg-sky-50 active:bg-sky-100"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <ScrollLink
+                    key={link.id}
+                    targetId={link.id}
+                    onNavigate={() => setOpen(false)}
+                    className="rounded-2xl px-4 py-3 font-body text-sm font-bold text-sky-950 transition-colors hover:bg-sky-50 active:bg-sky-100"
+                  >
+                    {link.label}
+                  </ScrollLink>
+                )
+              )}
               <ScrollLink
                 targetId="admission"
                 onNavigate={() => setOpen(false)}
