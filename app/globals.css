@@ -8,7 +8,6 @@
   font-weight: 400;
   font-display: swap;
   src: url("./fonts/noto-bengali-digits-400.woff2") format("woff2");
-  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
   unicode-range: U+09E6-09EF;
 }
 @font-face {
@@ -17,7 +16,6 @@
   font-weight: 500;
   font-display: swap;
   src: url("./fonts/noto-bengali-digits-500.woff2") format("woff2");
-  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
   unicode-range: U+09E6-09EF;
 }
 @font-face {
@@ -26,7 +24,6 @@
   font-weight: 600;
   font-display: swap;
   src: url("./fonts/noto-bengali-digits-600.woff2") format("woff2");
-  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
   unicode-range: U+09E6-09EF;
 }
 @font-face {
@@ -35,14 +32,11 @@
   font-weight: 700;
   font-display: swap;
   src: url("./fonts/noto-bengali-digits-700.woff2") format("woff2");
-  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
   unicode-range: U+09E6-09EF;
 }
 
 :root {
-  /* ফন্টগুলো নিজের সার্ভার থেকে দেওয়া হয় (@fontsource + app/fonts) —
-     Google Fonts-এ কোনো রিকোয়েস্ট যায় না, বিল্ডও নেটওয়ার্কের ওপর নির্ভর করে না। */
-  --font-display: "Playfair Display";
+  --font-display: "DM Sans", "Hind Siliguri", sans-serif;
   --font-dm-sans: "DM Sans";
   --font-bengali: "Hind Siliguri";
 
@@ -54,27 +48,29 @@
   --cloud-50: #f8fafc;
   --ink-800: #1e293b;
 
-  /* স্বাভাবিক, পাতলা ও মার্জিত সাধারণ শ্যাডো (কোনো কৃত্রিম নীল বা থ্রিডি ভাব ছাড়া) */
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(226, 232, 240, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(226, 232, 240, 0.85);
   --glass-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ডার্ক মোড সাপোর্ট ভেরিয়েবল */
+/* ══════════════════════════════════════════════════════════════════════
+   সম্পূর্ণ প্রিমিয়াম ডার্ক থিম কালার ভেরিয়েবল
+   ══════════════════════════════════════════════════════════════════════ */
 .dark {
   --sky-950: #f8fafc;
   --sky-700: #38bdf8;
   --sky-600: #0ea5e9;
   --sky-400: #7dd3fc;
-  --sky-100: #0f172a;
-  --cloud-50: #0b1120;
+  --sky-100: #0f1f33;
+  --cloud-50: #070f1a;
   --ink-800: #cbd5e1;
 
-  --glass-bg: rgba(15, 23, 42, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --glass-bg: rgba(10, 25, 47, 0.85);
+  --glass-border: rgba(56, 189, 248, 0.15);
+  --glass-shadow: 0 4px 16px -1px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -88,9 +84,6 @@ html {
 body {
   background: var(--cloud-50);
   color: var(--ink-800);
-  /* "Noto Sans Bengali" here is unicode-range restricted (in layout.tsx) to just
-     the ten Bengali digits ০-৯ — every other character still falls through to
-     Hind Siliguri. Keep it listed BEFORE var(--font-bengali) or digits go blurry. */
   font-family: var(--font-dm-sans), "Noto Sans Bengali", var(--font-bengali), system-ui, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -101,69 +94,108 @@ h1, h2, h3, h4 {
   color: var(--sky-950);
 }
 
-/* Opt-in accent serif — used sparingly (small taglines only), never the default heading font */
+/* সমান পুরুত্বের মসৃণ মডার্ন ডিসপ্লে বোল্ড ইটালিক */
 .font-display {
-  font-family: var(--font-display), var(--font-bengali), system-ui, serif;
+  font-family: var(--font-dm-sans), "Noto Sans Bengali", var(--font-bengali), sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.02em;
 }
 
-/* সাধারণ পরিচ্ছন্ন গ্লাস প্যানেল (পাতলা বর্ডার ও স্বাভাবিক সফট শ্যাডো) */
-.glass-panel {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--glass-shadow);
-  border-radius: 1rem;
+/* ══════════════════════════════════════════════════════════════════════
+   সফট প্রিমিয়াম গ্রেডিয়েন্ট বাটন ও স্প্রিং হোভার (.btn-gradient)
+   ══════════════════════════════════════════════════════════════════════ */
+.btn-gradient {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: #ffffff;
+  font-weight: 700;
+  background-image: linear-gradient(135deg, #0ea5e9 0%, #0284c7 60%, #0369a1 100%);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.4s var(--ease-spring), box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.glass-panel-premium {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-  border-radius: 1.25rem;
+@media (hover: hover) and (pointer: fine) {
+  .btn-gradient:not(:disabled):hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 22px rgba(14, 165, 233, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
 }
 
-/* ব্যাকগ্রাউন্ড গ্রেডিয়েন্ট — হালকা ও চোখের জন্য আরামদায়ক */
-.sky-gradient {
-  background: radial-gradient(circle at 50% 20%, #e0f2fe 0%, #f1f8fe 40%, var(--cloud-50) 100%);
+.btn-gradient:not(:disabled):active {
+  transform: scale(0.96);
+  transition-duration: 0.12s;
 }
 
-.dark .sky-gradient {
-  background: radial-gradient(circle at 50% 20%, #172554 0%, #0b1120 70%, #030712 100%);
+.btn-gradient:disabled,
+.btn-gradient[aria-disabled="true"] {
+  background-image: none !important;
+  background-color: #94a3b8 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.55 !important;
+  pointer-events: none !important;
 }
 
-/* বাটন স্টাইল: নীল কড়া গ্লো শ্যাডো বাদ দিয়ে স্ট্যান্ডার্ড ক্লিন ও ফ্ল্যাট বাটন */
-.btn-glow {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  transition: background-color 0.2s ease, transform 0.15s var(--ease-premium), box-shadow 0.15s ease;
-}
-.btn-glow:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-}
-.btn-glow:active {
-  transform: translateY(0);
+/* ══════════════════════════════════════════════════════════════════════
+   বাটন ঝিলিক (Sweep Shine) অ্যানিমেশন (.btn-shine)
+   ══════════════════════════════════════════════════════════════════════ */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-/* সাধারণ কার্ড লিফট ইফেক্ট */
-.hover-lift {
-  transition: transform 0.2s var(--ease-premium), box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.06);
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  left: 0;
+  width: 45%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-160%) skewX(-20deg);
 }
 
-/* ওয়ান-টাইম হিরো এনিমেশন */
-.reveal-up {
-  animation: reveal-up 0.6s var(--ease-premium) both;
+.btn-shine.is-shining::after {
+  animation: btnSweepShine 3.8s ease-in-out infinite;
 }
 
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+.btn-shine:disabled::after,
+.btn-shine[aria-disabled="true"]::after {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+@keyframes btnSweepShine {
+  0%   { transform: translateX(-160%) skewX(-20deg); opacity: 0; }
+  6%   { opacity: 1; }
+  28%  { transform: translateX(380%) skewX(-20deg); opacity: 1; }
+  32%  { transform: translateX(380%) skewX(-20deg); opacity: 0; }
+  100% { transform: translateX(380%) skewX(-20deg); opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   হিরো স্যারের ছবির অর্গানিক আর্চ/ফ্রেম ও রিফ্লেকশন
+   ══════════════════════════════════════════════════════════════════════ */
+.hero-arch-frame {
+  border-radius: 44% 56% 50% 50% / 54% 54% 46% 46%;
+  background: linear-gradient(145deg, rgba(224, 242, 254, 0.85) 0%, rgba(186, 230, 253, 0.45) 50%, rgba(255, 255, 255, 0.9) 100%);
+  box-shadow: 0 20px 40px -15px rgba(2, 132, 199, 0.18), inset 0 2px 6px rgba(255, 255, 255, 0.9);
+}
+
+.dark .hero-arch-frame {
+  background: linear-gradient(145deg, rgba(14, 165, 233, 0.18) 0%, rgba(3, 105, 161, 0.25) 50%, rgba(15, 31, 51, 0.7) 100%);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(56, 189, 248, 0.25);
 }
 
 /* স্ক্রল রিভিল */
@@ -178,14 +210,21 @@ h1, h2, h3, h4 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-up { animation: none; }
   .reveal-on-scroll {
     opacity: 1;
     transform: none;
     transition: none;
   }
-  .btn-glow:hover, .hover-lift:hover { transform: none; }
-  html { scroll-behavior: auto; }
+  .btn-gradient:not(:disabled):hover,
+  .btn-gradient:not(:disabled):active {
+    transform: none;
+  }
+  .btn-shine.is-shining::after {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 :focus-visible {
@@ -193,46 +232,8 @@ h1, h2, h3, h4 {
   outline-offset: 2px;
 }
 
-/* ফর্ম ইনপুটের নিজস্ব বর্ডার-ফোকাস স্টাইল আছে (focus:border-sky-600),
-   তার ওপর গ্লোবাল outline যোগ হয়ে "ডাবল রিং" তৈরি করছিল — এখানে সেটা বন্ধ করা হলো। */
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: none;
-}
-
-/* ══════════════════════════════════════════════════════════════════════
-   ক্রিস্টাল লিকুইড গ্লাস অ্যাকশন বাটন (ভাঙচুরের order-btn-glow থেকে রেফারেন্স
-   নিয়ে sky-blue প্যালেটে বসানো) — প্রাইমারি CTA বাটনগুলোতে ব্যবহার করার জন্য
-   ══════════════════════════════════════════════════════════════════════ */
-.crystal-btn {
-  background: #ffffff;
-  color: #0284c7;
-  border: 1.5px solid #bae6fd;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-.crystal-btn:hover,
-.crystal-btn:focus-visible,
-.crystal-btn:active {
-  background: #ffffff;
-  color: #0284c7;
-  border-color: #7dd3fc;
-  outline: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .crystal-btn { transition: color 0.2s ease; }
-}
-
-/* সলিড ভার্সন — ঘন sky-blue ব্যাকগ্রাউন্ডের ওপর বসানো বাটনের জন্য (যেমন ডার্ক ফুটার) */
-.crystal-btn-solid {
-  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 0.4), 0 3px 10px rgba(0, 88, 199, 0.25);
-  transition: filter 0.2s ease;
-}
-.crystal-btn-solid:hover,
-.crystal-btn-solid:focus-visible {
-  filter: brightness(1.08);
   outline: none;
 }
