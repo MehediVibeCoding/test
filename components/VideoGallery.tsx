@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import { optimizeImage } from "@/lib/image";
 import { getVideoLectures } from "@/lib/academyData";
 
 function parseYouTubeId(url: string): string | null {
@@ -64,7 +65,9 @@ export default async function VideoGallery() {
                       {thumbSrc ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={thumbSrc}
+                          src={optimizeImage(thumbSrc, 600)}
+ loading="lazy"
+ decoding="async"
                           alt={v.title}
                           className="h-full w-full object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
                         />

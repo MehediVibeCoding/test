@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { optimizeImage } from "@/lib/image";
 import type { Metadata } from "next";
 import { getAllPublishedBlogPosts } from "@/lib/academyData";
 import Footer from "@/components/Footer";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "সকল ব্লগ ও স্টাডি গাইডলাইন | Ahsan's Learning Academy",
@@ -79,7 +80,9 @@ export default async function AllBlogPage() {
                     <div className="mb-5 overflow-hidden rounded-2xl aspect-video w-full bg-slate-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={post.coverImageUrl}
+                        src={optimizeImage(post.coverImageUrl, 600)}
+ loading="lazy"
+ decoding="async"
                         alt={post.title}
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />

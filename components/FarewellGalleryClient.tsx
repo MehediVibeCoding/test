@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import { optimizeImage } from "@/lib/image";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
 import type { FarewellMemory } from "@/lib/academyData";
@@ -163,7 +164,9 @@ export default function FarewellGalleryClient({
                   <div className="relative aspect-video w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-white/15 bg-sky-950/60 shadow-lg">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={currentSlide.top}
+                      src={optimizeImage(currentSlide.top, 1200)}
+ loading="lazy"
+ decoding="async"
                       alt="Farewell Memory Top"
                       className="h-full w-full object-cover select-none"
                       draggable={false}
@@ -177,7 +180,9 @@ export default function FarewellGalleryClient({
                     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-white/15 bg-sky-950/60 shadow-md">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={currentSlide.bottom1}
+                        src={optimizeImage(currentSlide.bottom1, 800)}
+ loading="lazy"
+ decoding="async"
                         alt="Farewell Memory Sub 1"
                         className="h-full w-full object-cover select-none"
                         draggable={false}
@@ -189,7 +194,9 @@ export default function FarewellGalleryClient({
                     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-white/15 bg-sky-950/60 shadow-md">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={currentSlide.bottom2}
+                        src={optimizeImage(currentSlide.bottom2, 800)}
+ loading="lazy"
+ decoding="async"
                         alt="Farewell Memory Sub 2"
                         className="h-full w-full object-cover select-none"
                         draggable={false}

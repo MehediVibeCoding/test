@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
+import { optimizeImage } from "@/lib/image";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
-import { createClient } from "@/lib/supabase/client";
 
 // ডাটাবেজ ফাঁকা থাকলে ডেমো ফলব্যাক ছবি
 const FALLBACK_PHOTOS = [
@@ -33,30 +33,13 @@ const FALLBACK_PHOTOS = [
   },
 ];
 
-export default function RealClassroomShowcase() {
-  const [photos, setPhotos] = useState<{ id: string; imageUrl: string }[]>(FALLBACK_PHOTOS);
+type ShowcasePhoto = { id: string; imageUrl: string };
+
+// ছবি সার্ভার থেকে (ISR ক্যাশ সহ) prop হিসেবে আসে — ব্রাউজারে আলাদা ডাটাবেজ কল বা
+// ফলব্যাক-ছবি ঝলকানি নেই। ডাটাবেজ ফাঁকা থাকলে ডেমো ছবি দেখায়।
+export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photos?: ShowcasePhoto[] }) {
+  const photos: ShowcasePhoto[] = dbPhotos.length > 0 ? dbPhotos : FALLBACK_PHOTOS;
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // ডাটাবেজ থেকে ক্লাসরুম ছবি ফেচ করা
-  useEffect(() => {
-    async function loadPhotos() {
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from("classroom_photos")
-          .select("id, image_url")
-          .order("sort_order", { ascending: true })
-          .order("created_at", { ascending: false });
-
-        if (!error && data && data.length > 0) {
-          setPhotos(data.map((p) => ({ id: p.id, imageUrl: p.image_url })));
-        }
-      } catch {
-        // fallback
-      }
-    }
-    loadPhotos();
-  }, []);
 
   // প্রতি ৩টি ছবি নিয়ে একটি করে স্লাইড সেট তৈরি (১টি ১৬:৯ টপ + ২টি বটম স্প্লিট)
   const slides = useMemo(() => {
@@ -148,7 +131,9 @@ export default function RealClassroomShowcase() {
                 <div className="relative aspect-video w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-sky-100 bg-slate-100 shadow-xs">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={currentSlide.top}
+                    src={optimizeImage(currentSlide.top, 1200)}
+ loading="lazy"
+ decoding="async"
                     alt="Classroom Main View"
                     className="h-full w-full object-cover select-none"
                     draggable={false}
@@ -160,7 +145,9 @@ export default function RealClassroomShowcase() {
                   <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 bg-slate-100 shadow-xs">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={currentSlide.bottom1}
+                      src={optimizeImage(currentSlide.bottom1, 800)}
+ loading="lazy"
+ decoding="async"
                       alt="Classroom Sub View 1"
                       className="h-full w-full object-cover select-none"
                       draggable={false}
@@ -170,7 +157,9 @@ export default function RealClassroomShowcase() {
                   <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-sky-100 bg-slate-100 shadow-xs">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={currentSlide.bottom2}
+                      src={optimizeImage(currentSlide.bottom2, 800)}
+ loading="lazy"
+ decoding="async"
                       alt="Classroom Sub View 2"
                       className="h-full w-full object-cover select-none"
                       draggable={false}

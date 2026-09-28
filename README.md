@@ -1,35 +1,22 @@
-# কীভাবে এই আপডেটটা তোমার রেপোতে বসাবে
+# Ahsan's Learning Academy — মূল ওয়েবসাইট
 
-## ধাপ ১ — একটা ফাইল ডিলিট করো
-তোমার রেপোতে `app/fonts.ts` ফাইলটা ডিলিট করে দাও। এটা আর দরকার নেই।
+Next.js 16 (App Router) + React 19 + Supabase। শিক্ষার্থীরা ভর্তি ফর্ম পূরণ করে ও রিভিউ দেয়।
+অ্যাডমিন প্যানেল আলাদা রিপোতে: `babago`।
 
-## ধাপ ২ — এই ফাইলগুলো কপি করে বসাও
-এই zip-এর ভেতরের ফোল্ডার স্ট্রাকচারটা তোমার রেপোর স্ট্রাকচারের সাথে হুবহু মেলে।
-প্রতিটা ফাইল তোমার রেপোতে একই পাথে কপি করে বসিয়ে দাও (থাকলে ওভাররাইট করে দাও):
-
+## চালানো
+```bash
+cp .env.example .env.local   # তিনটি মান বসান
+npm install
+npm run dev
 ```
-app/actions/admission.ts        ← নতুন ফাইল
-app/globals.css                 ← আপডেট
-app/layout.tsx                  ← আপডেট
-app/page.tsx                    ← আপডেট
-components/AdmissionForm.tsx    ← আপডেট
-components/Batches.tsx          ← আপডেট
-components/BatchesClient.tsx    ← নতুন ফাইল
-components/BlogPreview.tsx      ← আপডেট
-components/ClassDiary.tsx       ← আপডেট
-components/ClassDiaryClient.tsx ← নতুন ফাইল
-lib/academyData.ts              ← নতুন ফাইল
-lib/bengaliNumerals.ts          ← আপডেট
-lib/supabase/client.ts          ← নতুন ফাইল
-lib/supabase/server.ts          ← নতুন ফাইল
-```
+`npm run typecheck`, `npm run lint`, `npm run build` — তিনটিই পাস করতে হবে (CI-তেও চলে)।
 
-## ধাপ ৩ — Vercel-এ Environment Variable যোগ করো (বাধ্যতামূলক, নিচের মেসেজে বিস্তারিত)
+## গুরুত্বপূর্ণ ডিজাইন সিদ্ধান্ত
+- **কুকি নেই, লগইন নেই।** পাবলিক ডেটা সাধারণ anon ক্লায়েন্টে পড়া হয় (`lib/supabase/server.ts`), তাই পেজগুলো ISR দিয়ে ক্যাশ হয় (৬০ সেকেন্ড)। অ্যাডমিনে বদলালে সর্বোচ্চ ১ মিনিটে সাইটে দেখা যায়।
+- **স্প্যাম সুরক্ষা ডাটাবেজে।** ২ ঘণ্টায় একই ফোন থেকে একটির বেশি আবেদন, ১০ মিনিটে ৪০টির বেশি আবেদন, ২৪ ঘণ্টায় একই নামে ২টির বেশি রিভিউ — সব ডাটাবেজ ট্রিগার আটকায় (`supabase/SECURITY_MIGRATION_NOTES.sql`)।
+- **ফন্ট নিজের সার্ভার থেকে** (`@fontsource` + `app/fonts`) — Google Fonts-এ কোনো রিকোয়েস্ট নেই।
+- **ছবি:** Cloudinary ছবিতে `f_auto,q_auto,w_N` যোগ হয় (`lib/image.ts`)।
+- **CSP ও সিকিউরিটি হেডার** `next.config.js`-এ। নতুন বাইরের সার্ভিস (যেমন নতুন ছবির হোস্ট বা এমবেড) যোগ করলে CSP-তে অনুমতি দিন।
 
-## ধাপ ৪ — কমিট ও পুশ করো
-```
-git add .
-git commit -m "Connect admission form, batches, blog and class diary to Supabase"
-git push
-```
-Vercel অটোমেটিক নতুন বিল্ড শুরু করবে।
+## Vercel Environment Variables
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`

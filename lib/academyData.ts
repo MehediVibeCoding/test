@@ -1,4 +1,4 @@
-import { createClient } from "./supabase/server";
+import { createPublicClient } from "./supabase/server";
 import { formatBengaliDate } from "./bengaliNumerals";
 
 // ============================================================
@@ -16,7 +16,7 @@ export type Batch = {
 
 export async function getActiveBatches(): Promise<Batch[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("batches")
       .select("id, name, target_cohort, badge, schedule, location, features")
@@ -68,7 +68,7 @@ export type BlogPostDetail = {
 
 export async function getPublishedBlogPosts(limit = 3): Promise<BlogPostSummary[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("blog_posts")
       .select("id, title, slug, excerpt, cover_image_url, published_at, created_at")
@@ -103,7 +103,7 @@ export async function getAllPublishedBlogPosts(): Promise<BlogPostSummary[]> {
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPostDetail | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("blog_posts")
       .select("id, title, slug, excerpt, content, cover_image_url, published_at, created_at")
@@ -144,7 +144,7 @@ export type ClassDiaryEntry = {
 // ১. নির্দিষ্ট সংখ্যক ক্লাস ডায়েরি ফেচ করা (ডিফল্ট: সর্বশেষ ৩টি)
 export async function getClassDiaryEntries(limit = 3): Promise<ClassDiaryEntry[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("class_diary_entries")
       .select("id, entry_date, batch_name_snapshot, topic, note, slide_url, created_at")
@@ -180,7 +180,7 @@ export async function getAllClassDiaryEntries(): Promise<ClassDiaryEntry[]> {
 // ৩. আইডি অনুযায়ী নির্দিষ্ট একক ক্লাস ডায়েরি বিস্তারিত ফেচ করা
 export async function getClassDiaryEntryById(id: string): Promise<ClassDiaryEntry | null> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("class_diary_entries")
       .select("id, entry_date, batch_name_snapshot, topic, note, slide_url, created_at")
@@ -219,7 +219,7 @@ export type SuccessTopper = {
 
 export async function getSuccessToppers(): Promise<SuccessTopper[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("success_toppers")
       .select("id, name, batch, result, subject, college, photo_url")
@@ -254,7 +254,7 @@ export type ClassroomPhoto = {
 
 export async function getClassroomPhotos(): Promise<ClassroomPhoto[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("classroom_photos")
       .select("id, caption, image_url")
@@ -286,7 +286,7 @@ export type FarewellMemory = {
 
 export async function getFarewellMemories(): Promise<FarewellMemory[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("farewell_memories")
       .select("id, batch_tag, caption, image_url")
@@ -319,7 +319,7 @@ export type VideoLecture = {
 
 export async function getVideoLectures(): Promise<VideoLecture[]> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("video_lectures")
       .select("id, title, video_url, thumbnail_url")
@@ -358,7 +358,7 @@ export async function getTestimonials(): Promise<{
   moreReviews: Testimonial[];
 }> {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("testimonials")
       .select("id, name, role_type, batch_year, quote, is_featured")

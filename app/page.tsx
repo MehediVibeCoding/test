@@ -14,16 +14,19 @@ import CampusLocation from "@/components/CampusLocation";
 import FAQ from "@/components/FAQ";
 import AdmissionForm from "@/components/AdmissionForm";
 import Footer from "@/components/Footer";
-import { getActiveBatches } from "@/lib/academyData";
+import StickyMobileBar from "@/components/StickyMobileBar";
+import { getActiveBatches, getClassroomPhotos } from "@/lib/academyData";
 
-// ⚡ Next.js 15 Incremental Static Regeneration (ISR):
-// প্রতি ৬০ সেকেন্ড পর পর এজ-ক্যাশ ব্যাকগ্রাউন্ডে রিভ্যালিডেট হবে, ফলে ব্যবহারকারীরা পাবেন ০ মিলিসেকেন্ডে ইনস্ট্যান্ট লোড।
-// আর অ্যাডমিন প্যানেল থেকে কোনো পরিবর্তন হলে সাথে সাথে revalidatePath("/") দিয়ে লাইভ রিফ্রেশ হবে।
+// ⚡ ISR: পেজ ক্যাশ হয়ে থাকে, প্রতি ৬০ সেকেন্ডে ব্যাকগ্রাউন্ডে নতুন ডেটা নেয়।
+// অ্যাডমিন প্যানেলে কিছু বদলালে সর্বোচ্চ ১ মিনিটের মধ্যে এই সাইটে দেখা যাবে।
 export const revalidate = 60;
 
 export default async function Home() {
   // ডাটাবেজ থেকে সক্রিয় ব্যাচসমূহ ফেচ করা
-  const batches = await getActiveBatches();
+  const [batches, classroomPhotos] = await Promise.all([
+    getActiveBatches(),
+    getClassroomPhotos(),
+  ]);
 
   return (
     <main className="min-h-screen bg-[#f8fafc]">
@@ -40,7 +43,7 @@ export default async function Home() {
       <AcademyFeatures />
 
       {/* ৫. রিয়েল ক্লাসরুম ও একাডেমি লাইফ */}
-      <RealClassroomShowcase />
+      <RealClassroomShowcase photos={classroomPhotos} />
 
       {/* ৬. চলমান ব্যাচসমূহ */}
       <Batches />
@@ -74,6 +77,9 @@ export default async function Home() {
 
       {/* ১৬. প্রিমিয়াম ফুটার */}
       <Footer />
+
+      {/* ১৭. মোবাইলে ফ্লোটিং কল/ভর্তি বার */}
+      <StickyMobileBar />
     </main>
   );
 }

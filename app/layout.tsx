@@ -1,5 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "@fontsource/playfair-display/latin-600.css";
+import "@fontsource/playfair-display/latin-700.css";
+import "@fontsource/playfair-display/latin-600-italic.css";
+import "@fontsource/playfair-display/latin-700-italic.css";
+import "@fontsource/dm-sans/latin-400.css";
+import "@fontsource/dm-sans/latin-500.css";
+import "@fontsource/dm-sans/latin-600.css";
+import "@fontsource/dm-sans/latin-700.css";
+import "@fontsource/hind-siliguri/latin-400.css";
+import "@fontsource/hind-siliguri/latin-500.css";
+import "@fontsource/hind-siliguri/latin-600.css";
+import "@fontsource/hind-siliguri/latin-700.css";
+import "@fontsource/hind-siliguri/bengali-400.css";
+import "@fontsource/hind-siliguri/bengali-500.css";
+import "@fontsource/hind-siliguri/bengali-600.css";
+import "@fontsource/hind-siliguri/bengali-700.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ahsansir.vercel.app";
 
@@ -113,16 +129,6 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&text=%E0%A7%A6%E0%A7%A7%E0%A7%A8%E0%A7%A9%E0%A7%AA%E0%A7%AB%E0%A7%AC%E0%A7%AD%E0%A7%AE%E0%A7%AF&display=swap"
-        />
         {/* Google Rich Snippets Structured Data */}
         <script
           type="application/ld+json"

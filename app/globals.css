@@ -2,9 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/noto-bengali-digits-400.woff2") format("woff2");
+  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
+  unicode-range: U+09E6-09EF;
+}
+@font-face {
+  font-family: "Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/noto-bengali-digits-500.woff2") format("woff2");
+  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
+  unicode-range: U+09E6-09EF;
+}
+@font-face {
+  font-family: "Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/noto-bengali-digits-600.woff2") format("woff2");
+  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
+  unicode-range: U+09E6-09EF;
+}
+@font-face {
+  font-family: "Noto Sans Bengali";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/noto-bengali-digits-700.woff2") format("woff2");
+  /* শুধু বাংলা অঙ্ক ০-৯ — বাকি বাংলা অক্ষর Hind Siliguri থেকে আসে */
+  unicode-range: U+09E6-09EF;
+}
+
 :root {
-  /* Loaded via <link> tags in app/layout.tsx, not next/font/google —
-     see the comment there for why. */
+  /* ফন্টগুলো নিজের সার্ভার থেকে দেওয়া হয় (@fontsource + app/fonts) —
+     Google Fonts-এ কোনো রিকোয়েস্ট যায় না, বিল্ডও নেটওয়ার্কের ওপর নির্ভর করে না। */
   --font-display: "Playfair Display";
   --font-dm-sans: "DM Sans";
   --font-bengali: "Hind Siliguri";

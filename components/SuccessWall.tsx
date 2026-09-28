@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import { optimizeImage } from "@/lib/image";
 import { getSuccessToppers } from "@/lib/academyData";
 
 export default async function SuccessWall() {
@@ -38,7 +39,9 @@ export default async function SuccessWall() {
                       {student.photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={student.photoUrl}
+                          src={optimizeImage(student.photoUrl, 400)}
+ loading="lazy"
+ decoding="async"
                           alt={student.name}
                           className="h-full w-full object-cover"
                         />

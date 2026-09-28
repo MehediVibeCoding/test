@@ -1,10 +1,16 @@
 import { notFound } from "next/navigation";
+import { optimizeImage } from "@/lib/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getBlogPostBySlug } from "@/lib/academyData";
 import Footer from "@/components/Footer";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+// কোনো পেজ বিল্ডে আগে থেকে বানানো হয় না; প্রথম ভিজিটে বানিয়ে ক্যাশ করা হয় (ISR)।
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -76,7 +82,9 @@ export default async function BlogPostPage({
           <div className="mt-6 overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-xs">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={post.coverImageUrl}
+              src={optimizeImage(post.coverImageUrl, 1200)}
+ loading="lazy"
+ decoding="async"
               alt={post.title}
               className="max-h-[440px] w-full object-cover"
             />

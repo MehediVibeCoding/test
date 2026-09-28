@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl =
@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // ২. ডাটাবেজ থেকে সকল প্রকাশিত ব্লগের ডায়নামিক ইউআরএল ফেচ করা
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data: posts } = await supabase
       .from("blog_posts")
       .select("slug, published_at, created_at")

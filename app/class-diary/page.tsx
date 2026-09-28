@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getAllClassDiaryEntries } from "@/lib/academyData";
 import Footer from "@/components/Footer";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "সকল ক্লাস ডায়েরি ও লেকচার নোট | Ahsan's Learning Academy",

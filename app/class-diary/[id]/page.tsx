@@ -4,7 +4,12 @@ import type { Metadata } from "next";
 import { getClassDiaryEntryById } from "@/lib/academyData";
 import Footer from "@/components/Footer";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+// কোনো পেজ বিল্ডে আগে থেকে বানানো হয় না; প্রথম ভিজিটে বানিয়ে ক্যাশ করা হয় (ISR)।
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,

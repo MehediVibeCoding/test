@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
+import { cleanText, dbGuardMessage } from "@/lib/sanitize";
 
 export type PublicReviewInput = {
   name: string;
@@ -19,23 +20,14 @@ export type ReviewStatusResult = {
 
 const ALLOWED_ROLES = ["শিক্ষার্থী", "অভিভাবক"];
 
-// সার্ভার-সাইড স্ক্রিপ্ট ও ট্যাগ স্যানিটাইজার
-function sanitizeServerInput(val: string): string {
-  if (!val) return "";
-  return val
-    .replace(/[<>]/g, "")
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
-    .trim();
-}
-
 // ১. নতুন রিভিউ সাবমিশন (২৪ ঘণ্টায় সর্বোচ্চ ২টি রিভিউ লিমিট সহ)
 export async function submitPublicReview(
   input: PublicReviewInput
 ): Promise<PublicReviewActionResult> {
   try {
-    const name = sanitizeServerInput(input.name);
-    const quote = sanitizeServerInput(input.quote);
-    const batchYear = sanitizeServerInput(input.batch_year);
+    const name = cleanText(input.name);
+    const quote = cleanText(input.quote);
+    const batchYear = cleanText(input.batch_year);
     const roleType = ALLOWED_ROLES.includes(input.role_type)
       ? input.role_type
       : "শিক্ষার্থী";
@@ -51,26 +43,10 @@ export async function submitPublicReview(
       return { ok: false, error: "সঠিক ব্যাচ বা শিক্ষাবর্ষ উল্লেখ করুন (যেমন: HSC 2026)।" };
     }
 
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
-    // সার্ভার-সাইড ২৪ ঘণ্টার রেট-লিমিট চেক (একই নাম থেকে ২৪ ঘণ্টায় সর্বোচ্চ ২টি রিভিউ)
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { data: recentReviews, error: rateLimitErr } = await supabase
-      .from("testimonials")
-      .select("id")
-      .eq("name", name)
-      .gte("created_at", twentyFourHoursAgo);
-
-    if (rateLimitErr) {
-      console.error("Rate limit check error:", rateLimitErr.message);
-    }
-
-    if (recentReviews && recentReviews.length >= 2) {
-      return {
-        ok: false,
-        error: "আপনি আজকের জন্য সর্বোচ্চ ২টি রিভিউ প্রদান করেছেন। অনুগ্রহ করে আগামীকাল চেষ্টা করুন।",
-      };
-    }
+    // ২৪ ঘণ্টায় একই নামে ২টির বেশি রিভিউ ও ফ্লাড লিমিট — ডাটাবেজের ট্রিগার
+    // (guard_testimonial_insert) প্রয়োগ করে।
 
     // ড্রাফট হিসেবে ডাটাবেজে ইনসার্ট (is_featured = false)
     const { data, error } = await supabase
@@ -87,6 +63,8 @@ export async function submitPublicReview(
       .single();
 
     if (error || !data) {
+      const guardMessage = dbGuardMessage(error?.message);
+      if (guardMessage) return { ok: false, error: guardMessage };
       console.error("submitPublicReview DB error:", error?.message);
       return { ok: false, error: "দুঃখিত, মতামত জমা নেওয়া যায়নি। একটু পরে আবার চেষ্টা করুন।" };
     }
@@ -107,7 +85,7 @@ export async function checkReviewStatus(
   }
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("testimonials")
       .select("id, is_featured")
