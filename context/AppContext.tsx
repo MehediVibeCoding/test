@@ -473,24 +473,29 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  // ১. ডিফল্টভাবে সাইট সবসময় ১০০% লাইট মোডে ওপেন হবে
+  // ১. সাইট সর্বদা বাধ্যতামূলকভাবে ডিফল্ট লাইট মোডে ওপেন হবে
   const [language, setLanguage] = useState<Language>("bn");
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    // শুধুমাত্র ইউজার যদি আগে নিজে ক্লিক করে localStorage-এ "dark" সেভ করে থাকে, তবেই ডার্ক হবে
-    const savedTheme = localStorage.getItem("ala_theme") as Theme | null;
-    if (savedTheme === "dark") {
-      setTheme("dark");
-      document.documentElement.classList.add("dark");
-    } else {
-      setTheme("light");
-      document.documentElement.classList.remove("dark");
-    }
+    // সিস্টেমের ডার্ক সেটিংস সম্পূর্ণ অগ্রাহ্য করা হবে।
+    // শুধুমাত্র ইউজার যদি আগে নিজে ক্লিক করে localStorage-এ "dark" সেভ করে থাকে, তবেই ডার্ক মোড অন হবে।
+    try {
+      const savedTheme = localStorage.getItem("ala_theme") as Theme | null;
+      if (savedTheme === "dark") {
+        setTheme("dark");
+        document.documentElement.classList.add("dark");
+      } else {
+        setTheme("light");
+        document.documentElement.classList.remove("dark");
+      }
 
-    const savedLang = localStorage.getItem("ala_lang") as Language | null;
-    if (savedLang === "en" || savedLang === "bn") {
-      setLanguage(savedLang);
+      const savedLang = localStorage.getItem("ala_lang") as Language | null;
+      if (savedLang === "en" || savedLang === "bn") {
+        setLanguage(savedLang);
+      }
+    } catch {
+      // fallback
     }
   }, []);
 
