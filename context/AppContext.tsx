@@ -473,14 +473,14 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  // ১. ডিফল্টভাবে সাইট সবসময় ১০০% লাইট মোডে ওপেন হবে
   const [language, setLanguage] = useState<Language>("bn");
   const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // 1. Theme initialization from localStorage or system preference
+    // শুধুমাত্র ইউজার যদি আগে নিজে ক্লিক করে localStorage-এ "dark" সেভ করে থাকে, তবেই ডার্ক হবে
     const savedTheme = localStorage.getItem("ala_theme") as Theme | null;
-    if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    if (savedTheme === "dark") {
       setTheme("dark");
       document.documentElement.classList.add("dark");
     } else {
@@ -488,13 +488,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.classList.remove("dark");
     }
 
-    // 2. Language initialization
     const savedLang = localStorage.getItem("ala_lang") as Language | null;
     if (savedLang === "en" || savedLang === "bn") {
       setLanguage(savedLang);
     }
-
-    setMounted(true);
   }, []);
 
   const toggleLanguage = () => {
@@ -543,4 +540,4 @@ export function useApp() {
     throw new Error("useApp must be used within an AppProvider");
   }
   return context;
-  }
+}
