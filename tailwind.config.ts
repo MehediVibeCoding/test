@@ -2,10 +2,13 @@ import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 
 const config: Config = {
+  // জাভাস্ক্রিপ্ট ক্লাস অনুযায়ী ডার্ক মোড নিয়ন্ত্রণ নিশ্চিতকরণ (সিস্টেম ডার্ক মোড ওভাররাইড বন্ধ হবে)
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./hooks/**/*.{ts,tsx}",
+    "./context/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {
