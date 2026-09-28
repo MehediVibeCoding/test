@@ -15,7 +15,7 @@ const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 
 // ছবির কলাম অ্যানিমেশন
 const imageVariants = {
-  hidden: { opacity: 0, y: 35, scale: 0.97 },
+  hidden: { opacity: 0, y: 30, scale: 0.97 },
   show: {
     opacity: 1,
     y: 0,
@@ -69,7 +69,7 @@ export default function Hero() {
     <section
       className="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 lg:pt-40 lg:pb-28 bg-gradient-to-b from-[#def1fe] via-[#f0f7fe] to-white dark:from-[#071322] dark:via-[#091a2e] dark:to-[#070f1a] transition-colors"
     >
-      {/* ১. ব্যাকগ্রাউন্ড এডুকেশন ডুডলস (হালকা ৯% অপাসিটি) */}
+      {/* ১. ব্যাকগ্রাউন্ড এডুকেশন ডুডলস */}
       <EduDoodles variant="hero" />
 
       {/* ব্যাকগ্রাউন্ড সফট গ্লো আভা */}
@@ -83,7 +83,7 @@ export default function Hero() {
           animate="show"
           className="order-2 text-center md:order-1 md:text-left -mt-2 sm:mt-0"
         >
-          {/* সমান পুরুত্বের মসৃণ বোল্ড ইটালিক টাইপোগ্রাফি (কোনো অসমান চিকন টান ছাড়া) */}
+          {/* সমান পুরুত্বের মসৃণ বোল্ড ইটালিক টাইপোগ্রাফি */}
           <motion.h1
             variants={lineVariants}
             className="font-display font-black italic tracking-tight text-sky-950 dark:text-white text-3xl xs:text-4xl sm:text-5xl lg:text-6xl leading-[1.15]"
@@ -107,7 +107,7 @@ export default function Hero() {
             {t.hero.heroSubtitle}
           </motion.p>
 
-          {/* স্ট্যাটাস কাউন্টার (বাংলা/ইংরেজি ভাষা অনুযায়ী) */}
+          {/* স্ট্যাটাস কাউন্টার (দ্বিভাষিক) */}
           <motion.div
             variants={lineVariants}
             className="mx-auto mt-6 flex max-w-md justify-center gap-6 border-y border-sky-200/60 dark:border-sky-800/60 py-3.5 sm:gap-8 md:mx-0 md:justify-start"
@@ -150,7 +150,7 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* ৩. অ্যাকশন বাটনসমূহ (তীর চিহ্ন ছাড়া সফট গ্রেডিয়েন্ট + ঝিলিক অ্যানিমেশন) */}
+          {/* ৩. অ্যাকশন বাটনসমূহ (তীর চিহ্ন ছাড়া সফট গ্রেডিয়েন্ট + ঝিলিক) */}
           <motion.div
             variants={lineVariants}
             className="mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:justify-start"
@@ -175,36 +175,31 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* ৪. ছবির কলাম (রেফারেন্স-স্টাইল অর্গানিক আর্চ ফ্রেম ও বটম-ফেড ইন্টিগ্রেশন) */}
+        {/* ৪. ছবির কলাম (পরিচ্ছন্ন আর্টওয়ার্ক কন্টেইনার) */}
         <motion.div
           variants={imageVariants}
           initial="hidden"
           animate="show"
           className="order-1 flex justify-center md:order-2 relative"
         >
-          <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[400px]">
-            {/* ছবির পেছনের অর্গানিক কার্ভ ফ্রেম (রেফারেন্স ডিজাইনের মতো ডাবল ব্যাকড্রপ আর্চ) */}
-            <div className="hero-arch-frame absolute inset-x-2 -inset-y-3 z-0 transition-all scale-105 border border-sky-200/60 dark:border-sky-700/30" />
+          <div className="relative w-full max-w-[290px] sm:max-w-[360px] md:max-w-[430px] flex justify-center items-center">
+            {/* সফট ব্যাকগ্রাউন্ড আভা */}
+            <div className="absolute -inset-4 rounded-full bg-gradient-to-t from-sky-400/20 via-sky-200/10 to-transparent blur-2xl pointer-events-none dark:from-sky-500/15" />
 
-            {/* ভেতরের সফট সার্কুলার রিং ইলিমেন্ট */}
-            <div className="absolute -top-3 -right-3 h-20 w-20 rounded-full border-2 border-dashed border-sky-300/40 dark:border-sky-500/20 pointer-events-none animate-spin-slow" />
-            
-            {/* স্যারের ছবি (নিচের সোজা কাটা দাগ মুছে দিয়ে মসৃণভাবে ফ্রেমে ব্লেন্ড করা) */}
-            <div className="relative z-10 overflow-hidden pt-3">
-              <Image
-                src="/images/ahsan-hero.webp"
-                alt="Md. Ahsan Ullah — Founder & Mentor, Ahsan's Learning Academy"
-                width={900}
-                height={1350}
-                priority
-                className="relative z-10 h-auto w-full object-contain select-none [mask-image:linear-gradient(to_bottom,black_70%,transparent_97%)] [-webkit-mask-image:linear-gradient(to_bottom,black_70%,transparent_97%)]"
-              />
-            </div>
+            {/* স্যারের ডিজাইন করা সম্পূর্ণ পোর্ট্রেট ছবি */}
+            <Image
+              src="/images/ahsan-hero.webp"
+              alt="Md. Ahsan Ullah — Founder & Mentor, Ahsan's Learning Academy"
+              width={900}
+              height={1350}
+              priority
+              className="relative z-10 h-auto w-full object-contain select-none transition-all drop-shadow-md"
+            />
           </div>
         </motion.div>
       </div>
 
-      {/* ৫. রেফারেন্স-স্টাইল অর্গানিক কার্ভড কাট-আউট ওয়েভ ডিভাইডার (হিরো থেকে পরের সেকশনে মসৃণ ট্রানজিশন) */}
+      {/* ৫. পরবর্তী সেকশনে মসৃণ ট্রানজিশনের জন্য অর্গানিক কার্ভড কাট-আউট ডিভাইডার */}
       <div className="absolute inset-x-0 bottom-0 z-10 w-full overflow-hidden leading-none pointer-events-none">
         <svg
           viewBox="0 0 1440 68"
