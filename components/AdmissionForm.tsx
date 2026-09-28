@@ -11,6 +11,13 @@ import { useApp } from "@/context/AppContext";
 const SUBMISSION_LOCK_KEY = "ala_admission_locked_session";
 const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 
+const DEFAULT_BATCHES = [
+  { id: "b1", name: "HSC 27 (ICT + English)" },
+  { id: "b2", name: "HSC 28 (ICT + English)" },
+  { id: "b3", name: "HSC 27 (ICT Special)" },
+  { id: "b4", name: "HSC 28 (English Special)" },
+];
+
 export interface AdmissionFormProps {
   batches?: { id: string; name: string }[];
 }
@@ -35,17 +42,14 @@ const INITIAL_FORM: FormDataState = {
   guardianPhone: "",
 };
 
-// বাংলাদেশি মোবাইল নম্বর ভ্যালিডেটর
 function isValidBdPhone(phone: string): boolean {
   return /^01[3-9]\d{8}$/.test(phone.trim());
 }
 
-// শুধুমাত্র বর্ণমালা ও স্পেস ফিল্টার
 function filterAlphaOnly(value: string): string {
   return value.replace(/[^a-zA-Z\u0980-\u09FF\s.]/g, "");
 }
 
-// শুধুমাত্র সংখ্যা ফিল্টার (১১ ডিজিট)
 function filterPhoneOnly(value: string): string {
   const englishDigits = value.replace(/[০-৯]/g, (d) =>
     String("০১২৩৪৫৬৭৮৯".indexOf(d))
@@ -53,12 +57,11 @@ function filterPhoneOnly(value: string): string {
   return englishDigits.replace(/\D/g, "").slice(0, 11);
 }
 
-// কলেজ রোল ফিল্টার
 function filterRollOnly(value: string): string {
   return value.replace(/[^a-zA-Z0-9\u0980-\u09FF-]/g, "").slice(0, 20);
 }
 
-export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {}) {
+export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
   const { language, t } = useApp();
   const [formData, setFormData] = useState<FormDataState>(INITIAL_FORM);
   const [submittedData, setSubmittedData] = useState<FormDataState | null>(null);
@@ -66,7 +69,8 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
 
-  // ফরমের সকল ফিল্ড সঠিকভাবে পূরণ হয়েছে কিনা তা লাইভ চেক
+  const batchList = batches && batches.length > 0 ? batches : DEFAULT_BATCHES;
+
   const isFormValid = useMemo(() => {
     return (
       formData.name.trim().length >= 2 &&
@@ -79,12 +83,10 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
     );
   }, [formData]);
 
-  // ফিল্ড সম্পূর্ণ হলে তবেই সাবমিট বাটনে লাইভ ঝিলিক (Reactive Shine) জ্বলবে
   const { ref: submitBtnRef, shineClass } = useShine<HTMLButtonElement>(
     isFormValid && !isSubmitting
   );
 
-  // ২ ঘণ্টার ডুপ্লিকেট সাবমিশন লক চেক
   useEffect(() => {
     try {
       const saved = localStorage.getItem(SUBMISSION_LOCK_KEY);
@@ -152,19 +154,19 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
         setErrorMessage(
           language === "bn"
             ? "সঠিক বাংলাদেশি মোবাইল নম্বর দিন (যেমন: 01845435539 - ঠিক ১১ ডিজিট)।"
-            : "Please enter a valid 11-digit Bangladeshi mobile number (e.g. 01845435539)."
+            : "Please enter a valid 11-digit Bangladeshi mobile number."
         );
       } else if (errors.group || errors.batch) {
         setErrorMessage(
           language === "bn"
             ? "অনুগ্রহ করে বিভাগ ও কাঙ্ক্ষিত ব্যাচ নির্বাচন করুন।"
-            : "Please select your academic group and preferred batch."
+            : "Please select your group and preferred batch."
         );
       } else {
         setErrorMessage(
           language === "bn"
-            ? "অনুগ্রহ করে লাল চিহ্নিত সকল আবশ্যক তথ্য সঠিকভাবে পূরণ করুন।"
-            : "Please fill in all required fields marked in red."
+            ? "অনুগ্রহ করে সকল আবশ্যক তথ্য সঠিকভাবে পূরণ করুন।"
+            : "Please fill in all required fields correctly."
         );
       }
       return;
@@ -188,7 +190,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
         return;
       }
 
-      // ২ ঘণ্টার জন্য লক ডেটা সংরক্ষণ
       const sessionData = {
         timestamp: Date.now(),
         data: formData,
@@ -205,7 +206,7 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
       setErrorMessage(
         language === "bn"
           ? "ইন্টারনেট সংযোগে ত্রুটি হয়েছে। আপনার কানেকশন চেক করে আবার চেষ্টা করুন।"
-          : "Network error. Please check your internet connection and try again."
+          : "Network error. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -223,11 +224,9 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
       id="admission"
       className="relative px-4 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-white dark:bg-[#070f1a] overflow-hidden transition-colors"
     >
-      {/* ব্যাকগ্রাউন্ড এডুকেশন অ্যাকসেন্ট ডুডলস */}
       <EduDoodles variant="section" />
 
       <div className="relative z-10 mx-auto max-w-3xl">
-        {/* সেকশন হেডার */}
         <Reveal className="mb-8 text-center sm:mb-12">
           <span className="inline-flex rounded-full bg-sky-100 dark:bg-sky-900/60 px-4 py-1 font-body text-xs font-bold text-sky-800 dark:text-sky-300">
             {t.admission.tag}
@@ -242,7 +241,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
 
         <Reveal delay={80}>
           {submittedData ? (
-            /* সফট প্যাস্টেল মিন্ট গ্রিন ইনভয়েস রিসিপ্ট কার্ড */
             <div className="overflow-hidden rounded-3xl border border-[#a7f3d0] dark:border-emerald-800 bg-[#ecfdf5]/50 dark:bg-[#0b241d]/70 p-6 sm:p-8 shadow-xs backdrop-blur-sm">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left border-b border-[#a7f3d0]/80 dark:border-emerald-800/80 pb-6">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#d1fae5] dark:bg-emerald-900 text-[#047857] dark:text-emerald-300 border border-[#a7f3d0] dark:border-emerald-700 shadow-xs">
@@ -260,7 +258,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                 </div>
               </div>
 
-              {/* শিক্ষার্থীর তথ্যের রিসিপ্ট টেবিল */}
               <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-700 bg-white dark:bg-slate-900/90 font-body text-xs sm:text-sm shadow-xs">
                 <div className="divide-y divide-slate-100 dark:divide-slate-800">
                   <div className="flex justify-between items-center p-3.5 sm:px-5">
@@ -297,7 +294,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
               </div>
             </div>
           ) : (
-            /* আবেদন ফর্ম */
             <form
               onSubmit={handleSubmit}
               className="space-y-4 rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/85 p-6 shadow-xs backdrop-blur-sm sm:p-8"
@@ -308,7 +304,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                 </div>
               )}
 
-              {/* শিক্ষার্থীর নাম */}
               <div>
                 <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950 dark:text-white">
                   {t.admission.studentName}
@@ -327,7 +322,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                 />
               </div>
 
-              {/* কলেজ ও কলেজ রোল */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950 dark:text-white">
@@ -366,7 +360,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                 </div>
               </div>
 
-              {/* বিভাগ ও কাঙ্ক্ষিত ব্যাচ */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950 dark:text-white">
@@ -426,7 +419,7 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                       <option value="" disabled className="dark:bg-slate-900">
                         {t.admission.selectBatchPlaceholder}
                       </option>
-                      {batches.map((b) => (
+                      {batchList.map((b) => (
                         <option key={b.id} value={b.name} className="dark:bg-slate-900">
                           {b.name}
                         </option>
@@ -441,7 +434,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                 </div>
               </div>
 
-              {/* শিক্ষার্থীর ফোন ও অভিভাবকের ফোন */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block font-body text-xs sm:text-sm font-bold text-sky-950 dark:text-white">
@@ -484,7 +476,6 @@ export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {})
                 </div>
               </div>
 
-              {/* সাবমিট বাটন */}
               <div className="pt-2">
                 <motion.button
                   ref={submitBtnRef}
