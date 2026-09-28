@@ -13,6 +13,7 @@ import SuccessWall from "@/components/SuccessWall";
 import CampusLocation from "@/components/CampusLocation";
 import FAQ from "@/components/FAQ";
 import AdmissionForm from "@/components/AdmissionForm";
+import FooterScene from "@/components/FooterScene";
 import Footer from "@/components/Footer";
 import StickyMobileBar from "@/components/StickyMobileBar";
 import { getActiveBatches, getClassroomPhotos } from "@/lib/academyData";
@@ -75,7 +76,10 @@ export default async function Home() {
       {/* ১৫. ভর্তি আবেদন ফরম */}
       <AdmissionForm batches={batches} />
 
-      {/* ১৬. প্রিমিয়াম ফুটার */}
+      {/* ১৬. ফুটারের ওপরের ছবি (ঢেউ ওভারলে সহ) */}
+      <FooterScene />
+
+      {/* ১৭. প্রিমিয়াম ফুটার */}
       <Footer />
 
       {/* ১৭. মোবাইলে ফ্লোটিং কল/ভর্তি বার */}
