@@ -15,14 +15,6 @@ const FEATURES_DATA = [
     tagEn: "Special Care",
     cardBg: "bg-[#f0f9ff]/80 dark:bg-[#0c2238]/70 border-[#bae6fd]/60 dark:border-sky-800/40 hover:border-[#38bdf8]",
     badgeBg: "bg-[#e0f2fe] dark:bg-sky-900/80 text-[#0369a1] dark:text-sky-300 border border-[#bae6fd] dark:border-sky-700",
-    watermarkColor: "text-sky-500",
-    // ১. নার্সিং/যত্ন ওয়াটারমার্ক আইকন
-    watermarkIcon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-24 w-24">
-        <path d="M12 20c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V17c-6-1-12 0-16 3z" />
-        <path d="M32 18c0-7 6-12 12-12s12 5 12 12c0 14-24 24-24 24s-24-10-24-24c0-7 6-12 12-12s12 5 12 12z" />
-      </svg>
-    ),
   },
   {
     titleBn: "সাপ্তাহিক বোর্ড স্ট্যান্ডার্ড মডেল টেস্ট",
@@ -33,17 +25,6 @@ const FEATURES_DATA = [
     tagEn: "Weekly Evaluation",
     cardBg: "bg-[#f5f3ff]/80 dark:bg-[#1a1636]/70 border-[#ddd6fe]/60 dark:border-indigo-900/40 hover:border-[#a78bfa]",
     badgeBg: "bg-[#ede9fe] dark:bg-indigo-950/80 text-[#6d28d9] dark:text-indigo-300 border border-[#ddd6fe] dark:border-indigo-800",
-    watermarkColor: "text-indigo-500",
-    // ২. এক্সাম চেকলিস্ট ওয়াটারমার্ক আইকন
-    watermarkIcon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-24 w-24">
-        <rect x="14" y="10" width="36" height="46" rx="4" />
-        <path d="M22 6h20v8H22z" />
-        <path d="M22 24l4 4 8-8" />
-        <path d="M22 36l4 4 8-8" />
-        <path d="M22 48h20" />
-      </svg>
-    ),
   },
   {
     titleBn: "স্যারের সরাসরি পাঠদান, কোনো প্রক্সি নয়",
@@ -54,15 +35,6 @@ const FEATURES_DATA = [
     tagEn: "100% Authentic",
     cardBg: "bg-[#ecfdf5]/80 dark:bg-[#0c261e]/70 border-[#a7f3d0]/60 dark:border-emerald-900/40 hover:border-[#34d399]",
     badgeBg: "bg-[#d1fae5] dark:bg-emerald-950/80 text-[#047857] dark:text-emerald-300 border border-[#a7f3d0] dark:border-emerald-800",
-    watermarkColor: "text-emerald-500",
-    // ৩. মেন্টরশিপ ও অথেনটিক শিল্ড ওয়াটারমার্ক আইকন
-    watermarkIcon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-24 w-24">
-        <path d="M10 24L32 12l22 12-22 12L10 24z" />
-        <path d="M18 29v14c0 6 6 11 14 11s14-5 14-11V29" />
-        <path d="M54 24v16" />
-      </svg>
-    ),
   },
   {
     titleBn: "ডিজিটাল ক্লাস ডায়েরি ও হ্যান্ডনোট",
@@ -73,16 +45,6 @@ const FEATURES_DATA = [
     tagEn: "Smart Learning",
     cardBg: "bg-[#ecfeff]/80 dark:bg-[#0a272e]/70 border-[#a5f3fc]/60 dark:border-cyan-900/40 hover:border-[#22d3ee]",
     badgeBg: "bg-[#cffafe] dark:bg-cyan-950/80 text-[#0e7490] dark:text-cyan-300 border border-[#a5f3fc] dark:border-cyan-800",
-    watermarkColor: "text-cyan-500",
-    // ৪. ডিজিটাল ক্লাউড নোট ওয়াটারমার্ক আইকন
-    watermarkIcon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-24 w-24">
-        <rect x="12" y="10" width="40" height="46" rx="4" />
-        <path d="M22 22h20M22 30h20M22 38h14" />
-        <circle cx="44" cy="44" r="10" />
-        <path d="M44 38v6l4 2" />
-      </svg>
-    ),
   },
   {
     titleBn: "সীমিত আসন ও পড়াশোনার অনুকূল পরিবেশ",
@@ -93,15 +55,6 @@ const FEATURES_DATA = [
     tagEn: "Disciplined Cohorts",
     cardBg: "bg-[#fffbeb]/80 dark:bg-[#2b220d]/70 border-[#fde68a]/60 dark:border-amber-900/40 hover:border-[#fbbf24]",
     badgeBg: "bg-[#fef3c7] dark:bg-amber-950/80 text-[#b45309] dark:text-amber-300 border border-[#fde68a] dark:border-amber-800",
-    watermarkColor: "text-amber-500",
-    // ৫. শৃঙ্খলিত ব্যাচ ও আসন শিল্ড ওয়াটারমার্ক আইকন
-    watermarkIcon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-24 w-24">
-        <path d="M32 8l18 8v16c0 14-8 24-18 26-10-2-18-12-18-26V16l18-8z" />
-        <circle cx="32" cy="28" r="6" />
-        <path d="M22 42c0-5 5-8 10-8s10 3 10 8" />
-      </svg>
-    ),
   },
   {
     titleBn: "অভিভাবকদের সাথে নিয়মিত ফিডব্যাক",
@@ -112,14 +65,6 @@ const FEATURES_DATA = [
     tagEn: "Guardian Sync",
     cardBg: "bg-[#fff1f2]/80 dark:bg-[#2d1217]/70 border-[#fecdd3]/60 dark:border-rose-900/40 hover:border-[#fb7185]",
     badgeBg: "bg-[#ffe4e6] dark:bg-rose-950/80 text-[#be123c] dark:text-rose-300 border border-[#fecdd3] dark:border-rose-800",
-    watermarkColor: "text-rose-500",
-    // ৬. অভিভাবক সংযোগ ও কমিউনিকেশন ওয়াটারমার্ক আইকন
-    watermarkIcon: (
-      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-24 w-24">
-        <path d="M12 16h28a4 4 0 014 4v16a4 4 0 01-4 4H24l-8 8V40h-4a4 4 0 01-4-4V20a4 4 0 014-4z" />
-        <path d="M44 26h8a4 4 0 014 4v14a4 4 0 01-4 4h-4v6l-6-6h-4" />
-      </svg>
-    ),
   },
 ];
 
@@ -189,18 +134,10 @@ export default function AcademyFeatures() {
               key={idx}
               variants={card3DVariants}
               whileHover={{ y: -4, scale: 1.015, transition: { duration: 0.25 } }}
-              className={`relative overflow-hidden flex h-full flex-col justify-between rounded-3xl border p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-shadow hover:shadow-lg ${item.cardBg}`}
+              className={`flex h-full flex-col justify-between rounded-3xl border p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-shadow hover:shadow-lg ${item.cardBg}`}
               style={{ transformStyle: "preserve-3d" }}
             >
-              {/* ডানপাশের ফাঁকা জায়গায় সূক্ষ্ম প্রাসঙ্গিক ওয়াটারমার্ক অ্যাকসেন্ট আইকন */}
-              <div
-                aria-hidden="true"
-                className={`pointer-events-none absolute -bottom-4 -right-4 opacity-[0.08] dark:opacity-[0.11] select-none ${item.watermarkColor}`}
-              >
-                {item.watermarkIcon}
-              </div>
-
-              <div className="relative z-10">
+              <div>
                 {/* কার্ডের শুরুর ট্যাগ পিল */}
                 <div className="flex items-center justify-between">
                   <span className={`inline-flex rounded-full px-3 py-1 font-body text-xs font-bold ${item.badgeBg}`}>
