@@ -16,19 +16,18 @@ import FooterScene from "@/components/FooterScene";
 import Footer from "@/components/Footer";
 import { getActiveBatches, getClassroomPhotos } from "@/lib/academyData";
 
-// ⚡ ISR: পেজ ক্যাশ হয়ে থাকে, প্রতি ৬০ সেকেন্ডে ব্যাকগ্রাউন্ডে নতুন ডেটা নেয়।
-// অ্যাডমিন প্যানেলে কিছু বদলালে সর্বোচ্চ ১ মিনিটের মধ্যে এই সাইটে দেখা যাবে।
+// ISR: প্রতি ৬০ সেকেন্ডে ব্যাকগ্রাউন্ডে নতুন ডেটা ক্যাশ আপডেট হবে
 export const revalidate = 60;
 
 export default async function Home() {
-  // ডাটাবেজ থেকে সক্রিয় ব্যাচসমূহ ফেচ করা
+  // ডাটাবেজ থেকে সক্রিয় ব্যাচ ও ক্লাসরুম ছবি ফেচ করা
   const [batches, classroomPhotos] = await Promise.all([
     getActiveBatches(),
     getClassroomPhotos(),
   ]);
 
   return (
-    <main className="min-h-screen bg-[#f8fafc]">
+    <main className="min-h-screen bg-[#f8fafc] dark:bg-[#070f1a] transition-colors">
       {/* ১. শীর্ষ ন্যাভবার */}
       <Navbar />
 
@@ -50,31 +49,31 @@ export default async function Home() {
       {/* ৭. বিদায় সংবর্ধনা ও স্মৃতি */}
       <FarewellGallery />
 
-      {/* ৯. ভিডিও ক্লাস লেকচার */}
+      {/* ৮. ভিডিও ক্লাস লেকচার */}
       <VideoGallery />
 
-      {/* ১০. স্টাডি টিপস ও গাইডলাইন ব্লগ */}
+      {/* ৯. স্টাডি টিপস ও গাইডলাইন ব্লগ */}
       <BlogPreview />
 
-      {/* ১১. শিক্ষার্থী ও অভিভাবকদের মতামত */}
+      {/* ১০. শিক্ষার্থী ও অভিভাবকদের মতামত */}
       <Testimonials />
 
-      {/* ১২. সাফল্যের গল্প ও ফলাফল বোর্ড */}
+      {/* ১১. সাফল্যের গল্প ও ফলাফল বোর্ড */}
       <SuccessWall />
 
-      {/* ১৩. ক্যাম্পাস ও গুগল ম্যাপ লোকেশন */}
+      {/* ১২. ক্যাম্পাস ও গুগল ম্যাপ লোকেশন */}
       <CampusLocation />
 
-      {/* ১৪. সাধারণ জিজ্ঞাসা */}
+      {/* ১৩. সাধারণ জিজ্ঞাসা */}
       <FAQ />
 
-      {/* ১৫. ভর্তি আবেদন ফরম */}
+      {/* ১৪. ভর্তি আবেদন ফরম (সঠিক প্রপস সহ) */}
       <AdmissionForm batches={batches} />
 
-      {/* ১৬. ফুটারের ওপরের ছবি (ঢেউ ওভারলে সহ) */}
+      {/* ১৫. ফুটারের ওপরের ছবি */}
       <FooterScene />
 
-      {/* ১৭. প্রিমিয়াম ফুটার */}
+      {/* ১৬. প্রিমিয়াম ফুটার */}
       <Footer />
     </main>
   );
