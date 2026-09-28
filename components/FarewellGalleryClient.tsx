@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { optimizeImage } from "@/lib/image";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
+import EduDoodles from "./EduDoodles";
 import type { FarewellMemory } from "@/lib/academyData";
 import { useApp } from "@/context/AppContext";
 
@@ -94,7 +95,10 @@ export default function FarewellGalleryClient({
           "radial-gradient(circle at 15% 15%, rgba(56,189,248,0.12) 0%, transparent 55%), radial-gradient(circle at 85% 85%, rgba(2,132,199,0.10) 0%, transparent 55%), #0a1f33",
       }}
     >
-      <div className="mx-auto max-w-5xl">
+      {/* ব্যাকগ্রাউন্ড এডুকেশন ডুডলস (দুই পাশের ফাঁকা নীল জায়গায়) */}
+      <EduDoodles variant="section" className="opacity-15 text-sky-400" />
+
+      <div className="relative z-10 mx-auto max-w-5xl">
         {/* সেকশন হেডার */}
         <Reveal className="mb-6 text-center sm:mb-8">
           <span className="inline-flex rounded-full bg-white/10 px-4 py-1 font-body text-xs font-bold text-sky-300">
@@ -125,15 +129,15 @@ export default function FarewellGalleryClient({
           ))}
         </Reveal>
 
-        {/* ছবির গ্যালারি কন্টেইনার (দুই পাশে ফ্লুয়িড প্রিমিয়াম নেভিগেশন বাটন সহ) */}
+        {/* ছবির গ্যালারি কন্টেইনার (ডেস্কটপে মার্জিনের বাইরে বাটন ও মোবাইলে বাটন ছাড়া) */}
         <Reveal delay={100}>
-          <div className="relative group">
-            {/* ১. বাম পাশের নেভিগেশন তীর বাটন (Vertically Centered Overlay) */}
+          <div className="relative">
+            {/* ১. বাম পাশের নেভিগেশন তীর বাটন (শুধু ডেস্কটপে এবং ছবির বাইরে ফাঁকা মার্জিনে) */}
             {totalSlides > 1 && (
               <button
                 onClick={prevSlide}
                 aria-label="Previous Slide"
-                className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-white/25 bg-sky-950/80 text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-500 hover:border-sky-400 hover:scale-105 active:scale-95"
+                className="hidden md:flex absolute md:-left-14 lg:-left-16 top-1/2 -translate-y-1/2 z-20 h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-sky-900/60 text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-500 hover:border-sky-400 hover:scale-110 active:scale-95"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -141,12 +145,12 @@ export default function FarewellGalleryClient({
               </button>
             )}
 
-            {/* ২. ডান পাশের নেভিগেশন তীর বাটন (Vertically Centered Overlay) */}
+            {/* ২. ডান পাশের নেভিগেশন তীর বাটন (শুধু ডেস্কটপে এবং ছবির বাইরে ফাঁকা মার্জিনে) */}
             {totalSlides > 1 && (
               <button
                 onClick={nextSlide}
                 aria-label="Next Slide"
-                className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-white/25 bg-sky-950/80 text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-500 hover:border-sky-400 hover:scale-105 active:scale-95"
+                className="hidden md:flex absolute md:-right-14 lg:-right-16 top-1/2 -translate-y-1/2 z-20 h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-sky-900/60 text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-500 hover:border-sky-400 hover:scale-110 active:scale-95"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
