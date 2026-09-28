@@ -11,9 +11,9 @@ import { useApp } from "@/context/AppContext";
 const SUBMISSION_LOCK_KEY = "ala_admission_locked_session";
 const TWO_HOURS_IN_MS = 2 * 60 * 60 * 1000;
 
-type AdmissionFormProps = {
+export interface AdmissionFormProps {
   batches?: { id: string; name: string }[];
-};
+}
 
 type FormDataState = {
   name: string;
@@ -58,7 +58,7 @@ function filterRollOnly(value: string): string {
   return value.replace(/[^a-zA-Z0-9\u0980-\u09FF-]/g, "").slice(0, 20);
 }
 
-export default function AdmissionForm({ batches = [] }: AdmissionFormProps) {
+export default function AdmissionForm({ batches = [] }: AdmissionFormProps = {}) {
   const { language, t } = useApp();
   const [formData, setFormData] = useState<FormDataState>(INITIAL_FORM);
   const [submittedData, setSubmittedData] = useState<FormDataState | null>(null);
