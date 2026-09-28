@@ -16,6 +16,7 @@ import "@fontsource/hind-siliguri/bengali-400.css";
 import "@fontsource/hind-siliguri/bengali-500.css";
 import "@fontsource/hind-siliguri/bengali-600.css";
 import "@fontsource/hind-siliguri/bengali-700.css";
+import { AppProvider } from "@/context/AppContext";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ahsansir.vercel.app";
 
@@ -87,36 +88,35 @@ export const metadata: Metadata = {
   },
 };
 
-// Google Search Rich Snippet JSON-LD Structured Data
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "EducationalOrganization",
       "@id": `${siteUrl}/#organization`,
-      "name": "Ahsan's Learning Academy",
-      "url": siteUrl,
-      "logo": `${siteUrl}/images/ahsan-about.webp`,
-      "description":
+      name: "Ahsan's Learning Academy",
+      url: siteUrl,
+      logo: `${siteUrl}/images/ahsan-about.webp`,
+      description:
         "উচ্চমাধ্যমিক শিক্ষার্থীদের ইংরেজি ও আইসিটি বিষয়ে মৌলিক ধারণা স্পষ্টকরণ এবং বোর্ড পরীক্ষার সর্বোচ্চ প্রস্তুতির জন্য বিশেষায়িত একাডেমি।",
-      "telephone": "+8801845435539",
-      "address": {
+      telephone: "+8801845435539",
+      address: {
         "@type": "PostalAddress",
-        "streetAddress": "কলেজ রোড, চৌদ্দগ্রাম সরকারি কলেজ সংলগ্ন",
-        "addressLocality": "চৌদ্দগ্রাম",
-        "addressRegion": "কুমিল্লা",
-        "addressCountry": "BD",
+        streetAddress: "কলেজ রোড, চৌদ্দগ্রাম সরকারি কলেজ সংলগ্ন",
+        addressLocality: "চৌদ্দগ্রাম",
+        addressRegion: "কুমিল্লা",
+        addressCountry: "BD",
       },
     },
     {
       "@type": "Person",
       "@id": `${siteUrl}/#person`,
-      "name": "Md. Ahsan Ullah",
-      "jobTitle": "Lecturer & 40th BCS Cadre",
-      "worksFor": {
+      name: "Md. Ahsan Ullah",
+      jobTitle: "Lecturer & 40th BCS Cadre",
+      worksFor: {
         "@id": `${siteUrl}/#organization`,
       },
-      "alumniOf": "University of Chittagong",
+      alumniOf: "University of Chittagong",
     },
   ],
 };
@@ -127,15 +127,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="bn">
+    <html lang="bn" suppressHydrationWarning>
       <head>
-        {/* Google Rich Snippets Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body className="antialiased selection:bg-sky-500/20 selection:text-sky-900 dark:selection:bg-sky-400/20 dark:selection:text-sky-200">
+        <AppProvider>{children}</AppProvider>
+      </body>
     </html>
   );
 }
