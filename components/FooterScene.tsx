@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-// ওপরের সেকশনের ব্যাকগ্রাউন্ড ও ফুটারের ব্যাকগ্রাউন্ডের সাথে নিরবচ্ছিন্ন সংযোগ
+// ওপরের ও নিচের সেকশনের সাথে নিরবচ্ছিন্ন সংযোগের জন্য ওয়েভ কার্ভ
 const TOP_CURVE =
   "M0 58.6C260 90.8 470 71.2 640 50.2C800 30.6 930 41.8 1090 68.4C1210 88 1330 82.4 1440 54.4V110H0Z";
 
@@ -28,13 +28,15 @@ export default function FooterScene() {
       aria-label="Footer Scene"
       className="relative w-full overflow-hidden -mb-[1px] bg-white dark:bg-[#070f1a] transition-colors"
       style={{
-        background: `linear-gradient(to bottom, transparent 48%, #0a1f33 50%, #0a1f33 100%)`,
+        background: `linear-gradient(to bottom, var(--scene-above, #ffffff) 0%, var(--scene-above, #ffffff) 50%, var(--scene-footer, #0a1f33) 50%, var(--scene-footer, #0a1f33) 100%)`,
       }}
     >
       <div
         className="w-full"
         style={
           {
+            "--scene-above": "#ffffff",
+            "--scene-footer": "#0a1f33",
             "--wave-h": "clamp(28px, 5vw, 80px)",
             WebkitMaskImage: MASK_IMAGE,
             maskImage: MASK_IMAGE,
