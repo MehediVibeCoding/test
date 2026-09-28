@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { optimizeImage } from "@/lib/image";
 import { motion, AnimatePresence } from "motion/react";
 import Reveal from "./Reveal";
+import EduDoodles from "./EduDoodles";
 import { useApp } from "@/context/AppContext";
 
 // ডাটাবেজ ফাঁকা থাকলে ডেমো ফলব্যাক ছবি
@@ -72,8 +73,11 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
   const currentSlide = slides[currentIndex];
 
   return (
-    <section id="campus-life" className="relative px-4 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-white dark:bg-[#070f1a] transition-colors">
-      <div className="mx-auto max-w-5xl">
+    <section id="campus-life" className="relative px-4 py-12 sm:px-8 sm:py-16 lg:py-20 lg:px-12 bg-white dark:bg-[#070f1a] overflow-hidden transition-colors">
+      {/* ব্যাকগ্রাউন্ড এডুকেশন অ্যাকসেন্ট ডুডলস */}
+      <EduDoodles variant="section" />
+
+      <div className="relative z-10 mx-auto max-w-5xl">
         {/* সেকশন হেডার */}
         <Reveal className="mb-8 text-center sm:mb-12">
           <span className="inline-flex rounded-full bg-sky-100 dark:bg-sky-900/60 px-4 py-1 font-body text-xs font-bold text-sky-800 dark:text-sky-300">
@@ -89,15 +93,15 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
           </p>
         </Reveal>
 
-        {/* স্লাইডার কন্টেইনার (দুই পাশে ফ্লুয়িড প্রিমিয়াম নেভিগেশন বাটন সহ) */}
+        {/* স্লাইডার কন্টেইনার (ডেস্কটপে মার্জিনের বাইরে বাটন ও মোবাইলে বাটন ছাড়া) */}
         <Reveal delay={80}>
-          <div className="relative group">
-            {/* ১. বাম পাশের নেভিগেশন তীর বাটন (Vertically Centered Overlay) */}
+          <div className="relative">
+            {/* ১. বাম পাশের নেভিগেশন তীর বাটন (শুধু ডেস্কটপে এবং ছবির বাইরে ফাঁকা মার্জিনে) */}
             {totalSlides > 1 && (
               <button
                 onClick={prevSlide}
                 aria-label="Previous Slide"
-                className="absolute left-2 sm:-left-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800 bg-white/90 dark:bg-slate-900/90 text-sky-950 dark:text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 hover:scale-105 active:scale-95"
+                className="hidden md:flex absolute md:-left-14 lg:-left-16 top-1/2 -translate-y-1/2 z-20 h-11 w-11 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800 bg-white/90 dark:bg-slate-900/90 text-sky-950 dark:text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 hover:scale-110 active:scale-95"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -105,12 +109,12 @@ export default function RealClassroomShowcase({ photos: dbPhotos = [] }: { photo
               </button>
             )}
 
-            {/* ২. ডান পাশের নেভিগেশন তীর বাটন (Vertically Centered Overlay) */}
+            {/* ২. ডান পাশের নেভিগেশন তীর বাটন (শুধু ডেস্কটপে এবং ছবির বাইরে ফাঁকা মার্জিনে) */}
             {totalSlides > 1 && (
               <button
                 onClick={nextSlide}
                 aria-label="Next Slide"
-                className="absolute right-2 sm:-right-5 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800 bg-white/90 dark:bg-slate-900/90 text-sky-950 dark:text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 hover:scale-105 active:scale-95"
+                className="hidden md:flex absolute md:-right-14 lg:-right-16 top-1/2 -translate-y-1/2 z-20 h-11 w-11 items-center justify-center rounded-full border border-sky-200 dark:border-sky-800 bg-white/90 dark:bg-slate-900/90 text-sky-950 dark:text-white shadow-xl backdrop-blur-md transition-all hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 hover:scale-110 active:scale-95"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
