@@ -38,7 +38,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 sm:gap-10 md:grid-cols-12">
         {/* ১. ব্র্যান্ড পরিচিতি ও সোশ্যাল আইকন (স্কাই-ব্লু থিমে রূপান্তরিত) */}
         <div className="md:col-span-5 flex flex-col items-start">
-          <div className="flex flex-col items-center text-center leading-tight">
+          <div className="flex flex-col items-start text-left leading-tight">
             <p className="font-body text-xl font-black tracking-tight text-white sm:text-2xl leading-tight">
               Ahsan&apos;s Learning Academy
             </p>

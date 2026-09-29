@@ -143,6 +143,7 @@ export default function Navbar() {
           {/* ব্র্যান্ড ভর্তি বাটন (ডেস্কটপ - ২ ঘণ্টার লক সমন্বিত) */}
           <ScrollLink
             targetId="admission"
+            noRipple
             className={`hidden rounded-full px-5 py-2 font-body text-xs font-bold shadow-xs sm:inline-flex sm:items-center sm:justify-center transition-all ${
               isLocked
                 ? "bg-slate-400 text-white opacity-50 cursor-not-allowed pointer-events-none"
@@ -207,6 +208,7 @@ export default function Navbar() {
               <ScrollLink
                 targetId="admission"
                 onNavigate={() => setOpen(false)}
+                noRipple
                 className={`mt-3 flex items-center justify-center rounded-full py-3 text-center font-body text-sm font-bold shadow-sm ${
                   isLocked
                     ? "bg-slate-400 text-white opacity-50 cursor-not-allowed pointer-events-none"

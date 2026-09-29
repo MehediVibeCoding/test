@@ -230,16 +230,6 @@ h1, h2, h3, h4 {
   to { transform: scale(1); opacity: 0; }
 }
 
-/* মূল CTA বাটনের হালকা "শ্বাস" স্পন্দন (বাটন overflow:hidden তাই বাইরের গ্লো box-shadow দিয়ে) */
-.btn-pulse:not(:disabled) {
-  animation: btnBreath 2.8s ease-in-out infinite;
-}
-.btn-pulse:hover { animation-play-state: paused; }
-@keyframes btnBreath {
-  0%, 100% { box-shadow: 0 4px 14px rgba(14, 165, 233, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
-  50%      { box-shadow: 0 6px 26px rgba(14, 165, 233, 0.6), 0 0 0 5px rgba(14, 165, 233, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
-}
-
 /* ══════════════════════════════════════════════════════════════════════
    পেজ ট্রানজিশন (app/template.tsx) — শেষে transform থাকে না
    ══════════════════════════════════════════════════════════════════════ */
@@ -249,41 +239,6 @@ h1, h2, h3, h4 {
 @keyframes pageEnter {
   from { opacity: 0; transform: translate3d(0, 10px, 0); }
   to   { opacity: 1; transform: none; }
-}
-
-/* ══════════════════════════════════════════════════════════════════════
-   ফুটার ঢেউ (ধীরে দুলতে থাকা দুই স্তর)
-   ══════════════════════════════════════════════════════════════════════ */
-.footer-wave-layer {
-  position: absolute;
-  left: 0;
-  width: 200%;
-  height: var(--wave-h, 60px);
-  pointer-events: none;
-  will-change: transform;
-  animation: waveSway 26s linear infinite;
-}
-.footer-wave-layer.is-slow { animation-duration: 38s; animation-direction: reverse; }
-@keyframes waveSway {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-25%, 0, 0); }
-}
-
-/* ══════════════════════════════════════════════════════════════════════
-   ব্যাচ কার্ড: মাউস অনুসরণকারী স্পটলাইট (শুধু ডেক্সটপ মাউসে)
-   ══════════════════════════════════════════════════════════════════════ */
-.batch-spot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(56, 189, 248, 0.16), transparent 60%);
-}
-@media (hover: hover) and (pointer: fine) {
-  .batch-spot:hover::after { opacity: 1; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -327,9 +282,7 @@ html.dark {
     transform: none;
   }
   .btn-shine.is-shining::after,
-  .btn-pulse:not(:disabled),
   .btn-ripple-dot,
-  .footer-wave-layer,
   .page-enter {
     animation: none;
   }

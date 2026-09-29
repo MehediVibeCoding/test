@@ -12,7 +12,7 @@ export default function RippleProvider() {
 
     const onDown = (e: PointerEvent) => {
       const el = (e.target as HTMLElement | null)?.closest<HTMLElement>(".btn-gradient");
-      if (!el || (el as HTMLButtonElement).disabled || el.getAttribute("aria-disabled") === "true") return;
+      if (!el || el.closest("[data-no-ripple]") || (el as HTMLButtonElement).disabled || el.getAttribute("aria-disabled") === "true") return;
 
       const rect = el.getBoundingClientRect();
       const size = Math.max(rect.width, rect.height) * 2;

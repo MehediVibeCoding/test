@@ -8,6 +8,7 @@ interface ScrollLinkProps {
   children: ReactNode;
   className?: string;
   onNavigate?: () => void; // e.g. close mobile menu after click
+  noRipple?: boolean; // ক্লিক-রিপল বন্ধ রাখতে
 }
 
 /**
@@ -20,6 +21,7 @@ export default function ScrollLink({
   children,
   className = "",
   onNavigate,
+  noRipple,
 }: ScrollLinkProps) {
   function handleClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -38,6 +40,7 @@ export default function ScrollLink({
 
   return (
     <m.a
+      data-no-ripple={noRipple ? "" : undefined}
       href={`#${targetId === "top" ? "" : targetId}`}
       onClick={handleClick}
       whileTap={{ scale: 0.96 }}

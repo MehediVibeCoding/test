@@ -10,7 +10,6 @@ import {
   checkReviewStatus,
   type PublicReviewInput,
 } from "@/app/actions/review";
-import { useShine } from "@/hooks/useShine";
 import { useApp } from "@/context/AppContext";
 import type { Testimonial } from "@/lib/academyData";
 
@@ -111,11 +110,6 @@ export default function TestimonialsClient({
   const [localPendingReview, setLocalPendingReview] = useState<StoredReview | null>(null);
   const [rejectedNotice, setRejectedNotice] = useState<boolean>(false);
   const [isDailyLimitReached, setIsDailyLimitReached] = useState(false);
-
-  // বাটন ঝিলিক অ্যানিমেশন
-  const { ref: feedbackBtnRef, shineClass } = useShine<HTMLButtonElement>(
-    !isDailyLimitReached
-  );
 
   const syncReviewStatus = useCallback(async () => {
     const count = getRecentSubmissionsCount();
@@ -392,10 +386,9 @@ export default function TestimonialsClient({
         <Reveal from="zoom" delay={120} className="mt-8 text-center sm:mt-10">
           <div className="inline-flex flex-col items-center gap-1.5">
             <button
-              ref={feedbackBtnRef}
               disabled={isDailyLimitReached}
               onClick={() => setModalOpen(true)}
-              className={`inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all ${shineClass} ${
+              className={`inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-body text-xs sm:text-sm font-bold text-white shadow-sm transition-all ${
                 isDailyLimitReached
                   ? "bg-slate-400 opacity-50 cursor-not-allowed"
                   : "btn-gradient active:scale-95"

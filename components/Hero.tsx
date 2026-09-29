@@ -33,10 +33,10 @@ const textContainerVariants = {
   show: { transition: { delayChildren: 0.2, staggerChildren: 0.11 } },
 };
 
-// নামের প্রতিটি শব্দ মাস্কের নিচ থেকে উঠে আসে
-const wordVariants = {
-  hidden: { y: "110%" },
-  show: { y: "0%", transition: { duration: 0.85, ease: EASE } },
+// নামটি বাম থেকে ডানে অক্ষরে অক্ষরে লেখা হয় (টাইপরাইটার)
+const charVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.01 } },
 };
 
 // সাধারণ লাইন: ফেড + ওপরে ওঠা
@@ -113,17 +113,17 @@ export default function Hero() {
         >
           {/* সমান পুরুত্বের মার্জিত বোল্ড ইটালিক টাইপোগ্রাফি */}
           <m.h1
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
             className="font-display font-black italic tracking-tight text-sky-950 dark:text-white text-[30px] sm:text-[38px] md:text-[40px] lg:text-[clamp(36px,7.5svh,56px)] leading-[1.12]"
           >
-            {t.hero.teacherName.split(" ").map((word, i) => (
-              <span
-                key={i}
-                className="inline-block overflow-hidden align-bottom pb-[0.12em] pr-[0.1em] mr-[0.16em] last:mr-[-0.1em]"
-              >
-                <m.span variants={wordVariants} className="inline-block">
-                  {word}
-                </m.span>
+            {t.hero.teacherName.split(" ").map((word, i, arr) => (
+              <span key={i} className="inline-block whitespace-nowrap">
+                {word.split("").map((ch, j) => (
+                  <m.span key={j} variants={charVariants} className="inline-block">
+                    {ch}
+                  </m.span>
+                ))}
+                {i < arr.length - 1 ? "\u00A0" : ""}
               </span>
             ))}
           </m.h1>
@@ -151,7 +151,7 @@ export default function Hero() {
           >
             <m.div variants={statItemVariants}>
               <p className="font-body text-[19px] sm:text-2xl lg:text-[clamp(22px,4.2svh,28px)] font-black leading-tight text-sky-950 dark:text-white">
-                <CountUp end={8} suffix={language === "bn" ? "+ বছর" : "+ Years"} bn={language === "bn"} duration={2400} delay={700} />
+                <CountUp end={8} suffix={language === "bn" ? "+ বছর" : "+ Years"} bn={language === "bn"} duration={1500} delay={350} />
               </p>
               <p className="mt-0.5 font-body text-[11px] sm:text-xs lg:text-[13px] leading-tight font-semibold text-ink-800/70 dark:text-slate-400">
                 {t.hero.statExpLabel}
@@ -159,7 +159,7 @@ export default function Hero() {
             </m.div>
             <m.div variants={statItemVariants}>
               <p className="font-body text-[19px] sm:text-2xl lg:text-[clamp(22px,4.2svh,28px)] font-black leading-tight text-sky-950 dark:text-white">
-                <CountUp end={10000} suffix="+" grouped bn={language === "bn"} duration={2400} delay={700} />
+                <CountUp end={10000} suffix="+" grouped bn={language === "bn"} duration={1500} delay={350} />
               </p>
               <p className="mt-0.5 font-body text-[11px] sm:text-xs lg:text-[13px] leading-tight font-semibold text-ink-800/70 dark:text-slate-400">
                 {t.hero.statStudentsLabel}
@@ -167,7 +167,7 @@ export default function Hero() {
             </m.div>
             <m.div variants={statItemVariants}>
               <p className="font-body text-[19px] sm:text-2xl lg:text-[clamp(22px,4.2svh,28px)] font-black leading-tight text-sky-950 dark:text-white">
-                <CountUp end={100} suffix="%" bn={language === "bn"} duration={2400} delay={700} />
+                <CountUp end={100} suffix="%" bn={language === "bn"} duration={1500} delay={350} />
               </p>
               <p className="mt-0.5 font-body text-[11px] sm:text-xs lg:text-[13px] leading-tight font-semibold text-ink-800/70 dark:text-slate-400">
                 {t.hero.statSyllabusLabel}
@@ -185,7 +185,7 @@ export default function Hero() {
               className={`inline-flex items-center justify-center rounded-full px-4 py-3 sm:px-8 sm:py-3.5 min-h-[48px] lg:min-h-[clamp(42px,6svh,50px)] lg:py-2 text-center font-body text-[13.5px] sm:text-[15px] leading-tight font-bold text-white shadow-md transition-all ${shineClass} ${
                 isLocked
                   ? "bg-slate-400 opacity-50 cursor-not-allowed pointer-events-none"
-                  : "btn-gradient btn-pulse active:scale-95"
+                  : "btn-gradient active:scale-95"
               }`}
             >
               <span ref={shineRef as any}>{t.hero.enrollCta}</span>
@@ -205,7 +205,7 @@ export default function Hero() {
           variants={imageVariants}
           initial="hidden"
           animate="show"
-          className="order-1 flex justify-center md:order-2 relative"
+          className="order-1 flex justify-center md:order-2 relative md:self-end md:translate-y-[4svh]"
         >
           <div className="relative w-full max-w-[370px] sm:max-w-[440px] md:w-auto md:max-w-full flex justify-center items-center">
             {/* সফট ব্যাকগ্রাউন্ড আভা */}
@@ -219,7 +219,7 @@ export default function Hero() {
               height={1126}
               priority
               sizes="(max-width: 768px) 100vw, 560px"
-              className="relative z-10 h-auto w-full md:w-auto md:max-w-full md:max-h-[min(600px,calc(100svh_-_13.5rem))] object-contain select-none transition-all drop-shadow-xl"
+              className="relative z-10 h-auto w-full md:w-auto md:max-w-full md:max-h-[min(680px,calc(100svh_-_10.5rem))] object-contain select-none transition-all drop-shadow-xl"
             />
           </div>
         </m.div>
