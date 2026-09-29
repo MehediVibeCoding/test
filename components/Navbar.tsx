@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import Link from "next/link";
 import ScrollLink from "./ScrollLink";
 import { useApp } from "@/context/AppContext";
@@ -53,7 +54,7 @@ export default function Navbar() {
         {/* ১. বাম পাশে: একাডেমি লোগো/নাম ও স্লোগান */}
         <ScrollLink
           targetId="top"
-          className="flex flex-col items-start group cursor-pointer leading-tight text-left"
+          className="flex flex-col items-center group cursor-pointer leading-tight text-center"
         >
           <span className="font-body text-base font-black tracking-tight text-sky-950 dark:text-white transition-colors group-hover:text-sky-600 dark:group-hover:text-sky-400 sm:text-lg leading-tight">
             Ahsan&apos;s Learning Academy
@@ -174,7 +175,7 @@ export default function Navbar() {
       {/* মোবাইল ড্রপডাউন মেনু */}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -215,7 +216,7 @@ export default function Navbar() {
                 {t.nav.enrollBtn}
               </ScrollLink>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

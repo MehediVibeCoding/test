@@ -43,35 +43,35 @@ export default async function BlogPostPage({
   }
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-ink-800">
+    <main className="min-h-screen bg-gradient-to-b from-[#dff1fd] via-[#eaf5fe] to-[#d3e9fc] dark:from-[#071322] dark:via-[#091a2e] dark:to-[#0c243e] text-ink-800 dark:text-slate-200">
       <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         {/* ১. টপ হেডার কার্ড (ন্যাভবার ছাড়া ক্লিন ফিরে যান বাটন ও প্রকাশের তারিখ) */}
-        <div className="overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-b from-[#e0f2fe]/60 via-white to-white p-6 shadow-xs sm:p-8">
+        <div className="overflow-hidden rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-gradient-to-b from-[#e0f2fe]/60 dark:from-sky-900/40 via-white dark:via-slate-900 to-white dark:to-slate-900 p-6 shadow-xs sm:p-8">
           {/* টপ বার */}
-          <div className="flex items-center justify-between gap-4 border-b border-sky-100/80 pb-5">
+          <div className="flex items-center justify-between gap-4 border-b border-sky-100/80 dark:border-sky-900/60 pb-5">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white px-4 py-2 font-body text-xs font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95 sm:px-5 sm:py-2.5 sm:text-[13px]"
+              className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 dark:border-sky-800 bg-white dark:bg-slate-900/85 px-4 py-2 font-body text-xs font-bold text-sky-950 dark:text-white shadow-xs transition-all hover:bg-sky-50 dark:hover:bg-slate-800 active:scale-95 sm:px-5 sm:py-2.5 sm:text-[13px]"
             >
-              <svg className="h-4 w-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 text-sky-600 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               <span>সব ব্লগে ফিরে যান</span>
             </Link>
 
-            <span className="font-body text-xs font-semibold text-slate-500">
+            <span className="font-body text-xs font-semibold text-slate-500 dark:text-slate-400">
               প্রকাশিত: {post.date}
             </span>
           </div>
 
           {/* ব্লগের মূল শিরোনাম */}
-          <h1 className="mt-6 font-body text-2xl font-black leading-tight text-sky-950 sm:text-3xl lg:text-4xl">
+          <h1 className="mt-6 font-body text-2xl font-black leading-tight text-sky-950 dark:text-white sm:text-3xl lg:text-4xl">
             {post.title}
           </h1>
 
           {/* সংক্ষিপ্ত ভূমিকা কোট */}
           {post.excerpt && (
-            <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50/50 p-4 font-body text-xs sm:text-sm italic leading-relaxed text-sky-950">
+            <div className="mt-4 rounded-2xl border border-sky-100 dark:border-sky-900/60 bg-sky-50/50 dark:bg-sky-900/30 p-4 font-body text-xs sm:text-sm italic leading-relaxed text-sky-950 dark:text-white">
               {post.excerpt}
             </div>
           )}
@@ -79,7 +79,7 @@ export default async function BlogPostPage({
 
         {/* ২. কভার ছবি (যদি থাকে) */}
         {post.coverImageUrl && (
-          <div className="mt-6 overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-xs">
+          <div className="mt-6 overflow-hidden rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/85 shadow-xs">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={optimizeImage(post.coverImageUrl, 1200)}
@@ -92,18 +92,18 @@ export default async function BlogPostPage({
         )}
 
         {/* ৩. মূল আর্টিকেল কনটেন্ট ও বটম সিগনেচার */}
-        <div className="mt-6 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-10">
+        <div className="mt-6 rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/85 p-6 shadow-xs sm:p-10">
           {/* আর্টিকেলের টেক্সট বডি */}
-          <div className="space-y-5 font-body text-[15px] sm:text-base leading-[1.9] text-ink-800/90 whitespace-pre-line">
+          <div className="space-y-5 font-body text-[15px] sm:text-base leading-[1.9] text-ink-800/90 dark:text-slate-200 whitespace-pre-line">
             {post.content}
           </div>
 
           {/* সবার শেষে ডানপাশে স্যারের মার্জিত ইটালিক সিগনেচার (Email Sign-off Style) */}
-          <div className="mt-12 border-t border-sky-100/80 pt-6 flex flex-col items-end text-right">
-            <span className="font-display italic text-lg sm:text-xl font-black text-sky-950 tracking-wide">
+          <div className="mt-12 border-t border-sky-100/80 dark:border-sky-900/60 pt-6 flex flex-col items-end text-right">
+            <span className="font-display italic text-lg sm:text-xl font-black text-sky-950 dark:text-white tracking-wide">
               — Md. Ahsan Ullah
             </span>
-            <span className="font-body text-xs font-semibold text-sky-700 mt-0.5">
+            <span className="font-body text-xs font-semibold text-sky-700 dark:text-sky-300 mt-0.5">
               Ahsan&apos;s Learning Academy
             </span>
           </div>

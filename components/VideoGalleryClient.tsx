@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { optimizeImage } from "@/lib/image";
@@ -70,7 +70,7 @@ export default function VideoGalleryClient({ videos }: { videos: VideoLecture[] 
             <p className="mt-1 font-body text-xs text-ink-800/70 dark:text-slate-400">{t.videos.emptySubtext}</p>
           </div>
         ) : (
-          <motion.div
+          <m.div
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
@@ -86,7 +86,7 @@ export default function VideoGalleryClient({ videos }: { videos: VideoLecture[] 
                 (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null);
 
               return (
-                <motion.div key={v.id || i} variants={videoCardVariants}>
+                <m.div key={v.id || i} variants={videoCardVariants}>
                   <a
                     href={v.href}
                     target="_blank"
@@ -139,10 +139,10 @@ export default function VideoGalleryClient({ videos }: { videos: VideoLecture[] 
                       </h3>
                     </div>
                   </a>
-                </motion.div>
+                </m.div>
               );
             })}
-          </motion.div>
+          </m.div>
         )}
       </div>
     </section>

@@ -30,7 +30,7 @@ export default function CampusLocation() {
         </Reveal>
 
         {/* গুগল ম্যাপ ও যোগাযোগের তথ্য কার্ড */}
-        <Reveal delay={80}>
+        <Reveal from="zoom" delay={80}>
           <div className="grid gap-6 overflow-hidden rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/85 p-4 shadow-xs backdrop-blur-sm lg:grid-cols-[1.2fr_0.8fr] sm:p-6 lg:p-8">
             {/* লাইভ গুগল ম্যাপ এমবেড */}
             <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-sky-100/90 dark:border-slate-800 lg:aspect-auto lg:h-full min-h-[260px] sm:min-h-[300px]">

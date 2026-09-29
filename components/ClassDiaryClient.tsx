@@ -65,8 +65,8 @@ export default function ClassDiaryClient({ entries }: ClassDiaryClientProps) {
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {displayEntries.map((entry) => (
-              <Reveal key={entry.id}>
+            {displayEntries.map((entry, i) => (
+              <Reveal key={entry.id} delay={(i % 3) * 90}>
                 <article className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/80 p-6 sm:p-8 shadow-xs backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-xl hover:shadow-sky-950/5">
                   <div>
                     {/* তারিখ ও ব্যাচ ট্যাগ */}

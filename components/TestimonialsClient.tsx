@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, FormEvent, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import {
@@ -268,7 +269,7 @@ export default function TestimonialsClient({
         {/* রিজেক্ট নোটিশ ব্যানার */}
         <AnimatePresence>
           {rejectedNotice && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -296,12 +297,12 @@ export default function TestimonialsClient({
                   ✕
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 
         {/* ৩টি মনোটোন প্রিমিয়াম রিভিউ কার্ড গ্রিড */}
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -313,7 +314,7 @@ export default function TestimonialsClient({
             const initials = getInitials(item.name);
 
             return (
-              <motion.div key={item.id || item.name} variants={reviewCardVariants}>
+              <m.div key={item.id || item.name} variants={reviewCardVariants}>
                 <figure className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/80 p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-xl hover:shadow-sky-950/5">
                   <div>
                     {/* কোটেশন মার্ক */}
@@ -357,10 +358,10 @@ export default function TestimonialsClient({
                     </span>
                   </figcaption>
                 </figure>
-              </motion.div>
+              </m.div>
             );
           })}
-        </motion.div>
+        </m.div>
 
         {/* ব্যবহারকারীর নিজস্ব লোকাল পেন্ডিং রিভিউ কার্ড */}
         {localPendingReview && (
@@ -388,7 +389,7 @@ export default function TestimonialsClient({
         )}
 
         {/* রিভিউ বাটন (ঝিলিক অ্যানিমেশন সহ) */}
-        <Reveal delay={120} className="mt-8 text-center sm:mt-10">
+        <Reveal from="zoom" delay={120} className="mt-8 text-center sm:mt-10">
           <div className="inline-flex flex-col items-center gap-1.5">
             <button
               ref={feedbackBtnRef}
@@ -415,14 +416,14 @@ export default function TestimonialsClient({
       <AnimatePresence>
         {modalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseModal}
               className="absolute inset-0 bg-sky-950/60 dark:bg-black/75 backdrop-blur-sm"
             />
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
@@ -576,7 +577,7 @@ export default function TestimonialsClient({
                   </form>
                 </>
               )}
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { useShine } from "@/hooks/useShine";
@@ -44,24 +44,69 @@ function BatchCardButton({
   );
 }
 
-const containerVariants = {
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+const gridVariants = {
   hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.09,
-    },
-  },
+  show: { transition: { staggerChildren: 0.16 } },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 25, scale: 0.96 },
+// "টাইমটেবিল শিট" — কার্ডটি ওপর থেকে নিচে গুটানো কাগজের মতো খুলে যায়
+// (শেষে নেগেটিভ ইনসেট, যাতে হোভারের ছায়া কাটা না পড়ে)
+const sheetVariants = {
+  hidden: { opacity: 0, y: 26, clipPath: "inset(0% 0% 100% 0% round 24px)" },
   show: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] as const },
+    clipPath: "inset(-12% -12% -12% -12% round 24px)",
+    transition: { duration: 0.85, ease: EASE },
   },
 };
+
+// কার্ডের মাথার নীল রেখা বাম থেকে ডানে আঁকা হয়
+const barVariants = {
+  hidden: { scaleX: 0 },
+  show: { scaleX: 1, transition: { duration: 0.8, delay: 0.3, ease: EASE } },
+};
+
+// ঘড়ির আইকন ঘুরে বসে, সময়সূচী ক্যাপসুল পাশ থেকে স্লাইড করে আসে
+const clockVariants = {
+  hidden: { opacity: 0, rotate: -200, scale: 0.5 },
+  show: { opacity: 1, rotate: 0, scale: 1, transition: { type: "spring" as const, stiffness: 140, damping: 14, delay: 0.5 } },
+};
+const scheduleVariants = {
+  hidden: { opacity: 0, x: -22 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.42, ease: EASE } },
+};
+
+// ফিচার তালিকা: একটার পর একটা "টিক" পড়ে (চেকলিস্ট টিক-অফ)
+const listVariants = {
+  hidden: {},
+  show: { transition: { delayChildren: 0.6, staggerChildren: 0.11 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, x: -14 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.45, ease: EASE } },
+};
+const tickCircleVariants = {
+  hidden: { scale: 0 },
+  show: { scale: 1, transition: { type: "spring" as const, stiffness: 420, damping: 16 } },
+};
+const tickPathVariants = {
+  hidden: { pathLength: 0 },
+  show: { pathLength: 1, transition: { duration: 0.35, delay: 0.12, ease: "easeOut" as const } },
+};
+
+const ctaVariants = {
+  hidden: { opacity: 0, y: 12, scale: 0.94 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring" as const, stiffness: 240, damping: 18, delay: 1 } },
+};
+
+function handleSpot(e: React.MouseEvent<HTMLElement>) {
+  const r = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+}
 
 export default function BatchesClient({ batches }: BatchesClientProps) {
   const [isLocked, setIsLocked] = useState(false);
@@ -120,20 +165,27 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
         </Reveal>
 
         {/* প্রিমিয়াম ব্যাচ কার্ড গ্রিড */}
-        <motion.div
-          variants={containerVariants}
+        <m.div
+          variants={gridVariants}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
           {batches.map((batch) => (
-            <motion.div
+            <m.div
               key={batch.id}
-              variants={cardVariants}
+              variants={sheetVariants}
               whileHover={{ y: -5, transition: { duration: 0.25 } }}
-              className="group flex h-full flex-col justify-between rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/80 p-6 sm:p-8 shadow-xs backdrop-blur-sm transition-all hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-xl hover:shadow-sky-950/5"
+              onMouseMove={handleSpot}
+              className="batch-spot group relative flex h-full flex-col justify-between rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/80 p-6 sm:p-8 shadow-xs backdrop-blur-sm transition-all hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-xl hover:shadow-sky-950/5"
             >
+              {/* মাথার অ্যাকসেন্ট রেখা */}
+              <m.div
+                variants={barVariants}
+                aria-hidden="true"
+                className="absolute left-7 right-7 top-0 h-[3px] origin-left rounded-full bg-gradient-to-r from-sky-400 via-sky-500 to-cyan-400"
+              />
               <div>
                 {/* টপ ব্যাজ ও কোহোর্ট ট্যাগ */}
                 <div className="flex items-center justify-between">
@@ -151,36 +203,46 @@ export default function BatchesClient({ batches }: BatchesClientProps) {
                 </h3>
 
                 {/* সময়সূচী ক্যাপসুল বক্স */}
-                <div className="mt-3.5 flex items-center gap-2 rounded-2xl border border-sky-100 dark:border-sky-800/80 bg-sky-50/70 dark:bg-slate-800/60 px-3.5 py-2.5 font-body text-xs font-bold text-sky-800 dark:text-sky-300">
-                  <svg className="h-4 w-4 shrink-0 text-sky-600 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <m.div
+                  variants={scheduleVariants}
+                  className="mt-3.5 flex items-center gap-2 rounded-2xl border border-sky-100 dark:border-sky-800/80 bg-sky-50/70 dark:bg-slate-800/60 px-3.5 py-2.5 font-body text-xs font-bold text-sky-800 dark:text-sky-300"
+                >
+                  <m.svg variants={clockVariants} className="h-4 w-4 shrink-0 text-sky-600 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  </m.svg>
                   <span>{batch.schedule}</span>
-                </div>
+                </m.div>
 
                 {/* ব্যাচ ফিচার তালিকা */}
-                <ul className="mt-5 space-y-2.5 border-t border-sky-100/80 dark:border-sky-900/60 pt-4 font-body text-[13.5px] sm:text-sm text-ink-800/85 dark:text-slate-300">
+                <m.ul variants={listVariants} className="mt-5 space-y-2.5 border-t border-sky-100/80 dark:border-sky-900/60 pt-4 font-body text-[13.5px] sm:text-sm text-ink-800/85 dark:text-slate-300">
                   {batch.features.map((feat) => (
-                    <li key={feat} className="flex items-start gap-2.5">
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full border-2 border-sky-500 bg-white dark:bg-slate-900" />
+                    <m.li key={feat} variants={itemVariants} className="flex items-start gap-2.5">
+                      <m.span
+                        variants={tickCircleVariants}
+                        className="mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-sky-500 shadow-sm shadow-sky-500/30"
+                      >
+                        <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="white" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round">
+                          <m.path variants={tickPathVariants} d="M5 12.5l4.5 4.5L19 7.5" />
+                        </svg>
+                      </m.span>
                       <span className="leading-relaxed">{feat}</span>
-                    </li>
+                    </m.li>
                   ))}
-                </ul>
+                </m.ul>
               </div>
 
               {/* ২ ঘণ্টার লক সমন্বিত গ্রেডিয়েন্ট শাইন বাটন */}
-              <div className="mt-7 border-t border-sky-100/80 dark:border-sky-900/60 pt-4">
+              <m.div variants={ctaVariants} className="mt-7 border-t border-sky-100/80 dark:border-sky-900/60 pt-4">
                 <BatchCardButton
                   batchName={batch.name}
                   isLocked={isLocked}
                   onSelect={handleSelectBatch}
                   btnText={t.batches.enrollBtn}
                 />
-              </div>
-            </motion.div>
+              </m.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

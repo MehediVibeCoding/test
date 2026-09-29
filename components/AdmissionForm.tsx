@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, FormEvent, ChangeEvent } from "react";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { submitAdmission } from "@/app/actions/admission";
@@ -250,7 +250,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
           </p>
         </Reveal>
 
-        <Reveal delay={80}>
+        <Reveal from="zoom" delay={80}>
           {submittedData ? (
             /* ডার্ক ও লাইট মোডে সুষম সফট প্যাস্টেল মিন্ট/ইমারেল্ড ইনভয়েস রসিদ */
             <div className="overflow-hidden rounded-3xl border border-[#a7f3d0] dark:border-emerald-700/60 bg-[#ecfdf5]/80 dark:bg-[#062c21]/80 p-6 sm:p-8 shadow-xs backdrop-blur-md">
@@ -490,7 +490,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
               </div>
 
               <div className="pt-2">
-                <motion.button
+                <m.button
                   ref={submitBtnRef}
                   type="submit"
                   disabled={isSubmitting}
@@ -502,7 +502,7 @@ export default function AdmissionForm({ batches }: AdmissionFormProps = {}) {
                   }`}
                 >
                   {isSubmitting ? t.admission.submittingBtn : t.admission.submitBtn}
-                </motion.button>
+                </m.button>
               </div>
             </form>
           )}

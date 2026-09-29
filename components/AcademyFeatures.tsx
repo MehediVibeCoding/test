@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { useApp } from "@/context/AppContext";
@@ -122,7 +122,7 @@ export default function AcademyFeatures() {
         </Reveal>
 
         {/* ৩ডি পার্সপেক্টিভ ফ্লিপ কার্ড গ্রিড */}
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -130,7 +130,7 @@ export default function AcademyFeatures() {
           className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 [perspective:1200px]"
         >
           {FEATURES_DATA.map((item, idx) => (
-            <motion.div
+            <m.div
               key={idx}
               variants={card3DVariants}
               whileHover={{ y: -4, scale: 1.015, transition: { duration: 0.25 } }}
@@ -155,9 +155,9 @@ export default function AcademyFeatures() {
                   {language === "bn" ? item.descBn : item.descEn}
                 </p>
               </div>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

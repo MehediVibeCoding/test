@@ -7,6 +7,36 @@ const TOP_CURVE =
 const BOTTOM_CURVE =
   "M0 58C260 104 470 76 640 46C800 18 930 34 1090 72C1210 100 1330 92 1440 52V110H0Z";
 
+// ধীরে দুলতে থাকা ঢেউয়ের স্তর — ১৪৪০ ইউনিট পর্যায়কাল, ৪ বার পুনরাবৃত্ত (নিরবচ্ছিন্ন লুপ)
+const SWAY_PATH =
+  "M0 45C240 20 480 20 720 45S1200 70 1440 45S1920 20 2160 45S2640 70 2880 45S3360 20 3600 45S4080 70 4320 45S4800 20 5040 45S5520 70 5760 45V0H0Z";
+
+function WaveLayers({ edge }: { edge: "top" | "bottom" }) {
+  const isTop = edge === "top";
+  const fill = isTop
+    ? "fill-white dark:fill-[#070f1a]"
+    : "fill-[#0a1f33] dark:fill-[#06111e]";
+  const pos = isTop ? "top-0" : "bottom-0";
+  return (
+    <>
+      <div aria-hidden="true" className={`footer-wave-layer ${pos} opacity-60`}>
+        <svg viewBox="0 0 5760 110" preserveAspectRatio="none" className={`block h-full w-full ${isTop ? "" : "-scale-y-100"}`}>
+          <path d={SWAY_PATH} className={fill} />
+        </svg>
+      </div>
+      <div
+        aria-hidden="true"
+        className={`footer-wave-layer is-slow ${pos} opacity-40`}
+        style={{ animationDelay: "-11s" }}
+      >
+        <svg viewBox="0 0 5760 110" preserveAspectRatio="none" className={`block h-full w-full ${isTop ? "" : "-scale-y-100"}`}>
+          <path d={SWAY_PATH} className={fill} transform="translate(0 8)" />
+        </svg>
+      </div>
+    </>
+  );
+}
+
 const svgUri = (inner: string) =>
   `url("data:image/svg+xml,${encodeURIComponent(
     `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 110' preserveAspectRatio='none'>${inner}</svg>`
@@ -27,6 +57,7 @@ export default function FooterScene() {
     <section
       aria-label="Footer Scene"
       className="relative w-full overflow-hidden -mb-[2px] bg-[linear-gradient(to_bottom,#ffffff_50%,#0a1f33_50%)] dark:bg-[linear-gradient(to_bottom,#070f1a_50%,#06111e_50%)] transition-colors"
+      style={{ "--wave-h": "clamp(28px, 5vw, 80px)" } as CSSProperties}
     >
       <div
         className="w-full"
@@ -64,6 +95,8 @@ export default function FooterScene() {
           />
         </picture>
       </div>
+      <WaveLayers edge="top" />
+      <WaveLayers edge="bottom" />
     </section>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { useApp } from "@/context/AppContext";
@@ -94,7 +94,7 @@ export default function BlogPreviewClient({ posts }: { posts: BlogPostSummary[] 
         </Reveal>
 
         {/* ৩টি সফট প্যাস্টেল ব্লগ কার্ড গ্রিড */}
-        <motion.div
+        <m.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -105,7 +105,7 @@ export default function BlogPreviewClient({ posts }: { posts: BlogPostSummary[] 
             const theme = BLOG_PASTEL_THEMES[i % BLOG_PASTEL_THEMES.length];
 
             return (
-              <motion.div key={post.id} variants={blogCardVariants}>
+              <m.div key={post.id} variants={blogCardVariants}>
                 <Link
                   href={post.href}
                   className={`group flex h-full flex-col justify-between rounded-3xl border p-6 sm:p-8 shadow-xs backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-sky-950/5 ${theme.cardBg}`}
@@ -141,10 +141,10 @@ export default function BlogPreviewClient({ posts }: { posts: BlogPostSummary[] 
                     </span>
                   </div>
                 </Link>
-              </motion.div>
+              </m.div>
             );
           })}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

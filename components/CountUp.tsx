@@ -1,97 +1,109 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { toBengaliDigits } from "@/lib/bengaliNumerals";
 
 type CountUpProps = {
   /** যে সংখ্যা পর্যন্ত কাউন্ট হয়ে আটকে যাবে (যেমন ৮, ১০০০০, ১০০) */
   end: number;
-  /** সংখ্যার আগে বসবে (সচরাচর ফাঁকা) */
   prefix?: string;
-  /** সংখ্যার পরে বসবে, যেমন "+", "%" */
   suffix?: string;
-  /** ১০,০০০-এর মতো কমা গ্রুপিং দেখাতে চাইলে true */
+  /** ১০,০০০-এর মতো কমা গ্রুপিং */
   grouped?: boolean;
-  /** পুরো কাউন্ট-আপ অ্যানিমেশনের সময়কাল (মিলিসেকেন্ড) */
+  /** true হলে বাংলা অঙ্কে, false হলে ইংরেজি অঙ্কে দেখাবে */
+  bn?: boolean;
+  /** পুরো কাউন্ট-আপের সময় (ms) — একই সেকশনের সব কাউন্টারে একই মান দিলে একসাথে শেষ হবে */
   duration?: number;
-  /** ভিউপোর্টে আসার পর কতটা দেরিতে কাউন্ট শুরু হবে */
+  /** ভিউপোর্টে আসার পর কতক্ষণ পরে শুরু হবে (ms) */
   delay?: number;
   className?: string;
 };
 
+// প্রায়-লিনিয়ার ease-out: ছোট সংখ্যা (৮) আর বড় সংখ্যা (১০০০০) প্রায় একই মুহূর্তে থামে
+const ease = (p: number) => 1 - Math.pow(1 - p, 1.3);
+
 /**
- * সংখ্যাটি স্ক্রলে দৃশ্যমান হওয়া মাত্র ০ থেকে শুরু করে target পর্যন্ত গুণে গুণে
- * আটকে যায় (ease-out কার্ভে, ধীরে ধীরে স্লো ডাউন করে)। bn ফরম্যাটে দেখানো হয়
- * (toBengaliDigits) এবং prefers-reduced-motion থাকলে সরাসরি ফাইনাল ভ্যালু দেখায়।
+ * স্ক্রিনে দেখা গেলে ০ থেকে গুনে শুরু হয়, সব কাউন্টার একসাথে শেষ হয়।
+ * স্ক্রিন থেকে বেরিয়ে আবার ঢুকলে নতুন করে গোনে। প্রতি ফ্রেমে React রি-রেন্ডার নেই,
+ * সরাসরি টেক্সট আপডেট হয় (হালকা)। prefers-reduced-motion থাকলে সরাসরি চূড়ান্ত মান।
  */
 export default function CountUp({
   end,
   prefix = "",
   suffix = "",
   grouped = false,
-  duration = 1600,
-  delay = 0,
+  bn = true,
+  duration = 2400,
+  delay = 900,
   className = "",
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
-  const started = useRef(false);
 
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
 
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const fmt = (v: number) =>
+      `${prefix}${
+        bn
+          ? toBengaliDigits(v, { grouped })
+          : grouped
+            ? Math.round(v).toLocaleString("en-US")
+            : String(Math.round(v))
+      }${suffix}`;
 
-    if (reduceMotion) {
-      setValue(end);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      node.textContent = fmt(end);
       return;
     }
 
-    const observer = new IntersectionObserver(
+    let raf = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const stop = () => {
+      cancelAnimationFrame(raf);
+      if (timer) clearTimeout(timer);
+    };
+
+    const run = () => {
+      stop();
+      node.textContent = fmt(0);
+      timer = setTimeout(() => {
+        const t0 = performance.now();
+        const tick = (now: number) => {
+          const p = Math.min((now - t0) / duration, 1);
+          node.textContent = fmt(p >= 1 ? end : ease(p) * end);
+          if (p < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      }, delay);
+    };
+
+    node.textContent = fmt(0);
+
+    const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true;
-          observer.disconnect();
-
-          const startTimeout = setTimeout(() => {
-            const startTime = performance.now();
-
-            function tick(now: number) {
-              const elapsed = now - startTime;
-              const progress = Math.min(elapsed / duration, 1);
-              // ease-out-expo — শুরুতে দ্রুত, শেষে আস্তে আস্তে থেমে যায়
-              const eased =
-                progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-              setValue(Math.round(eased * end));
-
-              if (progress < 1) {
-                requestAnimationFrame(tick);
-              } else {
-                setValue(end);
-              }
-            }
-
-            requestAnimationFrame(tick);
-          }, delay);
-
-          // cleanup guard যদি কম্পোনেন্ট আনমাউন্ট হয়ে যায়
-          return () => clearTimeout(startTimeout);
+        if (entry.isIntersecting) run();
+        else {
+          stop();
+          node.textContent = fmt(0);
         }
       },
-      { threshold: 0.4 }
+      { threshold: 0.5 }
     );
+    io.observe(node);
 
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [end, duration, delay]);
+    return () => {
+      io.disconnect();
+      stop();
+    };
+  }, [end, prefix, suffix, grouped, bn, duration, delay]);
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={`tabular-nums ${className}`}>
       {prefix}
-      {toBengaliDigits(value, { grouped })}
+      {bn ? toBengaliDigits(end, { grouped }) : grouped ? end.toLocaleString("en-US") : end}
       {suffix}
     </span>
   );

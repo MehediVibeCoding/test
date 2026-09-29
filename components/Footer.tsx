@@ -34,31 +34,24 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative bg-[#0a1f33] dark:bg-[#06111e] px-6 pt-16 pb-12 sm:px-8 sm:pt-20 lg:px-12 text-slate-100 transition-colors">
-      {/* টপ সূক্ষ্ম ডিভাইডার আভা */}
-      <div
-        className="absolute inset-x-0 top-0 h-px"
-        style={{
-          background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.4), transparent)",
-        }}
-        aria-hidden="true"
-      />
-
-      <div className="mx-auto grid max-w-7xl gap-10 sm:gap-12 md:grid-cols-12">
+    <footer className="relative bg-[#0a1f33] dark:bg-[#06111e] px-6 pt-12 pb-10 sm:px-8 sm:pt-16 lg:px-12 text-slate-100 transition-colors">
+      <div className="mx-auto grid max-w-7xl gap-8 sm:gap-10 md:grid-cols-12">
         {/* ১. ব্র্যান্ড পরিচিতি ও সোশ্যাল আইকন (স্কাই-ব্লু থিমে রূপান্তরিত) */}
         <div className="md:col-span-5 flex flex-col items-start">
-          <p className="font-body text-xl font-black tracking-tight text-white sm:text-2xl">
-            Ahsan&apos;s Learning Academy
-          </p>
-          <p className="mt-1.5 font-body text-xs font-bold text-sky-400">
-            {t.footer.brandTag}
-          </p>
-          <p className="mt-4 max-w-sm font-body text-xs sm:text-[13.5px] leading-[1.8] text-slate-300">
+          <div className="flex flex-col items-center text-center leading-tight">
+            <p className="font-body text-xl font-black tracking-tight text-white sm:text-2xl leading-tight">
+              Ahsan&apos;s Learning Academy
+            </p>
+            <p className="font-body italic text-xs font-bold tracking-wide text-sky-300 sm:text-[13px] -mt-0.5 leading-tight">
+              {t.footer.brandTag}
+            </p>
+          </div>
+          <p className="mt-3.5 max-w-sm font-body text-xs sm:text-[13.5px] leading-[1.8] text-slate-300">
             {t.footer.vision}
           </p>
 
           {/* স্কাই-ব্লু থিম সোশ্যাল লিংকস */}
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-5 flex items-center gap-3">
             {SOCIALS.map((s) => (
               <a
                 key={s.label}
@@ -131,7 +124,7 @@ export default function Footer() {
       </div>
 
       {/* ফুটার কন্ট্রোল বার ও ডেভেলপার ক্রেডিট */}
-      <div className="mx-auto mt-14 flex max-w-7xl flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 text-xs text-slate-400 sm:flex-row">
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 text-xs text-slate-400 sm:flex-row">
         {/* কপিরাইট, পলিসি ও ডেভেলপার ক্রেডিট */}
         <div className="flex flex-col items-center gap-2 sm:items-start text-center sm:text-left">
           <p>© {new Date().getFullYear()} Ahsan&apos;s Learning Academy. {t.footer.rights}</p>

@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { optimizeImage } from "@/lib/image";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import type { FarewellMemory } from "@/lib/academyData";
@@ -113,7 +114,7 @@ export default function FarewellGalleryClient({
         </Reveal>
 
         {/* ব্যাচ ফিল্টার বোতামসমূহ */}
-        <Reveal className="mb-8 flex flex-wrap items-center justify-center gap-2" delay={80}>
+        <Reveal from="fade" className="mb-8 flex flex-wrap items-center justify-center gap-2" delay={80}>
           {filters.map((f) => (
             <button
               key={f}
@@ -130,7 +131,7 @@ export default function FarewellGalleryClient({
         </Reveal>
 
         {/* ছবির গ্যালারি কন্টেইনার (ডেস্কটপে মার্জিনের বাইরে বাটন ও মোবাইলে বাটন ছাড়া) */}
-        <Reveal delay={100}>
+        <Reveal from="zoom" delay={100}>
           <div className="relative">
             {/* ১. বাম পাশের নেভিগেশন তীর বাটন (শুধু ডেস্কটপে এবং ছবির বাইরে ফাঁকা মার্জিনে) */}
             {totalSlides > 1 && (
@@ -160,7 +161,7 @@ export default function FarewellGalleryClient({
 
             {/* স্লাইড কনটেন্ট (টাচ সোয়াইপ সমর্থিত) */}
             <AnimatePresence mode="wait">
-              <motion.div
+              <m.div
                 key={currentIndex}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -219,7 +220,7 @@ export default function FarewellGalleryClient({
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
             </AnimatePresence>
 
             {/* ডট পেজিনেশন */}

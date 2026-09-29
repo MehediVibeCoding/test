@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { useApp } from "@/context/AppContext";
@@ -91,18 +92,18 @@ export default function FAQ() {
                   <span className="font-body text-sm sm:text-base font-bold text-sky-950 dark:text-white leading-snug">
                     {question}
                   </span>
-                  <motion.span
+                  <m.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
                     transition={{ duration: 0.25 }}
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-50 dark:bg-slate-800 font-body text-base font-bold text-sky-700 dark:text-sky-300"
                   >
                     +
-                  </motion.span>
+                  </m.span>
                 </button>
 
                 <AnimatePresence initial={false}>
                   {isOpen && (
-                    <motion.div
+                    <m.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -112,7 +113,7 @@ export default function FAQ() {
                       <p className="border-t border-sky-100/70 dark:border-slate-800 px-4 pt-3.5 pb-4 sm:px-5 sm:pb-5 font-body text-xs sm:text-sm leading-[1.8] text-ink-800/85 dark:text-slate-300">
                         {answer}
                       </p>
-                    </motion.div>
+                    </m.div>
                   )}
                 </AnimatePresence>
               </div>

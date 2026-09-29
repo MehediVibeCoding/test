@@ -42,31 +42,31 @@ export default async function SingleClassDiaryPage({
   }
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-ink-800">
+    <main className="min-h-screen bg-gradient-to-b from-[#dff1fd] via-[#eaf5fe] to-[#d3e9fc] dark:from-[#071322] dark:via-[#091a2e] dark:to-[#0c243e] text-ink-800 dark:text-slate-200">
       <article className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         {/* ১. টপ হেডার কার্ড (ন্যাভবার ছাড়া ক্লিন ফিরে যান বাটন, তারিখ ও ব্যাচ) */}
-        <div className="overflow-hidden rounded-3xl border border-sky-100 bg-gradient-to-b from-[#e0f2fe]/60 via-white to-white p-6 shadow-xs sm:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-sky-100/80 pb-5">
+        <div className="overflow-hidden rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-gradient-to-b from-[#e0f2fe]/60 dark:from-sky-900/40 via-white dark:via-slate-900 to-white dark:to-slate-900 p-6 shadow-xs sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-sky-100/80 dark:border-sky-900/60 pb-5">
             <Link
               href="/class-diary"
-              className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 bg-white px-4 py-2 font-body text-xs font-bold text-sky-950 shadow-xs transition-all hover:bg-sky-50 active:scale-95 sm:px-5 sm:py-2.5 sm:text-[13px]"
+              className="inline-flex items-center gap-2 rounded-full border border-sky-200/80 dark:border-sky-800 bg-white dark:bg-slate-900/85 px-4 py-2 font-body text-xs font-bold text-sky-950 dark:text-white shadow-xs transition-all hover:bg-sky-50 dark:hover:bg-slate-800 active:scale-95 sm:px-5 sm:py-2.5 sm:text-[13px]"
             >
-              <svg className="h-4 w-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-4 w-4 text-sky-600 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
               <span>সব ক্লাস ডায়েরিতে ফিরে যান</span>
             </Link>
 
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1.5 rounded-full border border-sky-200/80 bg-sky-50 px-3.5 py-1 font-body text-xs font-bold text-sky-800">
-                <svg className="h-3.5 w-3.5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="flex items-center gap-1.5 rounded-full border border-sky-200/80 dark:border-sky-800 bg-sky-50 dark:bg-sky-900/40 px-3.5 py-1 font-body text-xs font-bold text-sky-800 dark:text-sky-200">
+                <svg className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span>{entry.date}</span>
               </span>
 
               {entry.batch && (
-                <span className="rounded-full bg-slate-100 px-3 py-1 font-body text-xs font-medium text-slate-700">
+                <span className="rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 font-body text-xs font-medium text-slate-700 dark:text-slate-200">
                   {entry.batch}
                 </span>
               )}
@@ -74,15 +74,15 @@ export default async function SingleClassDiaryPage({
           </div>
 
           {/* লেকচারের মূল শিরোনাম */}
-          <h1 className="mt-6 font-body text-2xl font-black leading-tight text-sky-950 sm:text-3xl lg:text-4xl">
+          <h1 className="mt-6 font-body text-2xl font-black leading-tight text-sky-950 dark:text-white sm:text-3xl lg:text-4xl">
             {entry.topic}
           </h1>
         </div>
 
         {/* ২. লেকচার নোট ও শিট কন্টেন্ট কার্ড */}
-        <div className="mt-6 rounded-3xl border border-sky-100 bg-white p-6 shadow-xs sm:p-10">
+        <div className="mt-6 rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/85 p-6 shadow-xs sm:p-10">
           {/* লেকচার নোট */}
-          <div className="space-y-4 font-body text-[15px] sm:text-base leading-[1.9] text-ink-800/90 whitespace-pre-line">
+          <div className="space-y-4 font-body text-[15px] sm:text-base leading-[1.9] text-ink-800/90 dark:text-slate-200 whitespace-pre-line">
             {entry.note ? (
               entry.note
             ) : (
@@ -92,7 +92,7 @@ export default async function SingleClassDiaryPage({
 
           {/* স্লাইড বা গুগল ড্রাইভ পিডিএফ লিংক বক্স (যদি থাকে) */}
           {entry.slideUrl && (
-            <div className="mt-8 rounded-2xl border border-sky-200 bg-sky-50/60 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="mt-8 rounded-2xl border border-sky-200 dark:border-sky-800 bg-sky-50/60 dark:bg-sky-900/30 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-600 text-white">
                   <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,8 +100,8 @@ export default async function SingleClassDiaryPage({
                   </svg>
                 </div>
                 <div>
-                  <p className="font-body text-sm font-bold text-sky-950">ক্লাস লেকচার শিট ও প্রেজেন্টেশন</p>
-                  <p className="font-body text-xs text-sky-800">সম্পূর্ণ শিট বা স্লাইড অনলাইনে দেখতে ক্লিক করুন</p>
+                  <p className="font-body text-sm font-bold text-sky-950 dark:text-white">ক্লাস লেকচার শিট ও প্রেজেন্টেশন</p>
+                  <p className="font-body text-xs text-sky-800 dark:text-sky-200">সম্পূর্ণ শিট বা স্লাইড অনলাইনে দেখতে ক্লিক করুন</p>
                 </div>
               </div>
 
@@ -118,11 +118,11 @@ export default async function SingleClassDiaryPage({
           )}
 
           {/* সবার শেষে ডানপাশে স্যারের মার্জিত ইটালিক সিগনেচার */}
-          <div className="mt-12 border-t border-sky-100/80 pt-6 flex flex-col items-end text-right">
-            <span className="font-display italic text-lg sm:text-xl font-black text-sky-950 tracking-wide">
+          <div className="mt-12 border-t border-sky-100/80 dark:border-sky-900/60 pt-6 flex flex-col items-end text-right">
+            <span className="font-display italic text-lg sm:text-xl font-black text-sky-950 dark:text-white tracking-wide">
               — Md. Ahsan Ullah
             </span>
-            <span className="font-body text-xs font-semibold text-sky-700 mt-0.5">
+            <span className="font-body text-xs font-semibold text-sky-700 dark:text-sky-300 mt-0.5">
               Ahsan&apos;s Learning Academy
             </span>
           </div>

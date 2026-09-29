@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import TeacherPhotoSlider, { type Slide } from "./TeacherPhotoSlider";
@@ -79,7 +79,7 @@ export default function AboutClient({ slides }: { slides: Slide[] }) {
 
         <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
           {/* বাম পাশে: শিক্ষকের ছবি ফ্রেম */}
-          <Reveal className="lg:col-span-5 flex justify-center">
+          <Reveal from="left" className="lg:col-span-5 flex justify-center">
             <div className="relative w-full max-w-sm sm:max-w-md">
               <div className="overflow-hidden rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/80 p-3 shadow-xs backdrop-blur-sm">
                 <TeacherPhotoSlider slides={slides} />
@@ -100,7 +100,7 @@ export default function AboutClient({ slides }: { slides: Slide[] }) {
           {/* ডানপাশে: বক্তব্য স্টেটমেন্ট ও সাইড-স্লাইড ক্রেডেনশিয়াল কার্ড */}
           <div className="lg:col-span-7 flex flex-col gap-5">
             {/* বক্তব্য কার্ড */}
-            <Reveal delay={80}>
+            <Reveal from="right" delay={80}>
               <div className="rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-sky-50/30 dark:bg-slate-900/60 p-6 sm:p-8 shadow-xs backdrop-blur-sm">
                 <p className="font-body text-[15px] leading-[1.8] text-ink-800 dark:text-slate-200 sm:text-base">
                   {t.about.bioP1}
@@ -112,7 +112,7 @@ export default function AboutClient({ slides }: { slides: Slide[] }) {
             </Reveal>
 
             {/* সাইড-স্লাইড ক্রেডেনশিয়াল কার্ড গ্রিড */}
-            <motion.div
+            <m.div
               variants={containerVariants}
               initial="hidden"
               whileInView="show"
@@ -120,7 +120,7 @@ export default function AboutClient({ slides }: { slides: Slide[] }) {
               className="grid gap-4 sm:grid-cols-1"
             >
               {credentials.map((item, idx) => (
-                <motion.div
+                <m.div
                   key={idx}
                   variants={slideCardVariants}
                   whileHover={{ x: 4, transition: { duration: 0.2 } }}
@@ -137,9 +137,9 @@ export default function AboutClient({ slides }: { slides: Slide[] }) {
                       {item.desc}
                     </p>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </div>

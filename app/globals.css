@@ -198,19 +198,126 @@ h1, h2, h3, h4 {
   box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(56, 189, 248, 0.25);
 }
 
-/* স্ক্রল রিভিল */
+/* স্ক্রল রিভিল (দিক অনুযায়ী) */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s var(--ease-premium), transform 0.6s var(--ease-premium);
+  transition: opacity 0.7s var(--ease-premium), transform 0.7s var(--ease-premium);
+  will-change: opacity, transform;
 }
+.reveal-on-scroll.reveal-up    { transform: translate3d(0, 20px, 0); }
+.reveal-on-scroll.reveal-left  { transform: translate3d(-36px, 0, 0); }
+.reveal-on-scroll.reveal-right { transform: translate3d(36px, 0, 0); }
+.reveal-on-scroll.reveal-zoom  { transform: scale(0.94); }
+.reveal-on-scroll.reveal-fade  { transform: none; }
 .reveal-on-scroll.reveal-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+  will-change: auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   বাটন রিপল (ক্লিক করলে ঢেউ) ও CTA স্পন্দন
+   ══════════════════════════════════════════════════════════════════════ */
+.btn-ripple-dot {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0);
+  animation: btnRipple 0.65s ease-out forwards;
+}
+@keyframes btnRipple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* মূল CTA বাটনের হালকা "শ্বাস" স্পন্দন (বাটন overflow:hidden তাই বাইরের গ্লো box-shadow দিয়ে) */
+.btn-pulse:not(:disabled) {
+  animation: btnBreath 2.8s ease-in-out infinite;
+}
+.btn-pulse:hover { animation-play-state: paused; }
+@keyframes btnBreath {
+  0%, 100% { box-shadow: 0 4px 14px rgba(14, 165, 233, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+  50%      { box-shadow: 0 6px 26px rgba(14, 165, 233, 0.6), 0 0 0 5px rgba(14, 165, 233, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   পেজ ট্রানজিশন (app/template.tsx) — শেষে transform থাকে না
+   ══════════════════════════════════════════════════════════════════════ */
+.page-enter {
+  animation: pageEnter 0.45s var(--ease-premium) backwards;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ফুটার ঢেউ (ধীরে দুলতে থাকা দুই স্তর)
+   ══════════════════════════════════════════════════════════════════════ */
+.footer-wave-layer {
+  position: absolute;
+  left: 0;
+  width: 200%;
+  height: var(--wave-h, 60px);
+  pointer-events: none;
+  will-change: transform;
+  animation: waveSway 26s linear infinite;
+}
+.footer-wave-layer.is-slow { animation-duration: 38s; animation-direction: reverse; }
+@keyframes waveSway {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-25%, 0, 0); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ব্যাচ কার্ড: মাউস অনুসরণকারী স্পটলাইট (শুধু ডেক্সটপ মাউসে)
+   ══════════════════════════════════════════════════════════════════════ */
+.batch-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(56, 189, 248, 0.16), transparent 60%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .batch-spot:hover::after { opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   প্রিমিয়াম চিকন স্ক্রলবার (ডেক্সটপ)
+   ══════════════════════════════════════════════════════════════════════ */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(2, 132, 199, 0.55) transparent;
+}
+html.dark {
+  scrollbar-color: rgba(56, 189, 248, 0.45) transparent;
+}
+@media (hover: hover) and (pointer: fine) {
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    background-color: rgba(2, 132, 199, 0.45);
+    transition: background-color 0.2s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: rgba(2, 132, 199, 0.8); }
+  .dark ::-webkit-scrollbar-thumb { background-color: rgba(56, 189, 248, 0.4); }
+  .dark ::-webkit-scrollbar-thumb:hover { background-color: rgba(56, 189, 248, 0.75); }
+  ::-webkit-scrollbar-corner { background: transparent; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-on-scroll {
+  .reveal-on-scroll,
+  .reveal-on-scroll.reveal-up,
+  .reveal-on-scroll.reveal-left,
+  .reveal-on-scroll.reveal-right,
+  .reveal-on-scroll.reveal-zoom {
     opacity: 1;
     transform: none;
     transition: none;
@@ -219,7 +326,11 @@ h1, h2, h3, h4 {
   .btn-gradient:not(:disabled):active {
     transform: none;
   }
-  .btn-shine.is-shining::after {
+  .btn-shine.is-shining::after,
+  .btn-pulse:not(:disabled),
+  .btn-ripple-dot,
+  .footer-wave-layer,
+  .page-enter {
     animation: none;
   }
   html {

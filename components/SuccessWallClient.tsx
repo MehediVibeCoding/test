@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import Reveal from "./Reveal";
 import EduDoodles from "./EduDoodles";
 import { optimizeImage } from "@/lib/image";
@@ -58,7 +58,7 @@ export default function SuccessWallClient({ toppers }: { toppers: SuccessTopper[
             <p className="mt-1 font-body text-xs text-ink-800/70 dark:text-slate-400">{t.successWall.emptySubtext}</p>
           </div>
         ) : (
-          <motion.div
+          <m.div
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
@@ -66,7 +66,7 @@ export default function SuccessWallClient({ toppers }: { toppers: SuccessTopper[
             className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
           >
             {toppers.map((student, i) => (
-              <motion.div key={student.id || i} variants={topperCardVariants}>
+              <m.div key={student.id || i} variants={topperCardVariants}>
                 <div className="group flex h-full flex-col items-center justify-between rounded-3xl border border-sky-100 dark:border-sky-900/60 bg-white dark:bg-slate-900/85 p-6 text-center shadow-xs backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300 dark:hover:border-sky-700 hover:shadow-xl hover:shadow-sky-950/5">
                   <div className="flex flex-col items-center w-full">
                     {/* বৃত্তাকার ছবি ফ্রেম */}
@@ -113,9 +113,9 @@ export default function SuccessWallClient({ toppers }: { toppers: SuccessTopper[
                     🏛️ {student.college}
                   </p>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
-          </motion.div>
+          </m.div>
         )}
       </div>
     </section>

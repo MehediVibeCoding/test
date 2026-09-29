@@ -1,6 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { LazyMotion, MotionConfig } from "motion/react";
+import RippleProvider from "@/components/RippleProvider";
 
 export type Language = "bn" | "en";
 export type Theme = "light" | "dark";
@@ -534,7 +536,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         t: translations[language],
       }}
     >
-      {children}
+      <LazyMotion features={() => import("@/lib/motionFeatures").then((mod) => mod.default)}>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </LazyMotion>
+      <RippleProvider />
     </AppContext.Provider>
   );
 }

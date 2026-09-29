@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import * as m from "motion/react-m";
 import type { ReactNode } from "react";
 
 interface ScrollLinkProps {
@@ -37,7 +37,7 @@ export default function ScrollLink({
   }
 
   return (
-    <motion.a
+    <m.a
       href={`#${targetId === "top" ? "" : targetId}`}
       onClick={handleClick}
       whileTap={{ scale: 0.96 }}
@@ -45,6 +45,6 @@ export default function ScrollLink({
       className={className}
     >
       {children}
-    </motion.a>
+    </m.a>
   );
 }
